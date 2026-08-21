@@ -1,0 +1,12 @@
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+backend/.env
+backend/.env.*
+!backend/.env.example
+
+# OS/editor artifacts
+.DS_Store
+.vscode/
+node_modules/

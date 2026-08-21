@@ -150,6 +150,9 @@
         }
     </style>
 <link rel="stylesheet" href="../shared/responsive.css"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../../../backend/supabase-config.js"></script>
+<script src="../../../backend/supabase-client.js"></script>
 <script src="../shared/navigation.js" defer></script>
 </head>
 <body class="bg-slate-50 text-on-surface font-body-md antialiased min-h-screen flex flex-col md:flex-row selection:bg-primary-container selection:text-white">
@@ -264,8 +267,8 @@
 </div>
 <!-- Editor Inputs -->
 <div class="flex flex-col flex-1 p-6 lg:p-8">
-<input class="w-full font-headline-md text-headline-md text-on-surface placeholder:text-slate-300 border-none bg-transparent outline-none ring-0 p-0 mb-6 focus:ring-0" placeholder="Insira o Título da sua Redação..." type="text"/>
-<textarea class="w-full flex-1 font-body-lg text-body-lg text-on-surface-variant placeholder:text-slate-300 border-none bg-transparent outline-none ring-0 p-0 resize-none focus:ring-0 leading-relaxed custom-scrollbar min-h-[300px]" placeholder="Comece a escrever sua introdução aqui..."></textarea>
+<input data-redacao-title class="w-full font-headline-md text-headline-md text-on-surface placeholder:text-slate-300 border-none bg-transparent outline-none ring-0 p-0 mb-6 focus:ring-0" placeholder="Insira o Título da sua Redação..." type="text"/>
+<textarea data-redacao-text class="w-full flex-1 font-body-lg text-body-lg text-on-surface-variant placeholder:text-slate-300 border-none bg-transparent outline-none ring-0 p-0 resize-none focus:ring-0 leading-relaxed custom-scrollbar min-h-[300px]" placeholder="Comece a escrever sua introdução aqui..."></textarea>
 </div>
 <!-- Editor Footer / Submission Area -->
 <div class="mt-auto border-t border-slate-100 bg-slate-50/50 p-4 lg:p-6 flex flex-col sm:flex-row items-center justify-between gap-4 rounded-b-xl">
@@ -281,7 +284,7 @@
 </div>
 </div>
 <!-- CTA -->
-<button class="w-full sm:w-auto bg-primary text-white hover:bg-on-primary-fixed transition-colors duration-200 rounded-lg px-6 py-3 font-label-md text-label-md flex items-center justify-center gap-2 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 whitespace-nowrap">
+<button data-submit-redacao class="w-full sm:w-auto bg-primary text-white hover:bg-on-primary-fixed transition-colors duration-200 rounded-lg px-6 py-3 font-label-md text-label-md flex items-center justify-center gap-2 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 whitespace-nowrap">
 <span>Enviar para Professor</span>
 <span class="material-symbols-outlined text-[18px]">send</span>
 </button>

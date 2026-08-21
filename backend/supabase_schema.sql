@@ -58,6 +58,23 @@ create table if not exists public.perfis (
 create index if not exists idx_perfis_turma_id on public.perfis (turma_id);
 create index if not exists idx_perfis_role on public.perfis (role);
 
+-- Permite que a tela de login aceite matrícula sem expor auth.users ao cliente.
+create or replace function public.email_por_matricula(matricula_input text)
+returns text
+language sql
+stable
+security definer set search_path = public, auth
+as $$
+  select u.email
+  from auth.users u
+  join public.perfis p on p.id = u.id
+  where p.matricula = matricula_input
+  limit 1;
+$$;
+
+revoke all on function public.email_por_matricula(text) from public;
+grant execute on function public.email_por_matricula(text) to anon, authenticated;
+
 -- Cria automaticamente o perfil básico quando um usuário é cadastrado no Auth.
 create or replace function public.handle_new_user()
 returns trigger
@@ -70,7 +87,7 @@ begin
     new.id,
     coalesce(new.raw_user_meta_data ->> 'nome', new.email, 'Novo usuário'),
     new.raw_user_meta_data ->> 'matricula',
-    coalesce((new.raw_user_meta_data ->> 'role')::public.perfil_role, 'aluno')
+    'aluno'
   )
   on conflict (id) do nothing;
   return new;
@@ -266,6 +283,13 @@ using (
 
 drop policy if exists perfis_update_proprio on public.perfis;
 drop policy if exists perfis_update_gestor on public.perfis;
+create policy perfis_update_proprio on public.perfis for update to authenticated
+using (id = auth.uid())
+with check (
+  id = auth.uid()
+  and role = public.usuario_role()
+  and turma_id is not distinct from public.usuario_turma_id()
+);
 create policy perfis_update_gestor on public.perfis for update to authenticated
 using (public.usuario_role() = 'gestor')
 with check (public.usuario_role() = 'gestor');

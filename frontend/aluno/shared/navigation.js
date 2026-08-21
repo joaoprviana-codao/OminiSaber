@@ -1,13 +1,15 @@
 (() => {
+  const frontendIndex = window.location.pathname.indexOf('/frontend/');
+  const frontendRoot = frontendIndex >= 0 ? window.location.pathname.slice(0, frontendIndex) + '/frontend/' : '/frontend/';
   const routes = {
-    dashboard: '../dashboard_principal/code.html',
-    inicio: '../dashboard_principal/code.html',
-    trilhas: '../modulo_de_trilhas/code.html',
-    redacao: '../laboratorio_de_redacao/code.html',
-    evolucao: '../minha_evolucao/code.html',
-    biblioteca: '../biblioteca_digital/code.html',
-    configuracoes: '../configuracoes/code.html',
-    login: '../login/code.html'
+    dashboard: `${frontendRoot}aluno/dashboard_principal/code.html`,
+    inicio: `${frontendRoot}aluno/dashboard_principal/code.html`,
+    trilhas: `${frontendRoot}aluno/modulo_de_trilhas/code.html`,
+    redacao: `${frontendRoot}aluno/laboratorio_de_redacao/code.html`,
+    evolucao: `${frontendRoot}aluno/minha_evolucao/code.html`,
+    biblioteca: `${frontendRoot}aluno/biblioteca_digital/code.html`,
+    configuracoes: `${frontendRoot}aluno/configuracoes/code.html`,
+    login: `${frontendRoot}login/code.html`
   };
 
   const normalize = (value) => value
@@ -135,7 +137,21 @@
   if (loginForm) {
     loginForm.addEventListener('submit', (event) => {
       event.preventDefault();
-      window.location.href = routes.dashboard;
+      const email = loginForm.querySelector('[name="email"]')?.value.trim();
+      const password = loginForm.querySelector('[name="password"]')?.value;
+      if (window.OminiSaber?.configured) {
+        const submit = loginForm.querySelector('[type="submit"]');
+        if (submit) submit.disabled = true;
+        window.OminiSaber.signIn(email, password).then(({ error }) => {
+          if (error) throw error;
+          window.location.href = routes.dashboard;
+        }).catch((error) => {
+          window.OminiSaber.notify(error.message || 'Não foi possível entrar.', 'error');
+          if (submit) submit.disabled = false;
+        });
+      } else {
+        window.location.href = routes.dashboard;
+      }
     });
   }
   const theme = localStorage.getItem('edutech-theme') || 'system';

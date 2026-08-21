@@ -157,6 +157,9 @@
         }
     </style>
 <link rel="stylesheet" href="../shared/responsive.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../../../backend/supabase-config.js"></script>
+<script src="../../../backend/supabase-client.js"></script>
 <script src="../shared/navigation.js" defer></script>
 </head>
 <body class="flex bg-slate-50 min-h-screen">
@@ -261,16 +264,16 @@
 <div class="flex-1 w-full space-y-4">
 <div>
 <label class="font-label-md text-label-md text-on-surface-variant block mb-1">Nome Completo</label>
-<input class="w-full bg-slate-100 border-none rounded-lg px-4 py-3 font-body-md text-body-md text-on-surface focus:ring-2 focus:ring-primary focus:bg-white transition-all" type="text" value="Ana Silva Rodrigues">
+<input data-profile-name-input class="w-full bg-slate-100 border-none rounded-lg px-4 py-3 font-body-md text-body-md text-on-surface focus:ring-2 focus:ring-primary focus:bg-white transition-all" type="text" value="Ana Silva Rodrigues">
 </div>
 <div>
 <label class="font-label-md text-label-md text-on-surface-variant block mb-1">E-mail</label>
-<input class="w-full bg-slate-100 border-none rounded-lg px-4 py-3 font-body-md text-body-md text-on-surface focus:ring-2 focus:ring-primary focus:bg-white transition-all" type="email" value="ana.rodrigues@escola.com.br">
+<input data-profile-email class="w-full bg-slate-100 border-none rounded-lg px-4 py-3 font-body-md text-body-md text-on-surface focus:ring-2 focus:ring-primary focus:bg-white transition-all" type="email" value="ana.rodrigues@escola.com.br">
 </div>
 </div>
 </div>
 <div class="mt-6 flex justify-end">
-<button class="bg-primary text-white font-label-md text-label-md px-6 py-2.5 rounded-lg hover:bg-primary-container transition-colors shadow-soft">
+<button data-save-profile class="bg-primary text-white font-label-md text-label-md px-6 py-2.5 rounded-lg hover:bg-primary-container transition-colors shadow-soft">
                                 Salvar Alterações
                             </button>
 </div>
