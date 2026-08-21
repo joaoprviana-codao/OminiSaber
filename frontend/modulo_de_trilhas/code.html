@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Trilhas - EduTech</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&amp;family=Poppins:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-dim": "#cfdaf2",
+                      "secondary-fixed": "#6ffbbe",
+                      "surface-variant": "#d8e3fb",
+                      "on-secondary-fixed-variant": "#005236",
+                      "on-tertiary": "#ffffff",
+                      "on-secondary-fixed": "#002113",
+                      "slate-500": "#64748B",
+                      "primary-fixed-dim": "#c3c0ff",
+                      "outline-variant": "#c7c4d8",
+                      "surface-container": "#e7eeff",
+                      "primary": "#3525cd",
+                      "on-primary-fixed": "#0f0069",
+                      "on-secondary-container": "#00714d",
+                      "on-surface": "#111c2d",
+                      "inverse-on-surface": "#ecf1ff",
+                      "tertiary-fixed": "#e3dfff",
+                      "on-surface-variant": "#464555",
+                      "surface-container-lowest": "#ffffff",
+                      "on-secondary": "#ffffff",
+                      "on-primary-container": "#dad7ff",
+                      "tertiary": "#3a2cc1",
+                      "on-background": "#111c2d",
+                      "indigo-50": "#EEF2FF",
+                      "surface": "#f9f9ff",
+                      "primary-fixed": "#e2dfff",
+                      "tertiary-container": "#534ada",
+                      "inverse-surface": "#263143",
+                      "secondary": "#006c49",
+                      "surface-bright": "#f9f9ff",
+                      "secondary-container": "#6cf8bb",
+                      "slate-50": "#F8FAFC",
+                      "on-error": "#ffffff",
+                      "surface-container-high": "#dee8ff",
+                      "error-container": "#ffdad6",
+                      "on-tertiary-container": "#dbd8ff",
+                      "on-primary-fixed-variant": "#3323cc",
+                      "inverse-primary": "#c3c0ff",
+                      "primary-container": "#4f46e5",
+                      "on-tertiary-fixed-variant": "#372abf",
+                      "error-red": "#EF4444",
+                      "on-tertiary-fixed": "#100069",
+                      "on-primary": "#ffffff",
+                      "surface-tint": "#4d44e3",
+                      "outline": "#777587",
+                      "secondary-fixed-dim": "#4edea3",
+                      "tertiary-fixed-dim": "#c3c0ff",
+                      "error": "#ba1a1a",
+                      "slate-100": "#F1F5F9",
+                      "background": "#f9f9ff",
+                      "surface-container-low": "#f0f3ff",
+                      "surface-container-highest": "#d8e3fb",
+                      "on-error-container": "#93000a"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-page": "2rem",
+                      "gap-md": "1rem",
+                      "gap-xs": "0.5rem",
+                      "base": "4px",
+                      "padding-card": "1.5rem",
+                      "gap-lg": "1.5rem"
+              },
+              "fontFamily": {
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "headline-lg": [
+                              "Poppins"
+                      ],
+                      "headline-md": [
+                              "Poppins"
+                      ],
+                      "headline-sm": [
+                              "Poppins"
+                      ],
+                      "headline-lg-mobile": [
+                              "Poppins"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "label-md": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "body-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-sm": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "26px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-lg": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-md": [
+                              "12px",
+                              {
+                                      "lineHeight": "1",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "700"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        .tab-active {
+            border-bottom: 2px solid #3525cd;
+            color: #3525cd;
+            font-weight: 700;
+        }
+        .tab-inactive {
+            color: #464555;
+            font-weight: 400;
+        }
+        </style>
+<link rel="stylesheet" href="../shared/responsive.css"/>
+<script src="../shared/navigation.js" defer></script>
+</head>
+<body class="bg-slate-50 min-h-screen text-on-surface font-body-md text-body-md">
+<!-- Top Navigation -->
+<header class="bg-surface/80 dark:bg-background/80 backdrop-blur-md docked full-width top-0 z-40 sticky border-b border-slate-100 dark:border-outline-variant flat no shadows transition-all duration-300 ease-in-out flex justify-between items-center h-16 px-margin-page w-full ml-auto lg:pl-72">
+<div class="flex items-center gap-md">
+<span class="font-headline-sm text-headline-sm font-bold text-primary lg:hidden">EduTech</span>
+</div>
+<div class="flex items-center gap-md">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<img alt="Avatar do Estudante" class="w-8 h-8 rounded-full border border-slate-100" data-alt="A small circular avatar showing a generic student profile picture. It is meant to represent a placeholder for a user's face in a modern learning application. Light background, professional." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDV4E1wVPcqNeztILX3hMjLEzDfIWimyuobZ66r8wzcW8sCuLqimfGXFNLd3VZp8Z8MvfXekgB_PpW9Ily2OVEOfNxsI5vr_FTMEWsn2eUrAirmClF3sAinH1FEw8-PvzJ6cOO3r6yKBWZELFv9OboCIING8sSV48zBupiwFIhV-eDqD7fk2tuvcDULnSN-Vg8lMWxYTM9TRt62_xHyXnwNXqZuFoMS0VgifwD5jnxTxN0SW3OVmATv"/>
+</div>
+</header>
+<!-- Side Navigation -->
+<aside class="bg-surface dark:bg-inverse-surface h-screen w-64 fixed left-0 top-0 hidden lg:flex flex-col border-r border-slate-100 dark:border-outline-variant flat no shadows">
+<div class="flex flex-col gap-lg p-margin-page h-full">
+<div class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim">
+                EduTech
+            </div>
+<nav class="flex flex-col gap-base mt-8">
+<a class="flex items-center gap-md px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:bg-slate-50 dark:hover:bg-on-surface-variant rounded-lg transition-colors duration-200 scale-98 hover:scale-100" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-md px-4 py-3 bg-indigo-50 dark:bg-tertiary-container text-primary dark:text-on-tertiary-container rounded-lg font-bold transition-colors duration-200 scale-98 hover:scale-100" href="#">
+<span class="material-symbols-outlined" data-icon="auto_stories">auto_stories</span>
+<span class="font-label-md text-label-md">Trilhas</span>
+</a>
+<a class="flex items-center gap-md px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:bg-slate-50 dark:hover:bg-on-surface-variant rounded-lg transition-colors duration-200 scale-98 hover:scale-100" href="#">
+<span class="material-symbols-outlined" data-icon="edit_note">edit_note</span>
+<span class="font-label-md text-label-md">Redação</span>
+</a>
+<a class="flex items-center gap-md px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:bg-slate-50 dark:hover:bg-on-surface-variant rounded-lg transition-colors duration-200 scale-98 hover:scale-100" href="#">
+<span class="material-symbols-outlined" data-icon="trending_up">trending_up</span>
+<span class="font-label-md text-label-md">Evolução</span>
+</a>
+<a class="flex items-center gap-md px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:bg-slate-50 dark:hover:bg-on-surface-variant rounded-lg transition-colors duration-200 scale-98 hover:scale-100" href="#">
+<span class="material-symbols-outlined" data-icon="local_library">local_library</span>
+<span class="font-label-md text-label-md">Biblioteca</span>
+</a>
+</nav>
+<div class="mt-auto">
+<button class="w-full py-3 bg-primary text-white rounded-lg font-body-md font-bold hover:bg-primary-container transition-colors duration-200">
+                    Falar com Tutor
+                </button>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="lg:ml-64 p-margin-page">
+<div class="mb-gap-lg flex justify-between items-end">
+<div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface mb-2">Trilhas de Estudo</h1>
+<p class="font-body-lg text-body-lg text-slate-500">Acompanhe seu progresso e descubra novos desafios.</p>
+</div>
+</div>
+<!-- Tabs Container -->
+<div class="border-b border-slate-200 mb-gap-lg">
+<div class="flex gap-gap-lg">
+<button class="pb-3 tab-active font-body-lg text-body-lg transition-colors duration-200" id="btn-obrigatorias" onclick="switchTab('obrigatorias')">
+                    Trilhas Obrigatórias
+                </button>
+<button class="pb-3 tab-inactive hover:text-primary font-body-lg text-body-lg transition-colors duration-200" id="btn-aprendizagem" onclick="switchTab('aprendizagem')">
+                    Trilhas de Aprendizagem
+                </button>
+</div>
+</div>
+<!-- Tab Content: Obrigatórias -->
+<div class="block" id="tab-obrigatorias">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gap-lg">
+<!-- Mandatory Card 1 -->
+<div class="bg-white rounded-[12px] border border-slate-100 p-padding-card shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+<div class="flex justify-between items-start mb-4">
+<span class="bg-error-container text-on-error-container text-[12px] font-bold px-2 py-1 rounded">URGENTE</span>
+<div class="flex items-center gap-1 text-slate-500">
+<span class="material-symbols-outlined text-[16px]" data-icon="schedule">schedule</span>
+<span class="font-label-md text-label-md">24h restantes</span>
+</div>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-2">Simulado SAEB - Matemática</h3>
+<p class="font-body-md text-body-md text-slate-500 mb-6">Avaliação diagnóstica com foco em geometria e álgebra. Peso 2 na média.</p>
+<div class="flex justify-between items-center mt-auto border-t border-slate-100 pt-4">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-slate-500">Valor</span>
+<span class="font-headline-sm text-headline-sm text-primary font-bold">10,0 pts</span>
+</div>
+<button class="bg-primary hover:bg-primary-container text-white px-4 py-2 rounded-lg font-body-md transition-colors duration-200">
+                            Iniciar
+                        </button>
+</div>
+</div>
+<!-- Mandatory Card 2 -->
+<div class="bg-white rounded-[12px] border border-slate-100 p-padding-card shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+<div class="flex justify-between items-start mb-4">
+<span class="bg-indigo-50 text-tertiary-container text-[12px] font-bold px-2 py-1 rounded">AVALIAÇÃO</span>
+<div class="flex items-center gap-1 text-slate-500">
+<span class="material-symbols-outlined text-[16px]" data-icon="schedule">schedule</span>
+<span class="font-label-md text-label-md">3 dias</span>
+</div>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-2">Redação: Dissertativa</h3>
+<p class="font-body-md text-body-md text-slate-500 mb-6">Tema: Impactos da IA na educação. Estrutura dissertativa-argumentativa obrigatória.</p>
+<div class="flex justify-between items-center mt-auto border-t border-slate-100 pt-4">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-slate-500">Valor</span>
+<span class="font-headline-sm text-headline-sm text-primary font-bold">5,0 pts</span>
+</div>
+<button class="bg-primary hover:bg-primary-container text-white px-4 py-2 rounded-lg font-body-md transition-colors duration-200">
+                            Iniciar
+                        </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Tab Content: Aprendizagem -->
+<div class="hidden" id="tab-aprendizagem">
+<div class="mb-6 flex gap-4">
+<button class="bg-indigo-50 text-tertiary-container px-4 py-2 rounded-full font-label-md text-label-md font-bold">Todos</button>
+<button class="bg-white border border-slate-200 text-slate-500 hover:bg-slate-50 px-4 py-2 rounded-full font-label-md text-label-md font-bold transition-colors">Português</button>
+<button class="bg-white border border-slate-200 text-slate-500 hover:bg-slate-50 px-4 py-2 rounded-full font-label-md text-label-md font-bold transition-colors">Matemática</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gap-lg">
+<!-- Learning Path Card 1 -->
+<div class="bg-white rounded-[12px] border border-slate-100 p-padding-card shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+<div class="flex gap-2 mb-4">
+<span class="bg-indigo-50 text-tertiary-container text-[12px] font-bold px-2 py-1 rounded">Matemática</span>
+<span class="bg-slate-100 text-slate-600 text-[12px] font-bold px-2 py-1 rounded">D15</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-2">Frações e Decimais</h3>
+<p class="font-body-md text-body-md text-slate-500 mb-6">Revisão fundamental para resolver problemas envolvendo números racionais.</p>
+<div class="w-full bg-slate-100 rounded-full h-[10px] mb-2">
+<div class="bg-emerald-500 h-[10px] rounded-full transition-all duration-500 w-[45%]"></div>
+</div>
+<div class="flex justify-between text-label-md text-slate-500 font-label-md">
+<span>45% Concluído</span>
+<span>4/9 Módulos</span>
+</div>
+</div>
+<!-- Learning Path Card 2 -->
+<div class="bg-white rounded-[12px] border border-slate-100 p-padding-card shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+<div class="flex gap-2 mb-4">
+<span class="bg-indigo-50 text-tertiary-container text-[12px] font-bold px-2 py-1 rounded">Português</span>
+<span class="bg-slate-100 text-slate-600 text-[12px] font-bold px-2 py-1 rounded">D01</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-2">Interpretação de Texto</h3>
+<p class="font-body-md text-body-md text-slate-500 mb-6">Estratégias de leitura para identificar informações explícitas e implícitas.</p>
+<div class="w-full bg-slate-100 rounded-full h-[10px] mb-2">
+<div class="bg-emerald-500 h-[10px] rounded-full transition-all duration-500 w-[10%]"></div>
+</div>
+<div class="flex justify-between text-label-md text-slate-500 font-label-md">
+<span>10% Concluído</span>
+<span>1/10 Módulos</span>
+</div>
+</div>
+<!-- Learning Path Card 3 -->
+<div class="bg-white rounded-[12px] border border-slate-100 p-padding-card shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+<div class="flex gap-2 mb-4">
+<span class="bg-indigo-50 text-tertiary-container text-[12px] font-bold px-2 py-1 rounded">Matemática</span>
+<span class="bg-slate-100 text-slate-600 text-[12px] font-bold px-2 py-1 rounded">D04</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-2">Geometria Plana</h3>
+<p class="font-body-md text-body-md text-slate-500 mb-6">Cálculo de áreas e perímetros de polígonos regulares e irregulares.</p>
+<div class="w-full bg-slate-100 rounded-full h-[10px] mb-2">
+<div class="bg-emerald-500 h-[10px] rounded-full transition-all duration-500 w-[0%]"></div>
+</div>
+<div class="flex justify-between text-label-md text-slate-500 font-label-md">
+<span>0% Concluído</span>
+<span>0/5 Módulos</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation (Mobile) -->
+<nav class="bg-surface dark:bg-inverse-surface docked full-width bottom-0 lg:hidden border-t border-slate-100 dark:border-outline-variant shadow-lg fixed bottom-0 w-full flex justify-around items-center h-16 z-50">
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant w-full h-full hover:bg-slate-50 dark:hover:bg-on-surface-variant transition-colors" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="home">home</span>
+<span class="font-label-md text-label-md text-[10px]">Início</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed-dim font-bold w-full h-full bg-slate-50 dark:bg-on-surface-variant transition-colors" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="route">route</span>
+<span class="font-label-md text-label-md text-[10px]">Trilhas</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant w-full h-full hover:bg-slate-50 dark:hover:bg-on-surface-variant transition-colors" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="leaderboard">leaderboard</span>
+<span class="font-label-md text-label-md text-[10px]">Evolução</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant w-full h-full hover:bg-slate-50 dark:hover:bg-on-surface-variant transition-colors" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="person">person</span>
+<span class="font-label-md text-label-md text-[10px]">Perfil</span>
+</a>
+</nav>
+<script>
+        function switchTab(tabName) {
+            const obrigatoriasContent = document.getElementById('tab-obrigatorias');
+            const aprendizagemContent = document.getElementById('tab-aprendizagem');
+            const btnObrigatorias = document.getElementById('btn-obrigatorias');
+            const btnAprendizagem = document.getElementById('btn-aprendizagem');
+
+            if (tabName === 'obrigatorias') {
+                obrigatoriasContent.classList.remove('hidden');
+                obrigatoriasContent.classList.add('block');
+                aprendizagemContent.classList.remove('block');
+                aprendizagemContent.classList.add('hidden');
+                
+                btnObrigatorias.className = 'pb-3 tab-active font-body-lg text-body-lg transition-colors duration-200';
+                btnAprendizagem.className = 'pb-3 tab-inactive hover:text-primary font-body-lg text-body-lg transition-colors duration-200';
+            } else {
+                aprendizagemContent.classList.remove('hidden');
+                aprendizagemContent.classList.add('block');
+                obrigatoriasContent.classList.remove('block');
+                obrigatoriasContent.classList.add('hidden');
+                
+                btnAprendizagem.className = 'pb-3 tab-active font-body-lg text-body-lg transition-colors duration-200';
+                btnObrigatorias.className = 'pb-3 tab-inactive hover:text-primary font-body-lg text-body-lg transition-colors duration-200';
+            }
+        }
+    </script>
+</body></html>

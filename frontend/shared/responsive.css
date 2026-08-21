@@ -1,0 +1,56 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  overflow-x: hidden;
+}
+
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
+}
+
+@media (max-width: 1023px) {
+  body {
+    overflow-x: hidden;
+  }
+
+  main {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 639px) {
+  main {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  header > div {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  h1,
+  h2,
+  h3 {
+    overflow-wrap: anywhere;
+  }
+
+  [class*="grid-cols-"] {
+    min-width: 0;
+  }
+
+  input,
+  textarea,
+  button,
+  a {
+    max-width: 100%;
+  }
+}

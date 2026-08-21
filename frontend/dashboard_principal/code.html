@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+
+<html class="light" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EduTech - Dashboard Principal</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Poppins:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-dim": "#cfdaf2",
+                        "secondary-fixed": "#6ffbbe",
+                        "surface-variant": "#d8e3fb",
+                        "on-secondary-fixed-variant": "#005236",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed": "#002113",
+                        "slate-500": "#64748B",
+                        "primary-fixed-dim": "#c3c0ff",
+                        "outline-variant": "#c7c4d8",
+                        "surface-container": "#e7eeff",
+                        "primary": "#3525cd",
+                        "on-primary-fixed": "#0f0069",
+                        "on-secondary-container": "#00714d",
+                        "on-surface": "#111c2d",
+                        "inverse-on-surface": "#ecf1ff",
+                        "tertiary-fixed": "#e3dfff",
+                        "on-surface-variant": "#464555",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "on-primary-container": "#dad7ff",
+                        "tertiary": "#3a2cc1",
+                        "on-background": "#111c2d",
+                        "indigo-50": "#EEF2FF",
+                        "surface": "#f9f9ff",
+                        "primary-fixed": "#e2dfff",
+                        "tertiary-container": "#534ada",
+                        "inverse-surface": "#263143",
+                        "secondary": "#006c49",
+                        "surface-bright": "#f9f9ff",
+                        "secondary-container": "#6cf8bb",
+                        "slate-50": "#F8FAFC",
+                        "on-error": "#ffffff",
+                        "surface-container-high": "#dee8ff",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-container": "#dbd8ff",
+                        "on-primary-fixed-variant": "#3323cc",
+                        "inverse-primary": "#c3c0ff",
+                        "primary-container": "#4f46e5",
+                        "on-tertiary-fixed-variant": "#372abf",
+                        "error-red": "#EF4444",
+                        "on-tertiary-fixed": "#100069",
+                        "on-primary": "#ffffff",
+                        "surface-tint": "#4d44e3",
+                        "outline": "#777587",
+                        "secondary-fixed-dim": "#4edea3",
+                        "tertiary-fixed-dim": "#c3c0ff",
+                        "error": "#ba1a1a",
+                        "slate-100": "#F1F5F9",
+                        "background": "#f9f9ff",
+                        "surface-container-low": "#f0f3ff",
+                        "surface-container-highest": "#d8e3fb",
+                        "on-error-container": "#93000a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-page": "2rem",
+                        "gap-md": "1rem",
+                        "gap-xs": "0.5rem",
+                        "base": "4px",
+                        "padding-card": "1.5rem",
+                        "gap-lg": "1.5rem"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "headline-lg": ["Poppins"],
+                        "headline-md": ["Poppins"],
+                        "headline-sm": ["Poppins"],
+                        "headline-lg-mobile": ["Poppins"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "headline-sm": ["18px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["26px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "body-lg": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-md": ["12px", { "lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        /* Custom Scrollbar for a cleaner look */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #cbd5e1;
+        }
+    </style>
+    <link rel="stylesheet" href="../shared/responsive.css"/>
+    <script src="../shared/navigation.js" defer></script>
+    </head>
+<body class="bg-background text-on-background font-body-md text-body-md antialiased min-h-screen flex overflow-hidden selection:bg-primary selection:text-on-primary">
+<!-- SideNavBar (Desktop) -->
+<aside class="h-screen w-64 fixed left-0 top-0 hidden lg:flex flex-col bg-surface border-r border-slate-100 z-50">
+<div class="flex flex-col gap-lg p-margin-page h-full">
+<!-- Header/Logo -->
+<div class="flex items-center gap-xs">
+<div class="w-8 h-8 rounded-lg bg-primary text-on-primary flex items-center justify-center">
+<span class="material-symbols-outlined fill text-[20px]">school</span>
+</div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary">EduTech</h1>
+</div>
+<!-- Navigation Links -->
+<nav class="flex-1 flex flex-col gap-xs mt-4">
+<!-- Active Item -->
+<a class="flex items-center gap-md px-4 py-3 bg-indigo-50 text-primary rounded-lg font-bold scale-98 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined fill">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<!-- Inactive Items -->
+<a class="flex items-center gap-md px-4 py-3 text-on-surface-variant hover:bg-slate-50 rounded-lg transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">auto_stories</span>
+<span class="font-label-md text-label-md">Trilhas</span>
+</a>
+<a class="flex items-center gap-md px-4 py-3 text-on-surface-variant hover:bg-slate-50 rounded-lg transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">edit_note</span>
+<span class="font-label-md text-label-md">Redação</span>
+</a>
+<a class="flex items-center gap-md px-4 py-3 text-on-surface-variant hover:bg-slate-50 rounded-lg transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">trending_up</span>
+<span class="font-label-md text-label-md">Evolução</span>
+</a>
+<a class="flex items-center gap-md px-4 py-3 text-on-surface-variant hover:bg-slate-50 rounded-lg transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">local_library</span>
+<span class="font-label-md text-label-md">Biblioteca</span>
+</a>
+</nav>
+<!-- User Profile & CTA -->
+<div class="mt-auto flex flex-col gap-4 border-t border-slate-100 pt-6">
+<div class="flex items-center gap-3">
+<img class="w-10 h-10 rounded-full object-cover border border-slate-200" data-alt="A close-up, professional and approachable headshot of a diverse high school student with a friendly expression. Soft, warm natural lighting emphasizing a clean, modern aesthetic. The background is a soft, out-of-focus classroom setting, reinforcing an educational context." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBdmbyHJDILrKb1ePYw1kYrzX5mW3PKoogjYjrTeUnhtEH4gPbfFhxqlVjjACfXaUUJWFPB1pdxac2TfhkNmH_mvhUkLmccqd9tZjyOj1oFC5_ajPvBgufcY8AcfOxY_66HrOs-UqhxR6TAS2J8TPlpcx7q4ll0tQXfKkZvb2kNfhnq6hQqmenXrQ6S8vBgphcfQPdmI3wujPdxfXitfz7gbg76h_gbDlyIDi2EWCrQUAvM4MULX-4"/>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface">Ana Silva</span>
+<span class="font-label-md text-label-md font-normal text-slate-500">Ensino Médio</span>
+</div>
+</div>
+<button class="w-full bg-indigo-50 text-tertiary hover:bg-indigo-100 font-label-md text-label-md py-3 rounded-lg flex items-center justify-center gap-2 transition-colors duration-200">
+<span class="material-symbols-outlined text-[18px]">chat_bubble</span>
+                    Falar com Tutor
+                </button>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<div class="flex-1 flex flex-col w-full lg:ml-64 h-screen overflow-y-auto bg-slate-50 relative">
+<!-- TopNavBar -->
+<header class="bg-surface/80 backdrop-blur-md sticky top-0 z-40 border-b border-slate-100 flex justify-between items-center h-16 px-4 lg:px-margin-page w-full transition-all duration-300 ease-in-out">
+<!-- Mobile Brand -->
+<h1 class="font-headline-sm text-headline-sm font-bold text-primary lg:hidden">EduTech</h1>
+<!-- Desktop Search/Title Area -->
+<div class="hidden lg:flex items-center text-on-surface-variant">
+<span class="font-headline-sm text-headline-sm">Bem-vinda de volta, Ana! 👋</span>
+</div>
+<!-- Actions -->
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:text-primary transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-error-red rounded-full"></span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors hidden sm:block">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<img alt="Avatar do Estudante" class="w-8 h-8 rounded-full object-cover border border-slate-200 lg:hidden" data-alt="A close-up, professional and approachable headshot of a diverse high school student with a friendly expression. Soft, warm natural lighting emphasizing a clean, modern aesthetic. The background is a soft, out-of-focus classroom setting, reinforcing an educational context." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBDNIYQ5ip03jbfCq7-hrzrREcC5Vya9-4D0heprqlHvTSu39NBMXJKDtGVHpiWqW3t9CoXRzG2RVm9b4dSfGs05XqSAZTS_scisNcb6UUN4seHnSopdTu_34wGm83t6Of0RtqMZfGS1hLzTGMvH0bVpHrn4oM72wmkJX68mlSV8uquKB3T6u7Eps7g_NLmUNkW8HBd2KW6iD9wQ_KZ58tGseJrz7Tl3mAoLbmOU5YCXqingTMk38TQ"/>
+</div>
+</header>
+<!-- Page Content Canvas -->
+<main class="flex-1 p-4 lg:p-margin-page pb-24 lg:pb-margin-page flex flex-col gap-lg max-w-7xl mx-auto w-full">
+<!-- Critical Warning Banner -->
+<div class="bg-error-container text-on-error-container rounded-xl p-4 flex items-start sm:items-center gap-4 border border-error-red/20 shadow-sm relative overflow-hidden">
+<div class="absolute inset-0 opacity-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9IiNjdXJyZW50Q29sb3IiLz48L3N2Zz4=')] [mask-image:linear-gradient(to_right,white,transparent)] pointer-events-none"></div>
+<div class="w-10 h-10 rounded-full bg-white/40 flex items-center justify-center shrink-0 z-10">
+<span class="material-symbols-outlined fill text-error-red">alarm_on</span>
+</div>
+<div class="flex-1 z-10">
+<h2 class="font-headline-sm text-headline-sm text-on-error-container">Sua redação vence amanhã!</h2>
+<p class="font-body-md text-body-md text-on-error-container/80 mt-1">Tema: "Os impactos da inteligência artificial no mercado de trabalho". Envie até as 23:59.</p>
+</div>
+<button class="shrink-0 bg-white/50 hover:bg-white text-error-red font-label-md text-label-md px-4 py-2 rounded-lg transition-colors shadow-sm z-10">
+                    Entregar Agora
+                </button>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-lg">
+<!-- Resumo de Evolução (Left Col - 8 spans) -->
+<section class="col-span-1 lg:col-span-8 flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<h3 class="font-headline-md text-headline-md text-on-surface">Resumo de Evolução</h3>
+<a class="font-label-md text-label-md text-primary hover:text-tertiary flex items-center gap-1 transition-colors" href="#">
+                            Ver detalhes <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</a>
+</div>
+<div class="bg-surface-container-lowest border border-slate-100 rounded-xl p-padding-card shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] hover:shadow-[0_10px_15px_-3px_rgba(0,0,0,0.1)] transition-all duration-300 flex flex-col h-full">
+<!-- Gamification Top Row -->
+<div class="flex flex-wrap items-center justify-between gap-6 mb-8">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined fill text-[28px]">military_tech</span>
+</div>
+<div>
+<span class="font-label-md text-label-md text-slate-500 uppercase tracking-wider block mb-1">Nível Atual</span>
+<div class="flex items-baseline gap-2">
+<span class="font-headline-lg text-headline-lg text-on-surface">Lvl 12</span>
+<span class="font-body-md text-body-md text-secondary font-semibold">+450 XP hoje</span>
+</div>
+</div>
+</div>
+<!-- Mini Stat Cards -->
+<div class="flex gap-4">
+<div class="bg-slate-50 rounded-lg p-3 border border-slate-100 min-w-[100px]">
+<span class="font-label-md text-label-md text-slate-500 block">Média Geral</span>
+<span class="font-headline-sm text-headline-sm text-primary">8.5</span>
+</div>
+<div class="bg-slate-50 rounded-lg p-3 border border-slate-100 min-w-[100px]">
+<span class="font-label-md text-label-md text-slate-500 block">Trilhas Conc.</span>
+<span class="font-headline-sm text-headline-sm text-tertiary">24/30</span>
+</div>
+</div>
+</div>
+<!-- Progress Chart Area -->
+<div class="flex-1 mt-auto">
+<h4 class="font-label-md text-label-md text-slate-500 mb-6">Desempenho Trimestral</h4>
+<!-- CSS Bar Chart Representation -->
+<div class="relative h-48 flex items-end gap-2 sm:gap-4 justify-between pt-6 border-b border-slate-200 pb-2">
+<!-- Y Axis Lines Mock -->
+<div class="absolute inset-0 flex flex-col justify-between pointer-events-none border-t border-slate-100 pb-2">
+<div class="w-full h-[1px] bg-slate-100"></div>
+<div class="w-full h-[1px] bg-slate-100"></div>
+<div class="w-full h-[1px] bg-slate-100"></div>
+</div>
+<!-- Bars -->
+<div class="flex flex-col items-center gap-2 group w-full relative z-10">
+<div class="w-full max-w-[40px] bg-surface-variant hover:bg-primary-fixed-dim transition-colors rounded-t-md h-[40%] flex justify-center items-start pt-2 relative cursor-pointer">
+<span class="opacity-0 group-hover:opacity-100 absolute -top-8 bg-on-surface text-on-primary font-label-md text-label-md px-2 py-1 rounded transition-opacity text-[10px]">6.0</span>
+</div>
+<span class="font-label-md text-label-md text-slate-500 text-[10px] sm:text-[12px]">Fev</span>
+</div>
+<div class="flex flex-col items-center gap-2 group w-full relative z-10">
+<div class="w-full max-w-[40px] bg-primary/60 hover:bg-primary transition-colors rounded-t-md h-[65%] flex justify-center items-start pt-2 relative cursor-pointer">
+<span class="opacity-0 group-hover:opacity-100 absolute -top-8 bg-on-surface text-on-primary font-label-md text-label-md px-2 py-1 rounded transition-opacity text-[10px]">7.5</span>
+</div>
+<span class="font-label-md text-label-md text-slate-500 text-[10px] sm:text-[12px]">Mar</span>
+</div>
+<div class="flex flex-col items-center gap-2 group w-full relative z-10">
+<div class="w-full max-w-[40px] bg-primary/80 hover:bg-primary transition-colors rounded-t-md h-[50%] flex justify-center items-start pt-2 relative cursor-pointer">
+<span class="opacity-0 group-hover:opacity-100 absolute -top-8 bg-on-surface text-on-primary font-label-md text-label-md px-2 py-1 rounded transition-opacity text-[10px]">6.8</span>
+</div>
+<span class="font-label-md text-label-md text-slate-500 text-[10px] sm:text-[12px]">Abr</span>
+</div>
+<div class="flex flex-col items-center gap-2 group w-full relative z-10">
+<div class="w-full max-w-[40px] bg-secondary hover:bg-secondary-fixed transition-colors rounded-t-md h-[85%] flex justify-center items-start pt-2 relative cursor-pointer">
+<span class="opacity-0 group-hover:opacity-100 absolute -top-8 bg-on-surface text-on-primary font-label-md text-label-md px-2 py-1 rounded transition-opacity text-[10px]">9.2</span>
+</div>
+<span class="font-label-md text-label-md font-bold text-on-surface text-[10px] sm:text-[12px]">Mai</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Próximas Atividades (Right Col - 4 spans) -->
+<section class="col-span-1 lg:col-span-4 flex flex-col gap-4">
+<h3 class="font-headline-md text-headline-md text-on-surface">Próximas Atividades</h3>
+<div class="bg-surface-container-lowest border border-slate-100 rounded-xl shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] overflow-hidden flex flex-col">
+<!-- List Items -->
+<div class="flex flex-col">
+<!-- Item 1 -->
+<div class="p-4 border-b border-slate-100 hover:bg-slate-50 transition-colors group cursor-pointer">
+<div class="flex justify-between items-start mb-2">
+<div class="flex gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container text-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[18px]">functions</span>
+</div>
+<div>
+<span class="inline-block bg-indigo-50 text-tertiary font-label-md text-label-md px-2 py-1 rounded-md mb-1 text-[10px] uppercase">Matemática</span>
+<h4 class="font-headline-sm text-headline-sm text-on-surface text-[15px] leading-tight group-hover:text-primary transition-colors">Geometria Analítica: Cônicas</h4>
+</div>
+</div>
+</div>
+<div class="mt-3">
+<div class="flex justify-between font-label-md text-label-md text-slate-500 mb-1 text-[10px]">
+<span>Progresso</span>
+<span>75%</span>
+</div>
+<div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 75%;"></div>
+</div>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="p-4 border-b border-slate-100 hover:bg-slate-50 transition-colors group cursor-pointer">
+<div class="flex justify-between items-start mb-2">
+<div class="flex gap-3">
+<div class="w-8 h-8 rounded-lg bg-error-container text-on-error-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[18px]">biotech</span>
+</div>
+<div>
+<span class="inline-block bg-error-container text-on-error-container font-label-md text-label-md px-2 py-1 rounded-md mb-1 text-[10px] uppercase">Biologia</span>
+<h4 class="font-headline-sm text-headline-sm text-on-surface text-[15px] leading-tight group-hover:text-primary transition-colors">Genética Mendeliana e Herança</h4>
+</div>
+</div>
+</div>
+<div class="mt-3">
+<div class="flex justify-between font-label-md text-label-md text-slate-500 mb-1 text-[10px]">
+<span>Progresso</span>
+<span>30%</span>
+</div>
+<div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+<div class="h-full bg-error-red rounded-full" style="width: 30%;"></div>
+</div>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="p-4 hover:bg-slate-50 transition-colors group cursor-pointer">
+<div class="flex justify-between items-start mb-2">
+<div class="flex gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-variant text-on-surface flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[18px]">menu_book</span>
+</div>
+<div>
+<span class="inline-block bg-indigo-50 text-tertiary font-label-md text-label-md px-2 py-1 rounded-md mb-1 text-[10px] uppercase">História</span>
+<h4 class="font-headline-sm text-headline-sm text-on-surface text-[15px] leading-tight group-hover:text-primary transition-colors">Revolução Industrial</h4>
+</div>
+</div>
+</div>
+<div class="mt-3">
+<div class="flex justify-between font-label-md text-label-md text-slate-500 mb-1 text-[10px]">
+<span>Progresso</span>
+<span>0%</span>
+</div>
+<div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+<div class="h-full bg-slate-300 rounded-full" style="width: 0%;"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- CTA -->
+<div class="p-4 bg-slate-50 border-t border-slate-100 mt-auto">
+<button class="w-full py-2 bg-white border border-slate-200 rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-slate-100 transition-colors shadow-sm">
+                                Ver todas as pendências
+                            </button>
+</div>
+</div>
+</section>
+</div>
+</main>
+</div>
+<!-- BottomNavBar (Mobile) -->
+<nav class="fixed bottom-0 w-full flex justify-around items-center h-16 bg-surface z-50 lg:hidden shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] border-t border-slate-100">
+<!-- Active Item -->
+<a class="flex flex-col items-center justify-center text-primary font-bold w-full h-full hover:bg-slate-50 transition-colors" href="#">
+<div class="px-4 py-1 rounded-full bg-indigo-50 mb-1">
+<span class="material-symbols-outlined fill text-[20px]">home</span>
+</div>
+<span class="font-label-md text-label-md text-[10px]">Início</span>
+</a>
+<!-- Inactive Items -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant w-full h-full hover:bg-slate-50 transition-colors" href="#">
+<div class="px-4 py-1 rounded-full mb-1">
+<span class="material-symbols-outlined text-[20px]">route</span>
+</div>
+<span class="font-label-md text-label-md text-[10px] font-normal">Trilhas</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant w-full h-full hover:bg-slate-50 transition-colors" href="#">
+<div class="px-4 py-1 rounded-full mb-1">
+<span class="material-symbols-outlined text-[20px]">leaderboard</span>
+</div>
+<span class="font-label-md text-label-md text-[10px] font-normal">Evolução</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant w-full h-full hover:bg-slate-50 transition-colors" href="#">
+<div class="px-4 py-1 rounded-full mb-1">
+<span class="material-symbols-outlined text-[20px]">person</span>
+</div>
+<span class="font-label-md text-label-md text-[10px] font-normal">Perfil</span>
+</a>
+</nav>
+</body></html>

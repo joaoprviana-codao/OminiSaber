@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EduTech - Biblioteca Digital</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&amp;family=Poppins:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-dim": "#cfdaf2",
+                      "secondary-fixed": "#6ffbbe",
+                      "surface-variant": "#d8e3fb",
+                      "on-secondary-fixed-variant": "#005236",
+                      "on-tertiary": "#ffffff",
+                      "on-secondary-fixed": "#002113",
+                      "slate-500": "#64748B",
+                      "primary-fixed-dim": "#c3c0ff",
+                      "outline-variant": "#c7c4d8",
+                      "surface-container": "#e7eeff",
+                      "primary": "#3525cd",
+                      "on-primary-fixed": "#0f0069",
+                      "on-secondary-container": "#00714d",
+                      "on-surface": "#111c2d",
+                      "inverse-on-surface": "#ecf1ff",
+                      "tertiary-fixed": "#e3dfff",
+                      "on-surface-variant": "#464555",
+                      "surface-container-lowest": "#ffffff",
+                      "on-secondary": "#ffffff",
+                      "on-primary-container": "#dad7ff",
+                      "tertiary": "#3a2cc1",
+                      "on-background": "#111c2d",
+                      "indigo-50": "#EEF2FF",
+                      "surface": "#f9f9ff",
+                      "primary-fixed": "#e2dfff",
+                      "tertiary-container": "#534ada",
+                      "inverse-surface": "#263143",
+                      "secondary": "#006c49",
+                      "surface-bright": "#f9f9ff",
+                      "secondary-container": "#6cf8bb",
+                      "slate-50": "#F8FAFC",
+                      "on-error": "#ffffff",
+                      "surface-container-high": "#dee8ff",
+                      "error-container": "#ffdad6",
+                      "on-tertiary-container": "#dbd8ff",
+                      "on-primary-fixed-variant": "#3323cc",
+                      "inverse-primary": "#c3c0ff",
+                      "primary-container": "#4f46e5",
+                      "on-tertiary-fixed-variant": "#372abf",
+                      "error-red": "#EF4444",
+                      "on-tertiary-fixed": "#100069",
+                      "on-primary": "#ffffff",
+                      "surface-tint": "#4d44e3",
+                      "outline": "#777587",
+                      "secondary-fixed-dim": "#4edea3",
+                      "tertiary-fixed-dim": "#c3c0ff",
+                      "error": "#ba1a1a",
+                      "slate-100": "#F1F5F9",
+                      "background": "#f9f9ff",
+                      "surface-container-low": "#f0f3ff",
+                      "surface-container-highest": "#d8e3fb",
+                      "on-error-container": "#93000a"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-page": "2rem",
+                      "gap-md": "1rem",
+                      "gap-xs": "0.5rem",
+                      "base": "4px",
+                      "padding-card": "1.5rem",
+                      "gap-lg": "1.5rem"
+              },
+              "fontFamily": {
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "headline-lg": [
+                              "Poppins"
+                      ],
+                      "headline-md": [
+                              "Poppins"
+                      ],
+                      "headline-sm": [
+                              "Poppins"
+                      ],
+                      "headline-lg-mobile": [
+                              "Poppins"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "label-md": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "body-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-sm": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "26px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-lg": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-md": [
+                              "12px",
+                              {
+                                      "lineHeight": "1",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "700"
+                              }
+                      ]
+              }
+            },
+          }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        </style>
+<link rel="stylesheet" href="../shared/responsive.css"/>
+<script src="../shared/navigation.js" defer></script>
+</head>
+<body class="bg-background text-on-surface font-body-md text-body-md antialiased min-h-screen">
+<!-- TopNavBar -->
+<header class="bg-surface/80 dark:bg-background/80 backdrop-blur-md docked full-width top-0 z-40 sticky border-b border-slate-100 dark:border-outline-variant transition-all duration-300 ease-in-out">
+<div class="flex justify-between items-center h-16 px-margin-page w-full ml-auto lg:pl-72">
+<div class="flex items-center gap-md">
+<span class="font-headline-sm text-headline-sm font-bold text-primary lg:hidden">EduTech</span>
+<!-- Search -->
+<div class="hidden md:flex relative items-center">
+<span class="material-symbols-outlined absolute left-3 text-slate-500">search</span>
+<input class="bg-slate-100 rounded-lg py-2 pl-10 pr-4 w-64 focus:ring-2 focus:ring-primary focus:bg-white transition-all border-none font-body-md text-body-md placeholder:text-slate-500" placeholder="Buscar livros..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors hidden sm:block">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden bg-slate-200 border border-slate-100 ml-2">
+<img alt="Avatar do Estudante" class="w-full h-full object-cover" data-alt="A professional headshot of a diverse high school student with a friendly expression, soft lighting, modern educational setting, high quality digital photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC2MpsyomfUpL0P6VQ4DtUGETGNxPtfTw2BPbvsPQ4tTv0_jk21T8oLtNlAN0Uk2qXOkBfvsctYw8dpXFBHTdSKb4-1rxGNqR1ehyHkmqnKf3r4i1tiVBox_kYEwUKcq1JcArKzI4LfO7w9d7u_ldpsOVX82Dy3tcT_Rcca8pX8V4fr9-OyAHsQ2lEY3i8ktTw1dD2Eubk9_90_xQhe66EqPWuwcTDFZF2_7YDDVwv1mBSo7MI8vM1N"/>
+</div>
+</div>
+</div>
+</header>
+<!-- SideNavBar -->
+<aside class="bg-surface border-r border-slate-100 h-screen w-64 fixed left-0 top-0 hidden lg:flex flex-col z-50">
+<div class="flex flex-col gap-lg p-margin-page h-full">
+<div class="flex items-center gap-xs">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-slate-200 shrink-0">
+<img alt="Foto de perfil do aluno" class="w-full h-full object-cover" data-alt="A professional headshot of a diverse high school student with a friendly expression, soft lighting, modern educational setting, high quality digital photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBbchdbbGvCaK0zzPaiPcNj-b6VKygake0d3rYM0crxWI4GcIRAiMUWtX5Nm3wFZJiPIBTyJC5vaM8qqawUJJRr6t8UEAWCwT6OviDc44xXN0qaM89BrCxIr7dlUK02MH8G9hEfMoU4DH0jFcvFXKd83Gtetm623Ys5TqXCb9-zupcs_HunVfJy9yO1bDXiD6zQXV2vCq9htULgUNgWhsLp2-1KVIR0tfzkc2tpJm6cBuelTdqjel7N"/>
+</div>
+<div>
+<h2 class="font-headline-md text-headline-md font-bold text-primary">EduTech</h2>
+<p class="font-label-md text-label-md text-slate-500">Ensino Médio</p>
+</div>
+</div>
+<nav class="flex-1 flex flex-col gap-xs mt-6">
+<a class="flex items-center gap-md px-4 py-3 text-on-surface-variant hover:bg-slate-50 transition-colors duration-200 scale-98 transition-transform duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-md px-4 py-3 text-on-surface-variant hover:bg-slate-50 transition-colors duration-200 scale-98 transition-transform duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="auto_stories">auto_stories</span>
+<span class="font-label-md text-label-md">Trilhas</span>
+</a>
+<a class="flex items-center gap-md px-4 py-3 text-on-surface-variant hover:bg-slate-50 transition-colors duration-200 scale-98 transition-transform duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="edit_note">edit_note</span>
+<span class="font-label-md text-label-md">Redação</span>
+</a>
+<a class="flex items-center gap-md px-4 py-3 text-on-surface-variant hover:bg-slate-50 transition-colors duration-200 scale-98 transition-transform duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="trending_up">trending_up</span>
+<span class="font-label-md text-label-md">Evolução</span>
+</a>
+<a class="flex items-center gap-md px-4 py-3 bg-indigo-50 text-primary rounded-lg font-bold scale-98 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined fill" data-icon="local_library">local_library</span>
+<span class="font-label-md text-label-md">Biblioteca</span>
+</a>
+</nav>
+<button class="mt-auto bg-primary text-white rounded-lg py-3 font-label-md text-label-md font-bold hover:bg-primary-fixed-variant transition-colors shadow-sm">
+                Falar com Tutor
+            </button>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="lg:ml-64 p-margin-page pb-24 lg:pb-margin-page">
+<div class="max-w-7xl mx-auto space-y-lg">
+<!-- Page Header -->
+<div class="flex flex-col sm:flex-row sm:items-end justify-between gap-md mb-8">
+<div>
+<h1 class="font-headline-lg text-headline-lg md:font-headline-lg md:text-headline-lg text-on-surface">Biblioteca Digital</h1>
+<p class="font-body-lg text-body-lg text-slate-500 mt-2">Explore e solicite obras do nosso acervo físico e digital.</p>
+</div>
+<!-- Status Widget - Current Loan -->
+<div class="bg-white border border-slate-100 rounded-xl p-4 shadow-sm flex items-center gap-md">
+<div class="w-12 h-16 bg-slate-200 rounded shrink-0 overflow-hidden relative">
+<img alt="Livro atual" class="w-full h-full object-cover" data-alt="A modern minimalist book cover design for 'Dom Casmurro' featuring abstract geometric shapes in cool indigo and soft cream tones. High resolution, professional graphic design style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJ9R0hOOTSp6-bVrtuojbhJGdvbGUxQ_iDDbLT9TrYt155j6h_vbb2lE_WoSW0tjVlFnfGP7uS3WPDvPc_VK4vnursNCZuZJfEWKYjbbU1E78hOwlPlM6jN6Rn7SSUUmyD3yf710sEZGHFdg9r8F7bP1l2GvvICCXomtDmRkClsbOG27AoJ7ghnMqThmn0L4YExetVzYtbVuOT9d3Qt40oTFRyk7H_7g20kECJjz3M4jD0kB1sJSM6"/>
+</div>
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="bg-indigo-50 text-tertiary px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider">Aguardando Bibliotecária</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Dom Casmurro</h3>
+<p class="font-label-md text-label-md text-slate-500 flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-[14px]">timer</span>
+                            Retirada em até 2 dias
+                        </p>
+</div>
+</div>
+</div>
+<!-- Library Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-md">
+<!-- Book Card 1 (Available) -->
+<article class="bg-white rounded-xl border border-slate-100 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] hover:shadow-[0_10px_15px_-3px_rgba(0,0,0,0.1)] hover:-translate-y-1 transition-all duration-300 p-padding-card flex flex-col h-full group">
+<div class="flex gap-md mb-4 flex-1">
+<div class="w-24 h-36 bg-slate-200 rounded-lg overflow-hidden shrink-0 shadow-sm relative">
+<img alt="Capa do livro" class="w-full h-full object-cover" data-alt="A modern minimalist book cover design for 'O Alienista' featuring abstract mind-map graphics in cool teal and soft slate tones. High resolution, professional graphic design style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCo0gFLSwbGJkxWAsAHWnPw7S7itX4E6dcAaIemOieLLjZysmtazGCwbKUnApsSINMA7yLuLKxqoVPvK6o9jtNLU0nPhAvmqHCuzChBJBY04bz5LifXyfWUQyXVRay38pewPeTTwjeyebmOh3D6wgiujHyGiLmxH1C3Gb2B3NHuiNdXAJ0PYQinccIXr8CiUJ9z-aoJQjURwoe7upa-kI3UBln_hwRDbKBOiyQhHm7oG_4CyGAXUdMg"/>
+</div>
+<div class="flex flex-col">
+<span class="bg-slate-100 text-slate-500 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider self-start mb-2">Disponível</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface line-clamp-2">O Alienista</h3>
+<p class="font-body-md text-body-md text-slate-500 mt-1">Machado de Assis</p>
+<div class="mt-auto flex items-center gap-2 text-slate-400">
+<span class="material-symbols-outlined text-[16px]">menu_book</span>
+<span class="font-label-md text-label-md">Físico</span>
+</div>
+</div>
+</div>
+<button class="w-full bg-indigo-50 text-indigo-700 hover:bg-indigo-100 rounded-lg py-2.5 font-label-md text-label-md font-bold transition-colors">
+                        Solicitar Empréstimo
+                    </button>
+</article>
+<!-- Book Card 2 (Blocked/Has active loan limit) -->
+<article class="bg-slate-50 rounded-xl border border-slate-100 p-padding-card flex flex-col h-full opacity-75">
+<div class="flex gap-md mb-4 flex-1">
+<div class="w-24 h-36 bg-slate-200 rounded-lg overflow-hidden shrink-0 relative grayscale">
+<img alt="Capa do livro" class="w-full h-full object-cover" data-alt="A modern minimalist book cover design for 'Vidas Secas' featuring abstract sun and cracked earth graphics in muted orange and soft sand tones. High resolution, professional graphic design style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBwUqrmpil8d7h1Bpm-IqiTvvkP3988y38oeR78mb7Yt8YA0OYcjaUnBhAGa-CfVnbC-R782xgVNXyfW59uQ1eJcndWVRrCfeKaD_D2XB1UrpV0QAKd0Yn10b-LB86aiJ6EU3rJzYV_ImSlq3sW5hCvB7MAP-sJ7vqMaPd5hIZw-ACoI5NT0LdHIPuD_XqSy8GcJlwxX0aUzn1XPO19o8vfz3CPvR1bJBYrnL_mIa-G56r0ObOYn9co"/>
+</div>
+<div class="flex flex-col">
+<span class="bg-error-container text-on-error-container px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider self-start mb-2">Limite Atingido</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface line-clamp-2 text-slate-600">Vidas Secas</h3>
+<p class="font-body-md text-body-md text-slate-500 mt-1">Graciliano Ramos</p>
+<p class="font-label-md text-label-md text-error-red mt-auto">Devolva seu livro atual para solicitar.</p>
+</div>
+</div>
+<button class="w-full bg-slate-200 text-slate-400 rounded-lg py-2.5 font-label-md text-label-md font-bold cursor-not-allowed" disabled="">
+                        Bloqueado
+                    </button>
+</article>
+<!-- Book Card 3 (Available Digital) -->
+<article class="bg-white rounded-xl border border-slate-100 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] hover:shadow-[0_10px_15px_-3px_rgba(0,0,0,0.1)] hover:-translate-y-1 transition-all duration-300 p-padding-card flex flex-col h-full group">
+<div class="flex gap-md mb-4 flex-1">
+<div class="w-24 h-36 bg-slate-200 rounded-lg overflow-hidden shrink-0 shadow-sm relative">
+<img alt="Capa do livro" class="w-full h-full object-cover" data-alt="A modern minimalist digital book cover design for '1984' featuring an abstract stylized eye motif in deep navy and stark white. High resolution, professional graphic design style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTJ5aP96EKTvt20-ZDQJUqivYkXl26qbRCRnkXdn2YkeHyMyaT6rGUI06cGGc2D9WH4ONbSTMaTtCkKi11MiOVzpUjAv3j-lws16hUVi0fg1Tqrja0GYHFK4lLAzl9zkXZIYarScQRvkdcg4xp7g5H_uzcZ5pu5qqZd1ZOL-VDm5eqh1gVISlpNzZrRRvlEZaeXdgIOXgOnzo-SP_If_F7s1t66f6mFaoSJH2M_Gil_SINAwE_JFho"/>
+</div>
+<div class="flex flex-col">
+<span class="bg-secondary-container text-on-secondary-container px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider self-start mb-2">Acesso Imediato</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface line-clamp-2">1984</h3>
+<p class="font-body-md text-body-md text-slate-500 mt-1">George Orwell</p>
+<div class="mt-auto flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined text-[16px]">devices</span>
+<span class="font-label-md text-label-md">E-book</span>
+</div>
+</div>
+</div>
+<button class="w-full bg-primary text-white hover:bg-primary-fixed-variant rounded-lg py-2.5 font-label-md text-label-md font-bold transition-colors shadow-sm">
+                        Ler Agora
+                    </button>
+</article>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="bg-surface dark:bg-inverse-surface border-t border-slate-100 dark:border-outline-variant shadow-lg fixed bottom-0 w-full flex justify-around items-center h-16 z-50 lg:hidden">
+<a class="flex flex-col items-center justify-center text-on-surface-variant w-full h-full hover:bg-slate-50 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-label-md text-label-md mt-1">Início</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant w-full h-full hover:bg-slate-50 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="route">route</span>
+<span class="font-label-md text-label-md mt-1">Trilhas</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant w-full h-full hover:bg-slate-50 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="leaderboard">leaderboard</span>
+<span class="font-label-md text-label-md mt-1">Evolução</span>
+</a>
+<!-- Using Profile here as a fallback semantic match for navigation if Library isn't present in bottom nav, though it should ideally be Library. Sticking to JSON provided labels. -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant w-full h-full hover:bg-slate-50 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-md text-label-md mt-1">Perfil</span>
+</a>
+</nav>
+</body></html>

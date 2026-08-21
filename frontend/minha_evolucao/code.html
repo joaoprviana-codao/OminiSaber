@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Minha Evolução - EduTech</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&amp;family=Poppins:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-dim": "#cfdaf2",
+                        "secondary-fixed": "#6ffbbe",
+                        "surface-variant": "#d8e3fb",
+                        "on-secondary-fixed-variant": "#005236",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed": "#002113",
+                        "slate-500": "#64748B",
+                        "primary-fixed-dim": "#c3c0ff",
+                        "outline-variant": "#c7c4d8",
+                        "surface-container": "#e7eeff",
+                        "primary": "#3525cd",
+                        "on-primary-fixed": "#0f0069",
+                        "on-secondary-container": "#00714d",
+                        "on-surface": "#111c2d",
+                        "inverse-on-surface": "#ecf1ff",
+                        "tertiary-fixed": "#e3dfff",
+                        "on-surface-variant": "#464555",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "on-primary-container": "#dad7ff",
+                        "tertiary": "#3a2cc1",
+                        "on-background": "#111c2d",
+                        "indigo-50": "#EEF2FF",
+                        "surface": "#f9f9ff",
+                        "primary-fixed": "#e2dfff",
+                        "tertiary-container": "#534ada",
+                        "inverse-surface": "#263143",
+                        "secondary": "#006c49",
+                        "surface-bright": "#f9f9ff",
+                        "secondary-container": "#6cf8bb",
+                        "slate-50": "#F8FAFC",
+                        "on-error": "#ffffff",
+                        "surface-container-high": "#dee8ff",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-container": "#dbd8ff",
+                        "on-primary-fixed-variant": "#3323cc",
+                        "inverse-primary": "#c3c0ff",
+                        "primary-container": "#4f46e5",
+                        "on-tertiary-fixed-variant": "#372abf",
+                        "error-red": "#EF4444",
+                        "on-tertiary-fixed": "#100069",
+                        "on-primary": "#ffffff",
+                        "surface-tint": "#4d44e3",
+                        "outline": "#777587",
+                        "secondary-fixed-dim": "#4edea3",
+                        "tertiary-fixed-dim": "#c3c0ff",
+                        "error": "#ba1a1a",
+                        "slate-100": "#F1F5F9",
+                        "background": "#f9f9ff",
+                        "surface-container-low": "#f0f3ff",
+                        "surface-container-highest": "#d8e3fb",
+                        "on-error-container": "#93000a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-page": "2rem",
+                        "gap-md": "1rem",
+                        "gap-xs": "0.5rem",
+                        "base": "4px",
+                        "padding-card": "1.5rem",
+                        "gap-lg": "1.5rem"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "headline-lg": ["Poppins"],
+                        "headline-md": ["Poppins"],
+                        "headline-sm": ["Poppins"],
+                        "headline-lg-mobile": ["Poppins"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "headline-sm": ["18px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["26px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "body-lg": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-md": ["12px", { "lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-fill {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+<link rel="stylesheet" href="../shared/responsive.css"/>
+<script src="../shared/navigation.js" defer></script>
+</head>
+<body class="bg-background text-on-surface font-body-md antialiased h-screen overflow-hidden flex">
+<!-- SideNavBar (Desktop) -->
+<nav class="bg-surface dark:bg-inverse-surface h-screen w-64 fixed left-0 top-0 hidden lg:flex flex-col border-r border-slate-100 dark:border-outline-variant z-50">
+<div class="flex flex-col gap-lg p-margin-page h-full">
+<!-- Brand -->
+<div class="flex items-center gap-md mb-8">
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container">
+<span class="material-symbols-outlined icon-fill">school</span>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim">EduTech</h1>
+<p class="font-label-md text-label-md text-on-surface-variant">Ensino Médio</p>
+</div>
+</div>
+<!-- Navigation Links -->
+<div class="flex flex-col gap-2 flex-grow">
+<a class="flex items-center gap-md px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:bg-slate-50 dark:hover:bg-on-surface-variant rounded-lg transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-md px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:bg-slate-50 dark:hover:bg-on-surface-variant rounded-lg transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">auto_stories</span>
+<span class="font-label-md text-label-md">Trilhas</span>
+</a>
+<a class="flex items-center gap-md px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:bg-slate-50 dark:hover:bg-on-surface-variant rounded-lg transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">edit_note</span>
+<span class="font-label-md text-label-md">Redação</span>
+</a>
+<a class="flex items-center gap-md px-4 py-3 bg-indigo-50 dark:bg-tertiary-container text-primary dark:text-on-tertiary-container rounded-lg font-bold" href="#">
+<span class="material-symbols-outlined icon-fill">trending_up</span>
+<span class="font-label-md text-label-md">Evolução</span>
+</a>
+<a class="flex items-center gap-md px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:bg-slate-50 dark:hover:bg-on-surface-variant rounded-lg transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">local_library</span>
+<span class="font-label-md text-label-md">Biblioteca</span>
+</a>
+</div>
+<!-- CTA -->
+<button class="bg-indigo-50 text-tertiary hover:bg-indigo-100 transition-colors duration-200 rounded-lg px-4 py-3 font-label-md text-label-md flex items-center justify-center gap-2 mt-auto">
+<span class="material-symbols-outlined">chat_bubble</span>
+                Falar com Tutor
+            </button>
+</div>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-1 flex flex-col lg:ml-64 relative h-screen overflow-y-auto">
+<!-- TopNavBar -->
+<header class="bg-surface/80 dark:bg-background/80 backdrop-blur-md docked full-width top-0 z-40 sticky border-b border-slate-100 dark:border-outline-variant">
+<div class="flex justify-between items-center h-16 px-margin-page w-full ml-auto">
+<!-- Mobile Brand -->
+<h1 class="font-headline-sm text-headline-sm font-bold text-primary lg:hidden">EduTech</h1>
+<!-- Spacer for desktop -->
+<div class="hidden lg:block flex-1"></div>
+<!-- Search (Left on desktop relative to actions) -->
+<div class="hidden md:flex items-center bg-slate-100 rounded-full px-4 py-2 mr-4 flex-1 max-w-md">
+<span class="material-symbols-outlined text-slate-500 mr-2">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-md w-full placeholder-slate-500 p-0" placeholder="Buscar..." type="text"/>
+</div>
+<!-- Actions -->
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden bg-slate-200 border border-slate-100">
+<img alt="Avatar do Estudante" class="w-full h-full object-cover" data-alt="A professional headshot of a young student in bright, natural light. Soft modern aesthetic, professional portrait, neutral background. Emphasizing a calm and focused learning environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB86t82WlbaBXYVjxBMaiklpGUtqGXVdUrsKCWoLgIoHCeOKobvNnYFnBcEswrYUl4Tg94V36qZXdudxDz4bQGGZBEmw-lv3ktjTNBLuRIhHkPgyrIo9294P3-naKxCt3-hmu9noUn-RUp2rU7Wd690qUCxJd3ExwpPh5fIo5X362FVIWcpSvLyaHO9NRlB4IKVROcspfb2xIeKEGfkYFt7XuavC7s0ZyDJfoTd3-Gtn6xw9a0znwq6"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Page Content -->
+<main class="p-4 md:p-margin-page pb-24 md:pb-8 flex-1 w-full max-w-7xl mx-auto flex flex-col gap-lg">
+<!-- Page Header -->
+<div class="mb-2">
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-2">Minha Evolução</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Seu boletim inteligente e histórico de conquistas.</p>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+<!-- Left Column: Gamification & Simulador (8 cols) -->
+<div class="lg:col-span-8 flex flex-col gap-6">
+<!-- Simulador de Nota Trimestral (Glassmorphism Card) -->
+<section class="bg-white rounded-xl border border-slate-100 shadow-sm p-6 relative overflow-hidden group hover:shadow-md transition-shadow duration-300">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-full -mr-8 -mt-8 pointer-events-none"></div>
+<div class="flex justify-between items-start mb-6">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-1 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">bar_chart</span>
+                                    Simulador de Nota Trimestral
+                                </h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Progresso atual vs Meta de aprovação</p>
+</div>
+<div class="bg-indigo-50 text-primary-container px-3 py-1 rounded-lg font-label-md text-label-md">
+                                2º Bimestre
+                            </div>
+</div>
+<!-- Faux Chart Area -->
+<div class="h-48 flex items-end justify-around gap-2 mt-4 relative">
+<!-- Background Grid Lines -->
+<div class="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-30">
+<div class="border-b border-slate-200 w-full h-0"></div>
+<div class="border-b border-slate-200 w-full h-0"></div>
+<div class="border-b border-slate-200 w-full h-0"></div>
+<div class="border-b border-slate-200 w-full h-0"></div>
+</div>
+<!-- Bars -->
+<div class="flex flex-col items-center gap-2 z-10 w-1/5 group/bar">
+<span class="font-label-md text-xs text-slate-500 opacity-0 group-hover/bar:opacity-100 transition-opacity">8.5</span>
+<div class="w-full bg-indigo-200 rounded-t-md h-[85%] relative overflow-hidden transition-all duration-300 group-hover/bar:bg-indigo-300">
+<div class="absolute bottom-0 w-full bg-primary h-full opacity-20"></div>
+</div>
+<span class="font-label-md text-xs text-on-surface-variant">Mat</span>
+</div>
+<div class="flex flex-col items-center gap-2 z-10 w-1/5 group/bar">
+<span class="font-label-md text-xs text-slate-500 opacity-0 group-hover/bar:opacity-100 transition-opacity">7.2</span>
+<div class="w-full bg-emerald-200 rounded-t-md h-[72%] relative overflow-hidden transition-all duration-300 group-hover/bar:bg-emerald-300">
+<div class="absolute bottom-0 w-full bg-secondary h-full opacity-20"></div>
+</div>
+<span class="font-label-md text-xs text-on-surface-variant">Fís</span>
+</div>
+<div class="flex flex-col items-center gap-2 z-10 w-1/5 group/bar">
+<span class="font-label-md text-xs text-slate-500 opacity-0 group-hover/bar:opacity-100 transition-opacity">9.0</span>
+<div class="w-full bg-indigo-200 rounded-t-md h-[90%] relative overflow-hidden transition-all duration-300 group-hover/bar:bg-indigo-300">
+<div class="absolute bottom-0 w-full bg-primary h-full opacity-20"></div>
+</div>
+<span class="font-label-md text-xs text-on-surface-variant">Port</span>
+</div>
+<div class="flex flex-col items-center gap-2 z-10 w-1/5 group/bar">
+<span class="font-label-md text-xs text-slate-500 opacity-0 group-hover/bar:opacity-100 transition-opacity">Meta: 7.0</span>
+<!-- Meta Line -->
+<div class="w-full border-t-2 border-dashed border-error-red absolute bottom-[70%] z-20 pointer-events-none"></div>
+<div class="w-full bg-slate-100 rounded-t-md h-[60%] relative overflow-hidden transition-all duration-300"></div>
+<span class="font-label-md text-xs text-on-surface-variant">Quím</span>
+</div>
+</div>
+</section>
+<!-- Gamification: Ranking & Medals -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Ranking -->
+<div class="bg-white rounded-xl border border-slate-100 shadow-sm p-6 hover:shadow-md transition-shadow duration-300">
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-amber-500 icon-fill">emoji_events</span>
+                                Ranking da Turma
+                            </h3>
+<div class="flex flex-col gap-3">
+<div class="flex items-center gap-3 p-2 rounded-lg bg-slate-50">
+<span class="font-headline-sm text-headline-sm text-slate-400 w-6 text-center">1</span>
+<div class="w-8 h-8 rounded-full bg-slate-200 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A calm, focused student portrait. Soft lighting, neutral background, professional educational aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLcvEXmg51G6ywk0NkYPk_MbscQ6GlTmvkiz9ykrPMqioLVi-PSqOUvwuOcQPaFGr0Zv8swyUjWSMtMfMf-ZFep-gq2s93WV4JaN-jjPkNKosOeo3tB1ZVlNtKtEZ0u_1utJUk_AyjpHZDXfk5UABp77o0RqnuCf-ZsQlSsIcSyWdauvgZTurLTV-fmJpKFo2RoHleWYYUMc1i8E4KC5xB44K_IB-BkoAG-_VqpgEQj5gI0EpPYg2d"/>
+</div>
+<span class="font-body-md text-body-md text-on-surface flex-1">Ana C.</span>
+<span class="font-label-md text-label-md text-primary">2400 xp</span>
+</div>
+<div class="flex items-center gap-3 p-2 rounded-lg bg-indigo-50 border border-indigo-100 shadow-sm relative">
+<div class="absolute -left-1 top-1/2 -translate-y-1/2 w-1 h-6 bg-primary rounded-r-full"></div>
+<span class="font-headline-sm text-headline-sm text-primary w-6 text-center">2</span>
+<div class="w-8 h-8 rounded-full bg-slate-200 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a young student in bright, natural light. Soft modern aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCjlQmYPjopz1U-m0baZpfq3gjrydBKoNDjCA_tx_73GTKU5dWEtg25S43Uc10f9Rz2wkr5dAl4JEPBXz7IE8C9964TrHxS79SJJNkGzVzA5l8vCsCaBFGP0i2KZeUHQrM_VY_jIdMjeriRClL8fJKLzM2Zha65PpxArtBJMQB8zMC3qJAVSEbm_Rns0JnSDSel8C8xGPKGk3MHhQ4twN0wrm2tDnBdECVm2UXomoV58Bz4YOwrih7o"/>
+</div>
+<span class="font-body-md text-body-md font-bold text-on-surface flex-1">Você</span>
+<span class="font-label-md text-label-md text-primary">2150 xp</span>
+</div>
+<div class="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 transition-colors">
+<span class="font-headline-sm text-headline-sm text-slate-400 w-6 text-center">3</span>
+<div class="w-8 h-8 rounded-full bg-slate-200 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A young student looking focused, soft lighting, calm educational environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBsJ00Yd6Nszd-KODIo_zeqAai6EP3YPO8Y3VTGTV0v_HN5bWc87AuvC7cksz_bXGom3uT5JIGEnYwiCd7pNCogu5opI9qz5Hub0UR0he1kT5GYszNLNmaZE5wJ6W5JPIRcNYNzpyzeCWSXn_6jzhnq5n6znRm744Zh9Nm-TZVL-S5wO_dJkJYlWQW69usGTIa2XOC1-1dUH21DklQINX4ESLdKXM0Adsiuh06VFtiS5zEQrGZNYNi6"/>
+</div>
+<span class="font-body-md text-body-md text-on-surface flex-1">Lucas M.</span>
+<span class="font-label-md text-label-md text-slate-500">1900 xp</span>
+</div>
+</div>
+</div>
+<!-- Medals -->
+<div class="bg-white rounded-xl border border-slate-100 shadow-sm p-6 hover:shadow-md transition-shadow duration-300">
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-purple-500 icon-fill">military_tech</span>
+                                Minhas Medalhas
+                            </h3>
+<div class="grid grid-cols-3 gap-4">
+<div class="flex flex-col items-center gap-2">
+<div class="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center border-2 border-amber-200 shadow-sm hover:-translate-y-1 transition-transform">
+<span class="material-symbols-outlined text-amber-500 text-3xl icon-fill">local_fire_department</span>
+</div>
+<span class="font-label-md text-[10px] text-center text-on-surface-variant">7 Dias Seguidos</span>
+</div>
+<div class="flex flex-col items-center gap-2">
+<div class="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center border-2 border-emerald-200 shadow-sm hover:-translate-y-1 transition-transform">
+<span class="material-symbols-outlined text-emerald-600 text-3xl icon-fill">verified</span>
+</div>
+<span class="font-label-md text-[10px] text-center text-on-surface-variant">Mestre em Mat</span>
+</div>
+<div class="flex flex-col items-center gap-2 opacity-50 grayscale">
+<div class="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center border-2 border-slate-200">
+<span class="material-symbols-outlined text-slate-400 text-3xl">lightbulb</span>
+</div>
+<span class="font-label-md text-[10px] text-center text-slate-500">Gênio da Redação</span>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column: Histórico de Conquistas (4 cols) -->
+<div class="lg:col-span-4 flex flex-col gap-6">
+<section class="bg-white rounded-xl border border-slate-100 shadow-sm p-6 h-full flex flex-col">
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-headline-sm text-headline-sm text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-emerald-600">route</span>
+                                Histórico de Trilhas
+                            </h3>
+<button class="text-primary hover:text-primary-container text-sm font-label-md">Ver tudo</button>
+</div>
+<div class="flex flex-col gap-4 flex-1 overflow-y-auto pr-2">
+<!-- Trilha Item 1 -->
+<div class="p-4 rounded-lg border border-slate-100 bg-surface hover:bg-slate-50 transition-all duration-200 hover:shadow-md group">
+<div class="flex justify-between items-start mb-2">
+<h4 class="font-headline-sm text-sm text-on-surface">Funções de 1º Grau</h4>
+<span class="bg-emerald-50 text-emerald-700 px-2 py-1 rounded text-[10px] font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] icon-fill">diamond</span>
+                                        Emerald
+                                    </span>
+</div>
+<p class="font-body-md text-xs text-on-surface-variant mb-3">Matemática • Concluída em 12/05</p>
+<div class="flex items-center gap-3">
+<div class="flex-1 bg-slate-100 rounded-full h-2 overflow-hidden">
+<div class="bg-emerald-500 h-full w-full rounded-full"></div>
+</div>
+<span class="font-label-md text-xs text-emerald-600">100% acerto</span>
+</div>
+</div>
+<!-- Trilha Item 2 -->
+<div class="p-4 rounded-lg border border-slate-100 bg-surface hover:bg-slate-50 transition-all duration-200 hover:shadow-md group">
+<div class="flex justify-between items-start mb-2">
+<h4 class="font-headline-sm text-sm text-on-surface">Cinemática Básica</h4>
+<span class="bg-indigo-50 text-indigo-700 px-2 py-1 rounded text-[10px] font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] icon-fill">star</span>
+                                        Gold
+                                    </span>
+</div>
+<p class="font-body-md text-xs text-on-surface-variant mb-3">Física • Concluída em 08/05</p>
+<div class="flex items-center gap-3">
+<div class="flex-1 bg-slate-100 rounded-full h-2 overflow-hidden">
+<div class="bg-primary h-full w-[85%] rounded-full"></div>
+</div>
+<span class="font-label-md text-xs text-primary">85% acerto</span>
+</div>
+</div>
+<!-- Trilha Item 3 -->
+<div class="p-4 rounded-lg border border-slate-100 bg-surface hover:bg-slate-50 transition-all duration-200 hover:shadow-md group">
+<div class="flex justify-between items-start mb-2">
+<h4 class="font-headline-sm text-sm text-on-surface">Revolução Industrial</h4>
+<span class="bg-slate-100 text-slate-700 px-2 py-1 rounded text-[10px] font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] icon-fill">circle</span>
+                                        Silver
+                                    </span>
+</div>
+<p class="font-body-md text-xs text-on-surface-variant mb-3">História • Concluída em 01/05</p>
+<div class="flex items-center gap-3">
+<div class="flex-1 bg-slate-100 rounded-full h-2 overflow-hidden">
+<div class="bg-slate-500 h-full w-[70%] rounded-full"></div>
+</div>
+<span class="font-label-md text-xs text-slate-600">70% acerto</span>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+</main>
+</div>
+<!-- BottomNavBar (Mobile) -->
+<nav class="fixed bottom-0 w-full flex justify-around items-center h-16 bg-surface dark:bg-inverse-surface z-50 lg:hidden border-t border-slate-100 dark:border-outline-variant shadow-lg">
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant w-full h-full bg-slate-50 dark:bg-on-surface-variant scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined mb-1">home</span>
+<span class="font-label-md text-[10px]">Início</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant w-full h-full hover:bg-slate-50 transition-colors" href="#">
+<span class="material-symbols-outlined mb-1">route</span>
+<span class="font-label-md text-[10px]">Trilhas</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed-dim font-bold w-full h-full scale-100" href="#">
+<span class="material-symbols-outlined icon-fill mb-1">leaderboard</span>
+<span class="font-label-md text-[10px]">Evolução</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant w-full h-full hover:bg-slate-50 transition-colors" href="#">
+<span class="material-symbols-outlined mb-1">person</span>
+<span class="font-label-md text-[10px]">Perfil</span>
+</a>
+</nav>
+</body></html>
