@@ -16,6 +16,8 @@ frontend/
 |-- login/
 |   |-- code.html
 |   `-- screen.png
+|-- cadastro/
+|   `-- code.html
 |-- aluno/
 |   |-- dashboard_principal/
 |   |   `-- code.html
@@ -46,6 +48,9 @@ frontend/
 
 backend/
 |-- .env.example
+|-- package.json
+|-- scripts/
+|   `-- seed-test-users.js
 |-- supabase_schema.sql
 |-- supabase-config.js
 |-- supabase-client.js

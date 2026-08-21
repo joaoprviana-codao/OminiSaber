@@ -7,11 +7,13 @@
   const frontendRoot = frontendIndex >= 0 ? window.location.pathname.slice(0, frontendIndex) + '/frontend/' : '/frontend/';
   const routes = {
     login: `${frontendRoot}login/code.html`,
-    dashboard: `${frontendRoot}aluno/dashboard_principal/code.html`
+    dashboard: `${frontendRoot}aluno/dashboard_principal/code.html`,
+    error: `${frontendRoot}erro/code.html`
   };
 
   const currentPage = window.location.pathname;
   const isLoginPage = currentPage.includes('/login/');
+  const isPublicAuthPage = isLoginPage || currentPage.includes('/cadastro/');
 
   const notify = (message, type = 'info') => {
     const event = new CustomEvent('ominisaber:notification', { detail: { message, type } });
@@ -22,9 +24,15 @@
       element = document.createElement('div');
       element.dataset.backendStatus = 'true';
       element.className = 'backend-status';
+      element.innerHTML = '<span class="backend-status-icon" aria-hidden="true"></span><div class="backend-status-content"><strong class="backend-status-title"></strong><p class="backend-status-message"></p></div><button type="button" class="backend-status-close" aria-label="Fechar mensagem">&times;</button>';
+      element.querySelector('.backend-status-close').addEventListener('click', () => { element.hidden = true; });
       document.body.appendChild(element);
     }
-    element.textContent = message;
+    const titles = { error: 'Não foi possível concluir', warning: 'Atenção', success: 'Tudo certo', info: 'Informação' };
+    const icons = { error: '!', warning: '!', success: '✓', info: 'i' };
+    element.querySelector('.backend-status-title').textContent = titles[type] || titles.info;
+    element.querySelector('.backend-status-message').textContent = message;
+    element.querySelector('.backend-status-icon').textContent = icons[type] || icons.info;
     element.dataset.type = type;
     element.hidden = false;
     window.clearTimeout(element._hideTimer);
@@ -59,7 +67,7 @@
     const profile = await getProfile();
     if (!profile || !allowedRoles.includes(profile.role)) {
       notify('Você não possui permissão para acessar esta área.', 'error');
-      window.location.href = routes.dashboard;
+      window.location.href = `${routes.error}?code=forbidden`;
       return false;
     }
     return true;
@@ -75,6 +83,15 @@
       loginEmail = data;
     }
     return client.auth.signInWithPassword({ email: loginEmail, password });
+  };
+
+  const signUp = async ({ nome, matricula, email, password }) => {
+    if (!ensureConfigured()) return { data: null, error: new Error('Supabase não configurado') };
+    return client.auth.signUp({
+      email,
+      password,
+      options: { data: { nome, matricula } }
+    });
   };
 
   const signOut = async () => {
@@ -217,13 +234,13 @@
 
   const mount = async () => {
     if (!configured) {
-      if (isLoginPage) return;
+      if (isPublicAuthPage) return;
       notify('Modo demonstração: configure o Supabase para salvar e carregar dados.', 'warning');
       return;
     }
 
     const session = await getSession();
-    if (!session && !isLoginPage) {
+    if (!session && !isPublicAuthPage) {
       window.location.href = routes.login;
       return;
     }
@@ -260,6 +277,7 @@
     getProfile,
     requireRole,
     signIn,
+    signUp,
     signOut,
     listTrilhas,
     listLivros,

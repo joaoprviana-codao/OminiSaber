@@ -9,7 +9,11 @@
     evolucao: `${frontendRoot}aluno/minha_evolucao/code.html`,
     biblioteca: `${frontendRoot}aluno/biblioteca_digital/code.html`,
     configuracoes: `${frontendRoot}aluno/configuracoes/code.html`,
-    login: `${frontendRoot}login/code.html`
+    login: `${frontendRoot}login/code.html`,
+    error: `${frontendRoot}erro/code.html`,
+    professor: `${frontendRoot}professor/dashboard/code.html`,
+    bibliotecaria: `${frontendRoot}bibliotecaria/dashboard/code.html`,
+    gestor: `${frontendRoot}gestor/dashboard/code.html`
   };
 
   const normalize = (value) => value
@@ -142,11 +146,20 @@
       if (window.OminiSaber?.configured) {
         const submit = loginForm.querySelector('[type="submit"]');
         if (submit) submit.disabled = true;
-        window.OminiSaber.signIn(email, password).then(({ error }) => {
+        window.OminiSaber.signIn(email, password).then(async ({ data, error }) => {
           if (error) throw error;
-          window.location.href = routes.dashboard;
+          const profile = await window.OminiSaber.getProfile(data.user.id);
+          window.location.href = routes[profile?.role] || routes.dashboard;
         }).catch((error) => {
-          window.OminiSaber.notify(error.message || 'Não foi possível entrar.', 'error');
+          const message = /matr[ií]cula/i.test(error.message || '')
+            ? 'Confira a matrícula informada ou use o e-mail cadastrado.'
+            : 'Confira seus dados e tente novamente.';
+          const loginError = document.getElementById('loginError');
+          if (loginError) {
+            loginError.textContent = message;
+            loginError.classList.remove('hidden');
+          }
+          window.OminiSaber.notify(message, 'error');
           if (submit) submit.disabled = false;
         });
       } else {

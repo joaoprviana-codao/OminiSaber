@@ -1,6 +1,4 @@
-// Preencha com os dados públicos do seu projeto Supabase.
-// Nunca coloque aqui a service_role key.
 window.OMINI_SUPABASE_CONFIG = {
-  url: '',
-  anonKey: ''
+  url: 'https://vijblslfmkypzivklcla.supabase.co',
+  anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZpamJsc2xmbWt5cHppdmtsY2xhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyODc0NDIsImV4cCI6MjEwMjg2MzQ0Mn0._2sPyR62ze_WoQhBnQ9HjefVPcmZZDjaOY6k6fIYrtY'
 };

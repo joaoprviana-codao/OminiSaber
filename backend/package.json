@@ -1,0 +1,12 @@
+{
+  "name": "ominisaber-backend-tools",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "seed:test-users": "node scripts/seed-test-users.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.57.0",
+    "dotenv": "^16.4.5"
+  }
+}
