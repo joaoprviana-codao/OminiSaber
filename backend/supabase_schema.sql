@@ -1,0 +1,461 @@
+-- OminiSaber | Schema Supabase
+-- Execute este arquivo no SQL Editor do Supabase.
+-- A autenticação continua sendo administrada pelo auth.users nativo.
+
+create extension if not exists pgcrypto;
+
+-- ============================================================
+-- 1. ENUMS, TURMAS E PERFIS
+-- ============================================================
+
+do $$ begin
+  create type public.perfil_role as enum ('aluno', 'professor', 'gestor', 'bibliotecaria');
+exception when duplicate_object then null;
+end $$;
+
+do $$ begin
+  create type public.tipo_trilha as enum ('obrigatoria', 'aprendizagem');
+exception when duplicate_object then null;
+end $$;
+
+do $$ begin
+  create type public.status_atividade as enum ('rascunho', 'publicada', 'encerrada');
+exception when duplicate_object then null;
+end $$;
+
+do $$ begin
+  create type public.status_redacao as enum ('rascunho', 'enviada', 'corrigida');
+exception when duplicate_object then null;
+end $$;
+
+do $$ begin
+  create type public.status_emprestimo as enum (
+    'pendente', 'aguardando_retirada', 'ativo', 'devolvido', 'atrasado'
+  );
+exception when duplicate_object then null;
+end $$;
+
+create table if not exists public.turmas (
+  id uuid primary key default gen_random_uuid(),
+  nome text not null,
+  ano_letivo smallint not null check (ano_letivo between 2000 and 2100),
+  serie text,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_turmas_ano_letivo on public.turmas (ano_letivo);
+
+create table if not exists public.perfis (
+  id uuid primary key references auth.users(id) on delete cascade,
+  nome text not null,
+  matricula text unique,
+  role public.perfil_role not null default 'aluno',
+  turma_id uuid references public.turmas(id) on delete set null,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create index if not exists idx_perfis_turma_id on public.perfis (turma_id);
+create index if not exists idx_perfis_role on public.perfis (role);
+
+-- Cria automaticamente o perfil básico quando um usuário é cadastrado no Auth.
+create or replace function public.handle_new_user()
+returns trigger
+language plpgsql
+security definer set search_path = public
+as $$
+begin
+  insert into public.perfis (id, nome, matricula, role)
+  values (
+    new.id,
+    coalesce(new.raw_user_meta_data ->> 'nome', new.email, 'Novo usuário'),
+    new.raw_user_meta_data ->> 'matricula',
+    coalesce((new.raw_user_meta_data ->> 'role')::public.perfil_role, 'aluno')
+  )
+  on conflict (id) do nothing;
+  return new;
+end;
+$$;
+
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created
+after insert on auth.users
+for each row execute procedure public.handle_new_user();
+
+-- ============================================================
+-- 2. TABELAS DO PEDAGÓGICO
+-- ============================================================
+
+create table if not exists public.trilhas (
+  id uuid primary key default gen_random_uuid(),
+  titulo text not null,
+  descricao text,
+  materia text not null,
+  descritor_sedu text,
+  tipo public.tipo_trilha not null default 'aprendizagem',
+  prazo timestamptz,
+  professor_id uuid references public.perfis(id) on delete set null,
+  turma_id uuid references public.turmas(id) on delete set null,
+  publicada boolean not null default false,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  check (tipo = 'aprendizagem' or prazo is not null)
+);
+
+create index if not exists idx_trilhas_materia on public.trilhas (materia);
+create index if not exists idx_trilhas_descritor on public.trilhas (descritor_sedu);
+create index if not exists idx_trilhas_turma on public.trilhas (turma_id);
+create index if not exists idx_trilhas_tipo_prazo on public.trilhas (tipo, prazo);
+
+create table if not exists public.atividades (
+  id uuid primary key default gen_random_uuid(),
+  trilha_id uuid not null references public.trilhas(id) on delete cascade,
+  titulo text not null,
+  descricao text,
+  ordem integer not null default 1 check (ordem > 0),
+  status public.status_atividade not null default 'rascunho',
+  pontuacao numeric(6,2) check (pontuacao >= 0),
+  created_at timestamptz not null default now(),
+  unique (trilha_id, ordem)
+);
+
+create index if not exists idx_atividades_trilha on public.atividades (trilha_id, ordem);
+
+create table if not exists public.progresso_atividades (
+  id uuid primary key default gen_random_uuid(),
+  atividade_id uuid not null references public.atividades(id) on delete cascade,
+  aluno_id uuid not null references public.perfis(id) on delete cascade,
+  concluida boolean not null default false,
+  nota numeric(6,2) check (nota >= 0),
+  concluida_em timestamptz,
+  updated_at timestamptz not null default now(),
+  unique (atividade_id, aluno_id)
+);
+
+create index if not exists idx_progresso_aluno on public.progresso_atividades (aluno_id);
+
+create table if not exists public.notas (
+  id uuid primary key default gen_random_uuid(),
+  aluno_id uuid not null references public.perfis(id) on delete cascade,
+  atividade_id uuid references public.atividades(id) on delete set null,
+  materia text not null,
+  valor numeric(5,2) not null check (valor between 0 and 10),
+  bimestre smallint check (bimestre between 1 and 4),
+  professor_id uuid references public.perfis(id) on delete set null,
+  observacao text,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_notas_aluno on public.notas (aluno_id);
+create index if not exists idx_notas_professor on public.notas (professor_id);
+
+create table if not exists public.redacoes (
+  id uuid primary key default gen_random_uuid(),
+  aluno_id uuid not null references public.perfis(id) on delete cascade,
+  trilha_id uuid references public.trilhas(id) on delete set null,
+  titulo text not null,
+  texto text not null default '',
+  nota numeric(5,2) check (nota between 0 and 1000),
+  status public.status_redacao not null default 'rascunho',
+  alerta_ia boolean not null default false,
+  feedback text,
+  corrigida_por uuid references public.perfis(id) on delete set null,
+  enviada_em timestamptz,
+  corrigida_em timestamptz,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create index if not exists idx_redacoes_aluno on public.redacoes (aluno_id);
+create index if not exists idx_redacoes_status on public.redacoes (status);
+create index if not exists idx_redacoes_alerta_ia on public.redacoes (alerta_ia) where alerta_ia = true;
+
+-- ============================================================
+-- 3. TABELAS DA BIBLIOTECA E ÍNDICE ÚNICO
+-- ============================================================
+
+create table if not exists public.livros (
+  id uuid primary key default gen_random_uuid(),
+  titulo text not null,
+  autor text not null,
+  quantidade_total integer not null default 0 check (quantidade_total >= 0),
+  quantidade_disponivel integer not null default 0 check (
+    quantidade_disponivel >= 0 and quantidade_disponivel <= quantidade_total
+  ),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create index if not exists idx_livros_titulo on public.livros using gin (to_tsvector('portuguese', titulo || ' ' || autor));
+
+create table if not exists public.emprestimos (
+  id uuid primary key default gen_random_uuid(),
+  livro_id uuid not null references public.livros(id) on delete restrict,
+  aluno_id uuid not null references public.perfis(id) on delete restrict,
+  status public.status_emprestimo not null default 'pendente',
+  solicitado_em timestamptz not null default now(),
+  retirada_em timestamptz,
+  devolucao_prevista_em timestamptz,
+  devolvido_em timestamptz,
+  observacao text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  check (devolvido_em is null or devolvido_em >= solicitado_em)
+);
+
+create index if not exists idx_emprestimos_livro on public.emprestimos (livro_id);
+create index if not exists idx_emprestimos_aluno on public.emprestimos (aluno_id);
+create index if not exists idx_emprestimos_status on public.emprestimos (status);
+
+-- Regra de ouro: cada aluno possui no máximo um empréstimo em aberto.
+create unique index if not exists uq_emprestimos_um_aberto_por_aluno
+on public.emprestimos (aluno_id)
+where status in ('pendente', 'aguardando_retirada', 'ativo', 'atrasado');
+
+-- ============================================================
+-- 4. POLÍTICAS RLS
+-- ============================================================
+
+create or replace function public.usuario_role()
+returns public.perfil_role
+language sql
+stable
+security definer set search_path = public
+as $$
+  select role from public.perfis where id = auth.uid();
+$$;
+
+create or replace function public.usuario_turma_id()
+returns uuid
+language sql
+stable
+security definer set search_path = public
+as $$
+  select turma_id from public.perfis where id = auth.uid();
+$$;
+
+create or replace function public.eh_gestor_ou_professor()
+returns boolean
+language sql
+stable
+security definer set search_path = public
+as $$
+  select public.usuario_role() in ('gestor', 'professor');
+$$;
+
+-- RLS habilitado em todas as tabelas de domínio.
+alter table public.turmas enable row level security;
+alter table public.perfis enable row level security;
+alter table public.trilhas enable row level security;
+alter table public.atividades enable row level security;
+alter table public.progresso_atividades enable row level security;
+alter table public.notas enable row level security;
+alter table public.redacoes enable row level security;
+alter table public.livros enable row level security;
+alter table public.emprestimos enable row level security;
+
+-- Perfis: o próprio usuário vê seu perfil; equipe pedagógica vê perfis da turma;
+-- gestores têm visão global.
+drop policy if exists perfis_select on public.perfis;
+create policy perfis_select on public.perfis for select to authenticated
+using (
+  id = auth.uid()
+  or public.usuario_role() = 'gestor'
+  or (public.usuario_role() = 'professor' and turma_id = public.usuario_turma_id())
+);
+
+drop policy if exists perfis_update_proprio on public.perfis;
+drop policy if exists perfis_update_gestor on public.perfis;
+create policy perfis_update_gestor on public.perfis for update to authenticated
+using (public.usuario_role() = 'gestor')
+with check (public.usuario_role() = 'gestor');
+
+-- Turmas e trilhas.
+drop policy if exists turmas_select on public.turmas;
+create policy turmas_select on public.turmas for select to authenticated
+using (
+  public.usuario_role() in ('gestor', 'bibliotecaria')
+  or id = public.usuario_turma_id()
+);
+
+drop policy if exists trilhas_select on public.trilhas;
+create policy trilhas_select on public.trilhas for select to authenticated
+using (
+  publicada = true
+  or public.usuario_role() = 'gestor'
+  or professor_id = auth.uid()
+  or (public.usuario_role() = 'professor' and turma_id = public.usuario_turma_id())
+);
+
+drop policy if exists trilhas_manage on public.trilhas;
+create policy trilhas_manage on public.trilhas for all to authenticated
+using (public.usuario_role() in ('professor', 'gestor'))
+with check (
+  public.usuario_role() = 'gestor'
+  or professor_id = auth.uid()
+);
+
+drop policy if exists atividades_select on public.atividades;
+create policy atividades_select on public.atividades for select to authenticated
+using (
+  exists (
+    select 1 from public.trilhas t
+    where t.id = trilha_id
+      and (
+        t.publicada = true
+        or public.usuario_role() = 'gestor'
+        or t.professor_id = auth.uid()
+        or (public.usuario_role() = 'professor' and t.turma_id = public.usuario_turma_id())
+      )
+  )
+);
+
+drop policy if exists atividades_manage on public.atividades;
+create policy atividades_manage on public.atividades for all to authenticated
+using (
+  public.usuario_role() = 'gestor'
+  or exists (select 1 from public.trilhas t where t.id = trilha_id and t.professor_id = auth.uid())
+)
+with check (
+  public.usuario_role() = 'gestor'
+  or exists (select 1 from public.trilhas t where t.id = trilha_id and t.professor_id = auth.uid())
+);
+
+-- Notas: alunos só consultam as próprias notas; professores consultam a turma;
+-- gestores consultam tudo. Inserção/edição fica com professor ou gestor.
+drop policy if exists notas_select on public.notas;
+create policy notas_select on public.notas for select to authenticated
+using (
+  aluno_id = auth.uid()
+  or public.usuario_role() = 'gestor'
+  or (public.usuario_role() = 'professor' and exists (
+    select 1 from public.perfis p
+    where p.id = aluno_id and p.turma_id = public.usuario_turma_id()
+  ))
+);
+
+drop policy if exists notas_manage on public.notas;
+create policy notas_manage on public.notas for all to authenticated
+using (public.usuario_role() in ('professor', 'gestor'))
+with check (
+  public.usuario_role() = 'gestor'
+  or (public.usuario_role() = 'professor' and professor_id = auth.uid())
+);
+
+-- Redações: alunos só veem as próprias; professores veem alunos da turma;
+-- gestor tem visão global e bibliotecária não acessa dados pedagógicos.
+drop policy if exists redacoes_select on public.redacoes;
+create policy redacoes_select on public.redacoes for select to authenticated
+using (
+  aluno_id = auth.uid()
+  or public.usuario_role() = 'gestor'
+  or (public.usuario_role() = 'professor' and exists (
+    select 1 from public.perfis p
+    where p.id = aluno_id and p.turma_id = public.usuario_turma_id()
+  ))
+);
+
+drop policy if exists redacoes_insert_proprias on public.redacoes;
+create policy redacoes_insert_proprias on public.redacoes for insert to authenticated
+with check (aluno_id = auth.uid());
+
+drop policy if exists redacoes_update on public.redacoes;
+create policy redacoes_update on public.redacoes for update to authenticated
+using (
+  aluno_id = auth.uid()
+  or public.usuario_role() = 'gestor'
+  or (public.usuario_role() = 'professor' and exists (
+    select 1 from public.perfis p
+    where p.id = aluno_id and p.turma_id = public.usuario_turma_id()
+  ))
+)
+with check (
+  aluno_id = auth.uid()
+  or public.usuario_role() in ('professor', 'gestor')
+);
+
+-- Progresso: aluno administra apenas seu próprio progresso; equipe pedagógica
+-- acompanha a turma e gestores têm visão global.
+drop policy if exists progresso_select on public.progresso_atividades;
+create policy progresso_select on public.progresso_atividades for select to authenticated
+using (
+  aluno_id = auth.uid()
+  or public.usuario_role() = 'gestor'
+  or (public.usuario_role() = 'professor' and exists (
+    select 1 from public.perfis p
+    where p.id = aluno_id and p.turma_id = public.usuario_turma_id()
+  ))
+);
+
+drop policy if exists progresso_aluno_manage on public.progresso_atividades;
+create policy progresso_aluno_manage on public.progresso_atividades for all to authenticated
+using (aluno_id = auth.uid())
+with check (aluno_id = auth.uid());
+
+-- Biblioteca: livros são globais para a bibliotecária e gestores; alunos consultam
+-- o acervo publicado. Empréstimos ficam restritos ao aluno e à equipe da biblioteca.
+drop policy if exists livros_select on public.livros;
+create policy livros_select on public.livros for select to authenticated
+using (true);
+
+drop policy if exists livros_manage on public.livros;
+create policy livros_manage on public.livros for all to authenticated
+using (public.usuario_role() in ('bibliotecaria', 'gestor'))
+with check (public.usuario_role() in ('bibliotecaria', 'gestor'));
+
+drop policy if exists emprestimos_select on public.emprestimos;
+create policy emprestimos_select on public.emprestimos for select to authenticated
+using (
+  aluno_id = auth.uid()
+  or public.usuario_role() in ('bibliotecaria', 'gestor')
+);
+
+drop policy if exists emprestimos_insert on public.emprestimos;
+create policy emprestimos_insert on public.emprestimos for insert to authenticated
+with check (
+  (aluno_id = auth.uid() and public.usuario_role() = 'aluno')
+  or public.usuario_role() in ('bibliotecaria', 'gestor')
+);
+
+drop policy if exists emprestimos_update on public.emprestimos;
+create policy emprestimos_update on public.emprestimos for update to authenticated
+using (
+  public.usuario_role() in ('bibliotecaria', 'gestor')
+  or (aluno_id = auth.uid() and status in ('pendente', 'aguardando_retirada'))
+)
+with check (
+  public.usuario_role() in ('bibliotecaria', 'gestor')
+  or (aluno_id = auth.uid() and status in ('pendente', 'aguardando_retirada'))
+);
+
+-- Mantém updated_at consistente para as tabelas editáveis.
+create or replace function public.set_updated_at()
+returns trigger
+language plpgsql
+as $$
+begin
+  new.updated_at = now();
+  return new;
+end;
+$$;
+
+drop trigger if exists set_turmas_updated_at on public.turmas;
+drop trigger if exists set_perfis_updated_at on public.perfis;
+drop trigger if exists set_trilhas_updated_at on public.trilhas;
+drop trigger if exists set_progresso_updated_at on public.progresso_atividades;
+drop trigger if exists set_redacoes_updated_at on public.redacoes;
+drop trigger if exists set_livros_updated_at on public.livros;
+drop trigger if exists set_emprestimos_updated_at on public.emprestimos;
+
+-- turmas não possui updated_at; o trigger abaixo só é criado nas tabelas compatíveis.
+create trigger set_perfis_updated_at before update on public.perfis for each row execute procedure public.set_updated_at();
+create trigger set_trilhas_updated_at before update on public.trilhas for each row execute procedure public.set_updated_at();
+create trigger set_progresso_updated_at before update on public.progresso_atividades for each row execute procedure public.set_updated_at();
+create trigger set_redacoes_updated_at before update on public.redacoes for each row execute procedure public.set_updated_at();
+create trigger set_livros_updated_at before update on public.livros for each row execute procedure public.set_updated_at();
+create trigger set_emprestimos_updated_at before update on public.emprestimos for each row execute procedure public.set_updated_at();
+
+-- Privilégios mínimos para o cliente autenticado usar as tabelas via Supabase.
+grant usage on schema public to authenticated;
+grant select, insert, update, delete on all tables in schema public to authenticated;
+grant execute on all functions in schema public to authenticated;
