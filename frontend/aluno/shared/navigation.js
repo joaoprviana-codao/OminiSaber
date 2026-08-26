@@ -5,7 +5,7 @@
     dashboard: `${frontendRoot}aluno/dashboard_principal/code.html`,
     inicio: `${frontendRoot}aluno/dashboard_principal/code.html`,
     trilhas: `${frontendRoot}aluno/modulo_de_trilhas/code.html`,
-    redacao: `${frontendRoot}aluno/laboratorio_de_redacao/code.html`,
+    redacao: `${frontendRoot}aluno/laboratorio_de_redacao/index.html`,
     evolucao: `${frontendRoot}aluno/minha_evolucao/code.html`,
     biblioteca: `${frontendRoot}aluno/biblioteca_digital/code.html`,
     configuracoes: `${frontendRoot}aluno/configuracoes/code.html`,

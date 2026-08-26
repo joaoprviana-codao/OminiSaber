@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OminiSaber - Laboratório de Redação</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet" />
+
+    <!-- Material Symbols -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet" />
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <div class="app">
+        <!-- Sidebar Desktop -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-icon">
+                    <span class="material-symbols-outlined">school</span>
+                </div>
+                <div>
+                    <h1 class="brand-title">EduTech</h1>
+                    <p class="brand-subtitle">Ensino Médio</p>
+                </div>
+            </div>
+
+            <div class="sidebar-nav">
+                <a href="#" class="sidebar-link" data-nav="dashboard">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    Dashboard
+                </a>
+                <a href="#" class="sidebar-link" data-nav="trilhas">
+                    <span class="material-symbols-outlined">auto_stories</span>
+                    Trilhas
+                </a>
+                <a href="#" class="sidebar-link active" data-nav="redacao">
+                    <span class="material-symbols-outlined">edit_note</span>
+                    Redação
+                </a>
+                <a href="#" class="sidebar-link" data-nav="evolucao">
+                    <span class="material-symbols-outlined">trending_up</span>
+                    Evolução
+                </a>
+                <a href="#" class="sidebar-link" data-nav="biblioteca">
+                    <span class="material-symbols-outlined">local_library</span>
+                    Biblioteca
+                </a>
+            </div>
+
+            <div class="sidebar-footer">
+                <button class="tutor-btn">
+                    <span class="material-symbols-outlined">support_agent</span>
+                    Falar com Tutor
+                </button>
+                <div class="profile">
+                    <div class="profile-avatar">
+                        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuANqNA4fSHiUQ1BbYbPQu2w9ARJ946Xl81J8DMj6cM2vX9rXKFbcE3og2lxY1ZIHVUkNo7ZaZr8Ze-bqC_inSHrsKNcgdLzMrWugBjOOXVySCBJD8_hoMGMs8FKfXbWbAp3m9HyIFH4adRqTuAuANhIeWvLFHhHS5OF9Os6VG4gUtdzbivZ_QKIhGWqEvdW9uU7gyTqtGaIg9RA2mJFXz0sKkaEErmKWnkH8m3DR278PPL21GmU-i0i" alt="Foto de perfil" />
+                    </div>
+                    <div>
+                        <span class="profile-name">Estudante Modelo</span>
+                        <span class="profile-year">3º Ano</span>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="main-wrapper">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-inner">
+                    <div class="mobile-brand">
+                        <div class="brand-icon small">
+                            <span class="material-symbols-outlined">school</span>
+                        </div>
+                        <span class="mobile-brand-title">EduTech</span>
+                    </div>
+                    <div class="header-actions">
+                        <button class="icon-btn" id="notif-btn" aria-label="Notificações">
+                            <span class="material-symbols-outlined">notifications</span>
+                            <span class="notification-dot"></span>
+                        </button>
+                        <button class="icon-btn" id="settings-btn" aria-label="Configurações">
+                            <span class="material-symbols-outlined">settings</span>
+                        </button>
+                        <div class="mobile-avatar">
+                            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuABoHTcKndIa7xtMk6SB5UC2J9yUC7WDWtS2PKrywJ2Vlze92Y3vua1yiuHY4i2EfBHBSKWg1oAs9UqOA2LW7nY-tDyWQUb6oIj8PTFw0vspTe15xBWz1aKQDWopXwifDf3UCamvalYxzc8tLjbk6tTi_7RNnxlTsVFjLyRnNMP22TCUcDfC93Wks-YCgl0KUnQU8GWHR8CAUP7MK2QqSHm9q6r4GiBCjlNhVpykGOpaCdbYHUXDIbI" alt="Avatar do Estudante" />
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <main class="page">
+                <div class="page-header">
+                    <h2 class="page-title">Laboratório de Redação</h2>
+                    <p class="page-description">Pratique sua escrita focada no formato ENEM e receba feedback detalhado.</p>
+                </div>
+
+                <div class="content-grid">
+                    <!-- Editor Column -->
+                    <section class="editor-column">
+                        <div class="editor-card">
+                            <div class="editor-toolbar">
+                                <button class="format-btn" data-command="bold" title="Negrito">
+                                    <span class="material-symbols-outlined">format_bold</span>
+                                </button>
+                                <button class="format-btn" data-command="italic" title="Itálico">
+                                    <span class="material-symbols-outlined">format_italic</span>
+                                </button>
+                                <button class="format-btn" data-command="underline" title="Sublinhado">
+                                    <span class="material-symbols-outlined">format_underlined</span>
+                                </button>
+                                <div class="toolbar-divider"></div>
+                                <button class="format-btn" data-command="insertUnorderedList" title="Lista">
+                                    <span class="material-symbols-outlined">format_list_bulleted</span>
+                                </button>
+                                <div class="toolbar-spacer"></div>
+                                <span class="save-indicator" id="save-indicator">Rascunho Salvo às 10:42</span>
+                            </div>
+
+                            <div class="editor-body">
+                                <input id="redacao-title" class="title-input" type="text" placeholder="Insira o Título da sua Redação..." />
+                                <div id="editor-content" class="editor-content" contenteditable="true" data-placeholder="Comece a escrever sua introdução aqui..." role="textbox" aria-multiline="true"></div>
+                            </div>
+
+                            <div class="editor-footer">
+                                <div class="footer-info">
+                                    <div class="word-count">
+                                        <span class="material-symbols-outlined">text_snippet</span>
+                                        <span><strong id="word-count">0</strong> palavras</span>
+                                    </div>
+                                    <div class="ai-warning">
+                                        <span class="material-symbols-outlined warning-icon">security</span>
+                                        <p>Este texto passará por análise automática de originalidade e adequação ao tema via IA antes do envio final.</p>
+                                    </div>
+                                </div>
+                                <button class="submit-btn" id="submit-redacao">
+                                    <span>Enviar para Professor</span>
+                                    <span class="material-symbols-outlined">send</span>
+                                </button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Theme Bank Column -->
+                    <aside class="theme-bank">
+                        <div class="theme-bank-header">
+                            <h2>
+                                <span class="material-symbols-outlined">lightbulb</span>
+                                Banco de Temas
+                            </h2>
+                            <button class="see-all">Ver todos</button>
+                        </div>
+
+                        <div class="theme-tabs" id="theme-tabs">
+                            <button class="theme-tab active" data-filter="all">Todos</button>
+                            <button class="theme-tab" data-filter="meio-ambiente">Meio Ambiente</button>
+                            <button class="theme-tab" data-filter="sociedade">Sociedade</button>
+                            <button class="theme-tab" data-filter="tecnologia">Tecnologia</button>
+                        </div>
+
+                        <div class="theme-cards" id="theme-cards">
+                            <!-- Card Meio Ambiente -->
+                            <div class="theme-card" data-category="meio-ambiente">
+                                <div class="theme-card-image" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBN5yDqUBrRtT7EyxuIfor0BbuNKDTN5atXBqS_vwmF3Ba5IzNKAZsdXplsxdGSnguGXqkP67pgUO9g2qd_MdnHch8LY_YB4IpfvDlKWKHbgyELYjAQRbhgxZtlOfOKKyTVEj0zwfyG6Jmh52B90XNKpl0iqUErTfbdD2SGWOSntMlBYoTmF3z7Fkyk7x38TvFkqHNX7TpBRkY-6gUl-r2gYGNe97yiom5EYOexUlpRZAw_1xZczFm_')">
+                                    <span class="theme-badge">Meio Ambiente</span>
+                                </div>
+                                <div class="theme-card-body">
+                                    <h3 class="theme-title">Os impactos das mudanças climáticas na infraestrutura urbana do Brasil.</h3>
+                                    <div class="theme-meta">
+                                        <span><span class="material-symbols-outlined">article</span> Textos Motivadores</span>
+                                        <span><span class="material-symbols-outlined">trending_up</span> Alta relevância</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Card Sociedade -->
+                            <div class="theme-card" data-category="sociedade">
+                                <div class="theme-card-image" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA756tTbJGY8Dd0OHj44WrtjSKb9GaBoPzKd10E7L218s_X0NpgncQwDWZlo_50ZDDENw-4a9yrzbyusB8EhGXvJCZzQ3ls7QLRZSaIR9ELS7YOYdA_ksDan6HeDjsuiLhklDLwO3u86TEoFci9DiIfLIQCh3CPuEuCBZAvZNz-ih7xgn6zNRyNxtvcNi0xSwLu_slJliQLJstZrxyx66sinGqUPgxefkc7YRnzoUmllGMWV6uWhV1T')">
+                                    <span class="theme-badge">Sociedade</span>
+                                </div>
+                                <div class="theme-card-body">
+                                    <h3 class="theme-title">A democratização do acesso à cultura e lazer nas periferias brasileiras.</h3>
+                                    <div class="theme-meta">
+                                        <span><span class="material-symbols-outlined">article</span> Textos Motivadores</span>
+                                        <span><span class="material-symbols-outlined">history</span> Caiu em 2019</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Card Tecnologia -->
+                            <div class="theme-card" data-category="tecnologia">
+                                <div class="theme-card-image" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDc1xAjE0GBGXDrEeETZz0qU1WtYRQVQMs6cVQOFs0Yr3jMvQyQv0f9c8kHc1JZM5r5VqfXH9yW3uZ4dWHJpQXQ4P_6tzmX0q9f6_F7VHlY3X1qO5LtQmK4A')">
+                                    <span class="theme-badge">Tecnologia</span>
+                                </div>
+                                <div class="theme-card-body">
+                                    <h3 class="theme-title">Os desafios da inclusão digital e da inteligência artificial no cotidiano brasileiro.</h3>
+                                    <div class="theme-meta">
+                                        <span><span class="material-symbols-outlined">article</span> Textos Motivadores</span>
+                                        <span><span class="material-symbols-outlined">new_releases</span> Tema atual</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation Mobile -->
+    <nav class="bottom-nav" id="bottom-nav">
+        <a href="#" class="bottom-nav-link" data-nav="home">
+            <span class="material-symbols-outlined">home</span>
+            <span>Início</span>
+        </a>
+        <a href="#" class="bottom-nav-link" data-nav="trilhas">
+            <span class="material-symbols-outlined">route</span>
+            <span>Trilhas</span>
+        </a>
+        <a href="#" class="bottom-nav-link" data-nav="evolucao">
+            <span class="material-symbols-outlined">leaderboard</span>
+            <span>Evolução</span>
+        </a>
+        <a href="#" class="bottom-nav-link" data-nav="perfil">
+            <span class="material-symbols-outlined">person</span>
+            <span>Perfil</span>
+        </a>
+    </nav>
+
+    <!-- Modal de Submissão -->
+    <div class="modal-overlay" id="submit-modal">
+        <div class="modal">
+            <button class="modal-close" data-close-modal="submit-modal" aria-label="Fechar">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+            <h3 class="modal-title">Confirmar envio da redação</h3>
+            <div class="modal-body">
+                <p>Deseja enviar sua redação para o professor?</p>
+                <div class="modal-summary">
+                    <div><strong>Título:</strong> <span id="modal-title"></span></div>
+                    <div><strong>Palavras:</strong> <span id="modal-word-count"></span></div>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-secondary" data-close-modal="submit-modal">Cancelar</button>
+                <button class="btn-primary" id="confirm-submit">Confirmar Envio</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Configurações -->
+    <div class="modal-overlay" id="settings-modal">
+        <div class="modal">
+            <button class="modal-close" data-close-modal="settings-modal" aria-label="Fechar">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+            <h3 class="modal-title">Preferências</h3>
+            <div class="modal-body settings-list">
+                <label class="setting-item">
+                    <span>Notificações por e-mail</span>
+                    <input type="checkbox" checked />
+                </label>
+                <label class="setting-item">
+                    <span>Salvamento automático</span>
+                    <input type="checkbox" checked />
+                </label>
+                <label class="setting-item">
+                    <span>Sugestões de IA</span>
+                    <input type="checkbox" checked />
+                </label>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-primary" data-close-modal="settings-modal">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Script -->
+    <script src="script.js"></script>
+</body>
+</html>

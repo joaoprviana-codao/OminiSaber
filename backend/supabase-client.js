@@ -103,9 +103,47 @@
 
   const listTrilhas = async ({ tipo } = {}) => {
     if (!ensureConfigured()) return [];
+    const profile = await getProfile();
     let query = client.from('trilhas').select('*, atividades(*)').eq('publicada', true).order('created_at', { ascending: false });
+    if (profile?.turma_id) query = query.or(`turma_id.eq.${profile.turma_id},turma_id.is.null`);
     if (tipo) query = query.eq('tipo', tipo);
     const { data, error } = await query;
+    if (error) throw error;
+    return data || [];
+  };
+
+  const listStudentNotes = async () => {
+    if (!ensureConfigured()) return [];
+    const session = await getSession();
+    if (!session) throw new Error('Sessão expirada. Entre novamente.');
+    const { data, error } = await client.from('notas').select('*').eq('aluno_id', session.user.id).order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  };
+
+  const listStudentProgress = async () => {
+    if (!ensureConfigured()) return [];
+    const session = await getSession();
+    if (!session) throw new Error('Sessão expirada. Entre novamente.');
+    const { data, error } = await client.from('progresso_atividades').select('*, atividades(id, trilha_id, titulo, trilhas(id, titulo, materia, tipo))').eq('aluno_id', session.user.id);
+    if (error) throw error;
+    return data || [];
+  };
+
+  const listStudentRedacoes = async () => {
+    if (!ensureConfigured()) return [];
+    const session = await getSession();
+    if (!session) throw new Error('Sessão expirada. Entre novamente.');
+    const { data, error } = await client.from('redacoes').select('*').eq('aluno_id', session.user.id).order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  };
+
+  const listStudentLoans = async () => {
+    if (!ensureConfigured()) return [];
+    const session = await getSession();
+    if (!session) throw new Error('Sessão expirada. Entre novamente.');
+    const { data, error } = await client.from('emprestimos').select('*, livros(id, titulo, autor)').eq('aluno_id', session.user.id).order('created_at', { ascending: false });
     if (error) throw error;
     return data || [];
   };
@@ -280,6 +318,10 @@
     signUp,
     signOut,
     listTrilhas,
+    listStudentNotes,
+    listStudentProgress,
+    listStudentRedacoes,
+    listStudentLoans,
     listLivros,
     createRedacao,
     updateProfile,
