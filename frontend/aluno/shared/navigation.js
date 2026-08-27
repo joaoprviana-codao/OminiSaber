@@ -6,7 +6,7 @@
     inicio: `${frontendRoot}aluno/dashboard_principal/index.html`,
     trilhas: `${frontendRoot}aluno/modulo_de_trilhas/index.html`,
     redacao: `${frontendRoot}aluno/laboratorio_de_redacao/index.html`,
-    evolucao: `${frontendRoot}aluno/minha_evolucao/index.html`,
+    evolucao: `${frontendRoot}aluno/minha_evolucao/code.html`,
     biblioteca: `${frontendRoot}aluno/biblioteca_digital/index.html`,
     configuracoes: `${frontendRoot}aluno/configuracoes/index.html`,
     login: `${frontendRoot}login/index.html`,

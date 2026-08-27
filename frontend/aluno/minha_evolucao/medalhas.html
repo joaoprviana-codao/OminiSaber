@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Galeria de conquistas do aluno." />
+    <title>Galeria de conquistas | EduTech</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:FILL@0..1"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../../backend/supabase-config.js"></script>
+    <script src="../../../backend/supabase-client.js"></script>
+    <script defer src="medalhas.js"></script>
+  </head>
+  <body class="achievements-page">
+    <header class="site-header">
+      <a class="brand" href="../dashboard_principal/index.html"
+        ><span class="brand-mark"
+          ><span class="material-symbols-outlined">school</span></span
+        ><span>EduTech</span></a
+      >
+      <a class="back-link" href="./index.html"
+        ><span class="material-symbols-outlined">arrow_back</span>Voltar para
+        Minha Evolução</a
+      >
+    </header>
+
+    <main class="achievements-shell">
+      <section class="achievements-hero">
+        <div>
+          <p class="eyebrow">GALERIA DE CONQUISTAS</p>
+          <h1>Marcos que contam<br />a sua história.</h1>
+          <p>Cada conquista registra uma escolha de continuar aprendendo.</p>
+        </div>
+        <div class="hero-medal">
+          <span class="material-symbols-outlined">workspace_premium</span
+          ><strong data-unlocked-count>0 desbloqueadas</strong>
+        </div>
+      </section>
+
+      <section class="status-summary" aria-label="Resumo de status">
+        <article>
+          <span class="material-symbols-outlined">military_tech</span>
+          <div>
+            <small>NÍVEL ATUAL</small><strong data-level>Carregando</strong
+            ><span data-level-title>Calculando título</span>
+          </div>
+        </article>
+        <article>
+          <span class="material-symbols-outlined">bolt</span>
+          <div>
+            <small>XP ACUMULADO</small><strong data-xp>0 XP</strong
+            ><span data-xp-detail>Calculando próximo nível</span>
+          </div>
+        </article>
+        <article>
+          <span class="material-symbols-outlined">workspace_premium</span>
+          <div>
+            <small>CONQUISTAS</small
+            ><strong data-unlocked-count>0 desbloqueadas</strong
+            ><span>na sua galeria</span>
+          </div>
+        </article>
+      </section>
+      <div class="xp-progress" aria-label="Progresso para o próximo nível">
+        <span data-xp-bar></span>
+      </div>
+      <p class="fallback-notice is-hidden" data-fallback-notice>
+        Exibindo medalhas padrão enquanto o catálogo do Supabase é configurado.
+      </p>
+
+      <section class="gallery-section">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">SEU ACERVO</p>
+            <h2>Conquistas disponíveis</h2>
+          </div>
+          <span class="material-symbols-outlined section-icon"
+            >auto_awesome</span
+          >
+        </div>
+        <nav class="achievement-filters" aria-label="Filtrar conquistas">
+          <button class="is-active" type="button" data-filter="todos">
+            Todas</button
+          ><button type="button" data-filter="trilhas">Trilhas</button
+          ><button type="button" data-filter="redacao">Redação</button
+          ><button type="button" data-filter="leitura">Leitura</button
+          ><button type="button" data-filter="geral">Geral</button>
+        </nav>
+        <section class="loading-state" data-loading aria-live="polite">
+          <span class="loader"></span>
+          <p>Carregando sua galeria...</p>
+        </section>
+        <section class="error-state is-hidden" data-error role="alert">
+          <span class="material-symbols-outlined">cloud_off</span>
+          <h2>Não foi possível carregar as conquistas</h2>
+          <p data-error-message>Tente novamente em alguns instantes.</p>
+          <button class="button button-primary" type="button" data-retry>
+            Tentar novamente
+          </button>
+        </section>
+        <div
+          class="achievement-list is-hidden"
+          data-content
+          data-achievement-list
+        ></div>
+      </section>
+    </main>
+  </body>
+</html>
