@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Empréstimos | Biblioteca</title>
+    <link rel="stylesheet" href="../library.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../../backend/supabase-config.js"></script>
+    <script src="../../../backend/supabase-client.js"></script>
+    <script defer src="../app.js"></script>
+  </head>
+  <body>
+    <div class="library-shell">
+      <aside class="library-sidebar">
+        <a class="brand" href="../dashboard/index.html"
+          ><span class="brand-mark"
+            ><span class="material-symbols-outlined">local_library</span></span
+          >Biblioteca</a
+        >
+        <nav aria-label="Navegação da biblioteca">
+          <a href="../dashboard/index.html"
+            ><span class="material-symbols-outlined">dashboard</span>Visão
+            geral</a
+          ><a href="../estoque/index.html"
+            ><span class="material-symbols-outlined">shelves</span>Acervo</a
+          ><a class="active" href="index.html"
+            ><span class="material-symbols-outlined">sync_alt</span
+            >Empréstimos</a
+          ><a href="../configuracoes/index.html"
+            ><span class="material-symbols-outlined">settings</span
+            >Configurações</a
+          >
+        </nav>
+        <button class="signout" type="button" data-signout>
+          <span class="material-symbols-outlined">logout</span>Sair
+        </button>
+      </aside>
+      <main class="library-main">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">CIRCULAÇÃO</p>
+            <h1>Empréstimos</h1>
+            <p class="muted">
+              Aprove solicitações, registre entregas e dê baixa nas devoluções.
+            </p>
+          </div>
+        </header>
+        <section class="card">
+          <div class="toolbar">
+            <div>
+              <h2>Controle unificado</h2>
+              <p class="muted">Pesquise por aluno, turma ou título.</p>
+            </div>
+            <input
+              class="input search"
+              data-search
+              type="search"
+              placeholder="Buscar registro..."
+            />
+          </div>
+          <div class="tabs" role="tablist">
+            <button class="tab active" data-tab="pendente" role="tab">
+              Solicitações</button
+            ><button class="tab" data-tab="aprovado" role="tab">
+              Aguardando retirada</button
+            ><button class="tab" data-tab="emprestado" role="tab">Ativos</button
+            ><button class="tab" data-tab="atrasado" role="tab">
+              Atrasados</button
+            ><button class="tab" data-tab="devolvido" role="tab">
+              Devolvidos
+            </button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Aluno / turma</th>
+                  <th>Livro</th>
+                  <th>Status / prazo</th>
+                  <th>Ação</th>
+                </tr>
+              </thead>
+              <tbody data-requests>
+                <tr>
+                  <td colspan="4" class="empty">Carregando registros...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+    <div class="toast" data-toast></div>
+  </body>
+</html>
