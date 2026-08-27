@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Regras | Biblioteca</title>
+    <link rel="stylesheet" href="../library.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../../backend/supabase-config.js"></script>
+    <script src="../../../backend/supabase-client.js"></script>
+    <script defer src="../app.js"></script>
+  </head>
+  <body>
+    <div class="library-shell">
+      <aside class="library-sidebar">
+        <a class="brand" href="../dashboard/index.html"
+          ><span class="brand-mark"
+            ><span class="material-symbols-outlined">local_library</span></span
+          >Biblioteca</a
+        >
+        <nav aria-label="Navegação da biblioteca">
+          <a href="../dashboard/index.html"
+            ><span class="material-symbols-outlined">dashboard</span>Visão
+            geral</a
+          ><a href="../estoque/index.html"
+            ><span class="material-symbols-outlined">shelves</span>Acervo</a
+          ><a href="../gestao_emprestimos/index.html"
+            ><span class="material-symbols-outlined">sync_alt</span
+            >Empréstimos</a
+          ><a class="active" href="index.html"
+            ><span class="material-symbols-outlined">settings</span
+            >Configurações</a
+          >
+        </nav>
+        <button class="signout" type="button" data-signout>
+          <span class="material-symbols-outlined">logout</span>Sair
+        </button>
+      </aside>
+      <main class="library-main">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">POLÍTICA DE CIRCULAÇÃO</p>
+            <h1>Regras da biblioteca</h1>
+            <p class="muted">
+              Defina os limites que orientam novos empréstimos.
+            </p>
+          </div>
+        </header>
+        <section class="card" style="max-width: 650px">
+          <div class="card-heading">
+            <div>
+              <h2>Parâmetros atuais</h2>
+              <p class="muted">
+                As novas regras valem para as próximas entregas.
+              </p>
+            </div>
+          </div>
+          <form data-library-settings>
+            <label
+              >Prazo de devolução<select class="input" name="prazo_dias">
+                <option value="15">15 dias</option>
+                <option value="30">30 dias</option>
+              </select></label
+            ><label
+              >Limite de livros por aluno<select
+                class="input"
+                name="limite_livros"
+              >
+                <option value="1">1 livro</option>
+                <option value="2">2 livros</option>
+                <option value="3">3 livros</option>
+                <option value="4">4 livros</option>
+                <option value="5">5 livros</option>
+              </select></label
+            >
+            <div class="form-actions">
+              <button class="button" type="submit">
+                <span class="material-symbols-outlined">save</span>Salvar regras
+              </button>
+            </div>
+          </form>
+        </section>
+      </main>
+    </div>
+    <div class="toast" data-toast></div>
+  </body>
+</html>
