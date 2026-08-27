@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Redação | EduTech</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="../../../backend/supabase-config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../../backend/supabase-client.js"></script>
+    <script defer src="script.js"></script>
+  </head>
+  <body data-matter="Redação" data-mode="writing">
+    <header>
+      <a href="../index.html">← Catálogo</a><strong>REDAÇÃO</strong
+      ><a href="../../laboratorio_de_redacao/index.html">Laboratório ↗</a>
+    </header>
+    <main>
+      <section class="hero">
+        <small>LINGUAGENS / ARGUMENTAÇÃO</small>
+        <h1>Uma ideia<br />bem construída.</h1>
+        <p>
+          Treine tese, repertório e intervenção antes de entrar no editor
+          oficial.
+        </p>
+        <strong data-progress>--%</strong>
+      </section>
+      <section class="writing">
+        <small>OFICINA DE TESE</small>
+        <h2>Qual é a posição central do seu texto?</h2>
+        <textarea
+          placeholder="Escreva uma frase que responda ao problema do tema..."
+          data-draft
+        ></textarea
+        ><button data-count>Contar palavras</button
+        ><span data-result>0 palavras</span>
+      </section>
+      <section class="trails">
+        <small>TRILHAS DE REDAÇÃO</small>
+        <div data-trails>Carregando...</div>
+      </section>
+    </main>
+  </body>
+</html>

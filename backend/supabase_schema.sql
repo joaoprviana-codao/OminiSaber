@@ -110,6 +110,8 @@ create table if not exists public.trilhas (
   materia text not null,
   descritor_sedu text,
   tipo public.tipo_trilha not null default 'aprendizagem',
+  interacao_tipo text not null default 'lista',
+  interacao_config jsonb not null default '{}'::jsonb,
   prazo timestamptz,
   professor_id uuid references public.perfis(id) on delete set null,
   turma_id uuid references public.turmas(id) on delete set null,
@@ -119,7 +121,30 @@ create table if not exists public.trilhas (
   check (tipo = 'aprendizagem' or prazo is not null)
 );
 
+alter table public.trilhas
+  add column if not exists interacao_tipo text not null default 'lista';
+
+alter table public.trilhas
+  add column if not exists interacao_config jsonb not null default '{}'::jsonb;
+
+do $$ begin
+  alter table public.trilhas
+    add constraint trilhas_interacao_tipo_check check (interacao_tipo in (
+      'lista', 'leitura', 'escrita', 'flashcards', 'calculadora', 'formulas',
+      'simulacao', 'tabela_periodica', 'diagrama', 'timeline', 'mapa_mental',
+      'dialogo', 'movimento'
+    ));
+exception when duplicate_object then null;
+end $$;
+
+do $$ begin
+  alter table public.trilhas
+    add constraint trilhas_interacao_config_check check (jsonb_typeof(interacao_config) = 'object');
+exception when duplicate_object then null;
+end $$;
+
 create index if not exists idx_trilhas_materia on public.trilhas (materia);
+create index if not exists idx_trilhas_interacao_tipo on public.trilhas (interacao_tipo);
 create index if not exists idx_trilhas_descritor on public.trilhas (descritor_sedu);
 create index if not exists idx_trilhas_turma on public.trilhas (turma_id);
 create index if not exists idx_trilhas_tipo_prazo on public.trilhas (tipo, prazo);
