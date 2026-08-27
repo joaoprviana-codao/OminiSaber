@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Descubra livros e materiais para sua jornada de aprendizagem."
+    />
+    <title>Biblioteca Digital | EduTech</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:FILL@0..1"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <script src="../../../backend/supabase-config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../../backend/supabase-client.js"></script>
+    <script defer src="script.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="../dashboard_principal/index.html"
+        ><span class="brand-mark"
+          ><span class="material-symbols-outlined">school</span></span
+        >EduTech</a
+      >
+      <nav class="header-nav" aria-label="Navegação do aluno">
+        <a href="../dashboard_principal/index.html">Dashboard</a
+        ><a href="../modulo_de_trilhas/index.html">Trilhas</a
+        ><a class="active" href="index.html" aria-current="page">Biblioteca</a>
+      </nav>
+      <a
+        class="avatar"
+        href="../configuracoes/code.html"
+        aria-label="Abrir perfil"
+        data-initials
+        >AL</a
+      >
+    </header>
+
+    <main class="page-shell">
+      <section class="hero">
+        <div>
+          <p class="eyebrow">BIBLIOTECA DIGITAL</p>
+          <h1>Encontre a próxima<br />ideia que vai te mover.</h1>
+          <p>
+            Livros, apostilas e materiais para acompanhar cada etapa do seu
+            aprendizado.
+          </p>
+        </div>
+        <span class="hero-mark material-symbols-outlined">local_library</span>
+      </section>
+
+      <section class="search-panel" aria-label="Busca de materiais">
+        <label class="search-box"
+          ><span class="material-symbols-outlined">search</span
+          ><input
+            type="search"
+            placeholder="Buscar por título, autor ou palavra-chave"
+            data-search
+        /></label>
+        <div class="filters" data-filters>
+          <button class="is-active" type="button" data-filter="todos">
+            Todos</button
+          ><button type="button" data-filter="Português">Português</button
+          ><button type="button" data-filter="História">História</button
+          ><button type="button" data-filter="Matemática">Matemática</button
+          ><button type="button" data-filter="Biologia">Biologia</button
+          ><button type="button" data-filter="Literatura Obrigatória">
+            Literatura obrigatória</button
+          ><button type="button" data-filter="Didáticos">Didáticos</button
+          ><button type="button" data-filter="Apostilas">Apostilas</button
+          ><button type="button" data-filter="HQ/Gibi Educativo">
+            HQ / Gibi
+          </button>
+        </div>
+      </section>
+
+      <section class="shelf-section">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">ACESSO RÁPIDO</p>
+            <h2>Minha estante</h2>
+          </div>
+          <span class="section-count" data-reading-count>0 leituras</span>
+        </div>
+        <div class="shelf" data-shelf>
+          <p class="loading">Carregando sua estante...</p>
+        </div>
+      </section>
+      <section class="catalog-section">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">CATÁLOGO COMPLETO</p>
+            <h2>Descubra materiais</h2>
+          </div>
+          <span class="section-count" data-result-count>0 materiais</span>
+        </div>
+        <div class="catalog-grid" data-catalog>
+          <p class="loading">Carregando catálogo...</p>
+        </div>
+      </section>
+    </main>
+
+    <dialog class="book-dialog" data-dialog>
+      <button
+        class="dialog-close"
+        type="button"
+        data-close-dialog
+        aria-label="Fechar detalhes"
+      >
+        <span class="material-symbols-outlined">close</span>
+      </button>
+      <div class="dialog-cover" data-dialog-cover></div>
+      <div class="dialog-content">
+        <span class="subject-tag" data-dialog-subject>Material</span>
+        <h2 data-dialog-title>Livro</h2>
+        <p class="dialog-author" data-dialog-author>Autor</p>
+        <p class="dialog-synopsis" data-dialog-synopsis>Sinopse</p>
+        <dl class="book-facts">
+          <div>
+            <dt>Páginas</dt>
+            <dd data-dialog-pages>--</dd>
+          </div>
+          <div>
+            <dt>Categoria</dt>
+            <dd data-dialog-category>--</dd>
+          </div>
+        </dl>
+        <div class="dialog-actions">
+          <button
+            class="button button-secondary"
+            type="button"
+            data-reading-action
+          >
+            Marcar como lendo</button
+          ><a
+            class="button button-primary"
+            href="#"
+            target="_blank"
+            rel="noopener"
+            data-material-link
+            >Abrir material
+            <span class="material-symbols-outlined">open_in_new</span></a
+          >
+        </div>
+      </div>
+    </dialog>
+    <div class="toast" data-toast role="status" aria-live="polite"></div>
+  </body>
+</html>
