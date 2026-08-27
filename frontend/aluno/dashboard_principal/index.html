@@ -1,263 +1,195 @@
-<!DOCTYPE html>
-<html class="light" lang="pt-BR">
-<head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>EduTech - Dashboard Principal</title>
-    
-    <!-- Material Symbols -->
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com" rel="preconnect"/>
-    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet"/>
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="style.css"/>
-    <link rel="stylesheet" href="../shared/responsive.css"/>
-    
-    <!-- Supabase -->
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Acompanhe seu desempenho e suas atividades na EduTech."
+    />
+    <title>Dashboard do aluno | EduTech</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:FILL@0..1"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../../../backend/supabase-config.js"></script>
     <script src="../../../backend/supabase-client.js"></script>
-    <script src="../shared/student-data.js"></script>
-</head>
-<body class="dashboard-body">
-    <!-- SideNavBar (Desktop) -->
-    <aside id="sidebar" class="sidebar" data-shared-sidebar>
-        <button id="sidebar-toggle" class="shared-sidebar-toggle" aria-label="Toggle sidebar">
-            <span class="material-symbols-outlined">menu</span>
-        </button>
-        
-        <button id="sidebar-theme-toggle" class="shared-theme-toggle" aria-label="Toggle theme">
-            <span class="material-symbols-outlined">dark_mode</span>
-        </button>
-        
-        <div class="sidebar-content">
-            <!-- Logo -->
-            <div class="sidebar-logo">
-                <div class="logo-icon">
-                    <span class="material-symbols-outlined fill">school</span>
-                </div>
-                <h1 class="logo-text">EduTech</h1>
-            </div>
-            
-            <!-- Navigation -->
-            <nav class="sidebar-nav" aria-label="Menu principal">
-                <a href="#" class="nav-item active" aria-current="page">
-                    <span class="material-symbols-outlined fill">dashboard</span>
-                    <span class="nav-label">Dashboard</span>
-                </a>
-                <a href="../modulo_de_trilhas/code.html" class="nav-item">
-                    <span class="material-symbols-outlined">auto_stories</span>
-                    <span class="nav-label">Trilhas</span>
-                </a>
-                <a href="../laboratorio_de_redacao/index.html" class="nav-item">
-                    <span class="material-symbols-outlined">edit_note</span>
-                    <span class="nav-label">Redação</span>
-                </a>
-                <a href="../minha_evolucao/code.html" class="nav-item">
-                    <span class="material-symbols-outlined">trending_up</span>
-                    <span class="nav-label">Evolução</span>
-                </a>
-                <a href="../biblioteca_digital/code.html" class="nav-item">
-                    <span class="material-symbols-outlined">local_library</span>
-                    <span class="nav-label">Biblioteca</span>
-                </a>
-            </nav>
-            
-            <!-- User Profile -->
-            <div class="sidebar-footer">
-                <div class="user-profile">
-                    <img id="user-avatar" class="user-avatar" alt="Avatar do estudante" src=""/>
-                    <div class="user-info">
-                        <span id="user-name" class="user-name">Carregando...</span>
-                        <span id="user-role" class="user-role">Aluno</span>
-                    </div>
-                </div>
-                <button class="tutor-button">
-                    <span class="material-symbols-outlined">chat_bubble</span>
-                    Falar com Tutor
-                </button>
-            </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <script defer src="script.js"></script>
+  </head>
+  <body>
+    <aside class="sidebar" aria-label="Navegação principal">
+      <a class="brand" href="index.html"
+        ><span class="brand-mark"
+          ><span class="material-symbols-outlined">school</span></span
+        ><span>EduTech</span></a
+      >
+      <nav class="sidebar-nav">
+        <a class="nav-link active" href="index.html" aria-current="page"
+          ><span class="material-symbols-outlined">dashboard</span>Início</a
+        >
+        <a class="nav-link" href="../modulo_de_trilhas/code.html"
+          ><span class="material-symbols-outlined">route</span>Trilhas</a
+        >
+        <a class="nav-link" href="../laboratorio_de_redacao/index.html"
+          ><span class="material-symbols-outlined">edit_note</span>Redação</a
+        >
+        <a class="nav-link" href="../minha_evolucao/code.html"
+          ><span class="material-symbols-outlined">trending_up</span>Evolução</a
+        >
+        <a class="nav-link" href="../biblioteca_digital/code.html"
+          ><span class="material-symbols-outlined">local_library</span
+          >Biblioteca</a
+        >
+      </nav>
+      <div class="sidebar-profile">
+        <div class="avatar" aria-hidden="true" data-initials>--</div>
+        <div>
+          <strong data-profile-name>Carregando...</strong><span>Aluno</span>
         </div>
+      </div>
     </aside>
-    
-    <!-- Sidebar Edge Reveal (Mobile) -->
-    <button id="sidebar-edge-reveal" class="sidebar-edge-reveal" aria-label="Abrir menu">
-        <span class="material-symbols-outlined">chevron_right</span>
-    </button>
-    
-    <!-- Main Content Area -->
-    <div class="main-wrapper">
-        <!-- TopNavBar -->
-        <header class="top-header">
-            <div class="header-content">
-                <!-- Mobile Menu Button -->
-                <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="Abrir menu">
-                    <span class="material-symbols-outlined">menu</span>
-                </button>
-                
-                <!-- Mobile Brand -->
-                <h1 class="mobile-brand">EduTech</h1>
-                
-                <!-- Desktop Greeting -->
-                <div class="desktop-greeting">
-                    <span id="greeting-text">Bem-vinda de volta! 👋</span>
+
+    <main class="main-content">
+      <header class="topbar">
+        <button
+          class="icon-button mobile-menu"
+          type="button"
+          aria-label="Abrir navegação"
+          data-menu-toggle
+        >
+          <span class="material-symbols-outlined">menu</span>
+        </button>
+        <div>
+          <p class="eyebrow">PAINEL DE ESTUDOS</p>
+          <h1 data-greeting>Olá, estudante</h1>
+        </div>
+        <div class="topbar-actions">
+          <a
+            class="icon-button"
+            href="../configuracoes/code.html"
+            aria-label="Abrir configurações"
+            ><span class="material-symbols-outlined">settings</span></a
+          ><a
+            class="avatar avatar-small"
+            href="../configuracoes/code.html"
+            aria-label="Abrir perfil"
+            data-initials
+            >--</a
+          >
+        </div>
+      </header>
+
+      <div class="content-shell">
+        <section class="state-panel" data-state="loading" aria-live="polite">
+          <span class="loader" aria-hidden="true"></span>
+          <p>Carregando seu painel...</p>
+        </section>
+        <section
+          class="state-panel is-hidden"
+          data-state="error"
+          aria-live="assertive"
+        >
+          <span class="state-icon material-symbols-outlined">cloud_off</span>
+          <h2>Não foi possível carregar o painel</h2>
+          <p data-error-message>Verifique sua conexão e tente novamente.</p>
+          <button class="button button-primary" type="button" data-retry>
+            Tentar novamente
+          </button>
+        </section>
+
+        <div class="dashboard is-hidden" data-dashboard>
+          <section class="welcome-band">
+            <div>
+              <p class="eyebrow">SUA JORNADA, EM UM SÓ LUGAR</p>
+              <h2 data-welcome>Continue avançando.</h2>
+              <p>Veja onde você está e escolha o próximo passo.</p>
+            </div>
+            <span class="welcome-icon material-symbols-outlined"
+              >auto_awesome</span
+            >
+          </section>
+
+          <section class="metrics-grid" aria-label="Resumo do desempenho">
+            <article class="metric-card metric-card-featured">
+              <span class="metric-icon material-symbols-outlined">grade</span>
+              <p>Média geral</p>
+              <strong data-average>--</strong
+              ><span data-average-caption>Sem notas lançadas</span>
+            </article>
+            <article class="metric-card">
+              <span
+                class="metric-icon metric-icon-green material-symbols-outlined"
+                >task_alt</span
+              >
+              <p>Atividades concluídas</p>
+              <strong data-completed>--</strong
+              ><span data-progress-caption>Sem atividades registradas</span>
+            </article>
+            <article class="metric-card">
+              <span
+                class="metric-icon metric-icon-coral material-symbols-outlined"
+                >edit_note</span
+              >
+              <p>Redações enviadas</p>
+              <strong data-essays>--</strong><span>produções registradas</span>
+            </article>
+            <article class="metric-card">
+              <span
+                class="metric-icon metric-icon-blue material-symbols-outlined"
+                >menu_book</span
+              >
+              <p>Empréstimo atual</p>
+              <strong class="metric-text" data-loan>--</strong
+              ><span data-loan-status>Consultando biblioteca</span>
+            </article>
+          </section>
+
+          <div class="dashboard-grid">
+            <section class="panel radar-panel">
+              <div class="panel-heading">
+                <div>
+                  <p class="eyebrow">DESEMPENHO</p>
+                  <h2>Média por matéria</h2>
                 </div>
-                
-                <!-- Actions -->
-                <div class="header-actions">
-                    <button class="action-button notification-btn" aria-label="Notificações">
-                        <span class="material-symbols-outlined">notifications</span>
-                        <span id="notification-dot" class="notification-dot hidden"></span>
-                    </button>
-                    <button class="action-button settings-btn hidden sm:block" aria-label="Configurações">
-                        <span class="material-symbols-outlined">settings</span>
-                    </button>
-                    <button id="theme-toggle" class="action-button theme-toggle header-theme-toggle" aria-label="Alternar tema">
-                        <span class="material-symbols-outlined">dark_mode</span>
-                    </button>
-                    <img id="mobile-avatar" class="mobile-avatar" alt="Avatar do estudante" src=""/>
+                <span class="panel-chip">Notas</span>
+              </div>
+              <div class="chart-wrap" data-chart-empty>
+                <canvas
+                  id="subject-radar"
+                  aria-label="Gráfico radar da média por matéria"
+                ></canvas>
+                <p class="empty-message">
+                  Suas médias por matéria aparecerão aqui quando houver notas.
+                </p>
+              </div>
+            </section>
+            <section class="panel activities-panel">
+              <div class="panel-heading">
+                <div>
+                  <p class="eyebrow">PRÓXIMOS PASSOS</p>
+                  <h2>Atividades recentes</h2>
                 </div>
-            </div>
-        </header>
-        
-        <!-- Page Content -->
-        <main class="page-content">
-            <!-- Loading State -->
-            <div id="loading-state" class="loading-state">
-                <div class="spinner"></div>
-                <p>Carregando dashboard...</p>
-            </div>
-            
-            <!-- Error State -->
-            <div id="error-state" class="error-state hidden">
-                <span class="material-symbols-outlined">error_outline</span>
-                <h2>Erro ao carregar dados</h2>
-                <p id="error-message">Não foi possível carregar as informações do dashboard.</p>
-                <button id="retry-btn" class="retry-btn">Tentar novamente</button>
-            </div>
-            
-            <!-- Dashboard Content -->
-            <div id="dashboard-content" class="dashboard-content hidden">
-                <!-- Critical Warning Banner -->
-                <div id="warning-banner" class="warning-banner hidden">
-                    <div class="warning-icon">
-                        <span class="material-symbols-outlined fill">alarm_on</span>
-                    </div>
-                    <div class="warning-content">
-                        <h2 id="warning-title">Sua redação vence amanhã!</h2>
-                        <p id="warning-description">Tema: "Os impactos da inteligência artificial no mercado de trabalho".</p>
-                    </div>
-                    <button class="warning-action">Entregar Agora</button>
-                </div>
-                
-                <!-- Bento Grid Layout -->
-                <div class="bento-grid">
-                    <!-- Resumo de Evolução -->
-                    <section class="evolution-section">
-                        <div class="section-header">
-                            <h3>Resumo de Evolução</h3>
-                            <a href="../minha_evolucao/code.html" class="details-link">
-                                Ver detalhes
-                                <span class="material-symbols-outlined">chevron_right</span>
-                            </a>
-                        </div>
-                        
-                        <div class="evolution-card">
-                            <!-- Gamification -->
-                            <div class="gamification-row">
-                                <div class="level-info">
-                                    <div class="level-badge">
-                                        <span class="material-symbols-outlined fill">military_tech</span>
-                                    </div>
-                                    <div>
-                                        <span class="stat-label">Nível Atual</span>
-                                        <div class="level-value">
-                                            <span id="user-level" class="level-number">Lvl --</span>
-                                            <span id="user-xp" class="xp-earned">+0 XP hoje</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="mini-stats">
-                                    <div class="mini-stat-card">
-                                        <span class="stat-label">Média Geral</span>
-                                        <span id="average-grade" class="stat-value primary">--</span>
-                                    </div>
-                                    <div class="mini-stat-card">
-                                        <span class="stat-label">Trilhas Conc.</span>
-                                        <span id="completed-trails" class="stat-value tertiary">--/--</span>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Progress Chart -->
-                            <div class="chart-section">
-                                <h4>Desempenho Trimestral</h4>
-                                <div id="progress-chart" class="progress-chart">
-                                    <!-- Chart bars will be rendered here -->
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                    
-                    <!-- Próximas Atividades -->
-                    <section class="activities-section">
-                        <h3>Próximas Atividades</h3>
-                        
-                        <div class="activities-card">
-                            <div id="activities-list" class="activities-list">
-                                <!-- Activity items will be rendered here -->
-                            </div>
-                            
-                            <div class="activities-footer">
-                                <button id="view-all-btn" class="view-all-btn">
-                                    Ver todas as pendências
-                                </button>
-                            </div>
-                        </div>
-                    </section>
-                </div>
-            </div>
-        </main>
-    </div>
-    
-    <!-- BottomNavBar (Mobile) -->
-    <nav class="bottom-nav" aria-label="Menu mobile">
-        <a href="#" class="bottom-nav-item active" aria-current="page">
-            <div class="bottom-nav-icon">
-                <span class="material-symbols-outlined fill">home</span>
-            </div>
-            <span class="bottom-nav-label">Início</span>
-        </a>
-        <a href="../modulo_de_trilhas/code.html" class="bottom-nav-item">
-            <div class="bottom-nav-icon">
-                <span class="material-symbols-outlined">route</span>
-            </div>
-            <span class="bottom-nav-label">Trilhas</span>
-        </a>
-        <a href="../minha_evolucao/code.html" class="bottom-nav-item">
-            <div class="bottom-nav-icon">
-                <span class="material-symbols-outlined">leaderboard</span>
-            </div>
-            <span class="bottom-nav-label">Evolução</span>
-        </a>
-        <a href="../configuracoes/code.html" class="bottom-nav-item">
-            <div class="bottom-nav-icon">
-                <span class="material-symbols-outlined">person</span>
-            </div>
-            <span class="bottom-nav-label">Perfil</span>
-        </a>
-    </nav>
-    
-    <!-- Custom JS -->
-    <script src="script.js"></script>
-    <script src="../shared/navigation.js" defer></script>
-</body>
+                <a class="text-link" href="../modulo_de_trilhas/code.html"
+                  >Ver trilhas
+                  <span class="material-symbols-outlined"
+                    >arrow_forward</span
+                  ></a
+                >
+              </div>
+              <ul class="activity-list" data-activities></ul>
+            </section>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
 </html>
