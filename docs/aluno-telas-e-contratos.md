@@ -1,10 +1,10 @@
 # Módulo do Aluno: telas, layouts e contratos
 
-Este é o inventário único para finalizar o frontend de `aluno`. Cada tela segue o padrão `tela/code.html`, com recursos específicos na própria pasta quando necessários. O carregamento de dados é centralizado em `frontend/aluno/shared/student-data.js`; autenticação e chamadas Supabase ficam em `backend/supabase-client.js`.
+Este é o inventário das telas de autenticação e do frontend de `aluno`. As telas integradas usam `tela/code.html`, com carregamento de dados centralizado em `frontend/aluno/shared/student-data.js`; autenticação e chamadas Supabase ficam em `backend/supabase-client.js`. O laboratório de redação é um protótipo independente.
 
 ## Estado atual
 
-As seis telas existentes foram ligadas ao renderer dinâmico. O conteúdo principal não deve mais depender de números ou nomes fixos: cada tela exibe carregamento, vazio, erro e dados vindos das tabelas RLS.
+As oito telas documentadas não têm o mesmo nível de integração. Login, cadastro e as cinco telas do shell integrado usam Supabase quando configurado. O laboratório mantém estado e envio simulados no navegador, sem consultar ou inserir dados no Supabase.
 
 ## Tela 1: Login
 
@@ -78,18 +78,21 @@ Observação: a abertura detalhada de uma atividade exige uma tela adicional cas
 
 ```text
 frontend/aluno/laboratorio_de_redacao/
-`-- code.html
+|-- index.html
+|-- script.js
+`-- style.css
 ```
 
 Layout necessário:
 
 - Editor de título e texto.
-- Envio para `redacoes`.
-- Histórico das próprias redações.
-- Status, nota, feedback e alerta de IA.
-- Estado de rascunho e erro de envio.
+- Editor visual com título, texto, formatação e contagem de palavras.
+- Rascunho salvo e restaurado em `localStorage`.
+- Banco de temas estático e navegação em demonstração.
+- Modal e envio simulados; o botão não grava em `redacoes`.
+- Alerta de análise de originalidade/adequação por IA é apenas informativo.
 
-Serviços: `createRedacao`, `listStudentRedacoes`.
+Serviços: nenhum serviço Supabase; a implementação usa `localStorage` e `setTimeout`.
 
 Para autosave real, adicionar uma operação `updateRedacao` e usar `status = 'rascunho'` antes do envio final.
 
@@ -153,7 +156,14 @@ frontend/aluno/shared/
 
 - `navigation.js`: rotas, tema, sidebar e redirecionamento.
 - `responsive.css`: responsividade, tema escuro e toasts.
-- `student-data.js`: renderização, estados e ações do aluno.
+- `student-data.js`: renderização, estados e ações das telas integradas. Não é carregado pelo laboratório independente.
+
+## Limitações conhecidas
+
+- Os cards de trilhas exibem um botão `Abrir`, mas ainda não existe listener para abrir a trilha ou iniciar uma atividade.
+- O filtro de trilhas é local e os cards filtrados não exibem a ação `Abrir`.
+- O prazo da trilha não é renderizado atualmente, embora exista no contrato visual.
+- Preferências de notificação, autosave remoto, feedback/nota do laboratório e respostas de atividades ainda não têm persistência implementada.
 
 ## Dados que ainda exigem extensão de schema
 

@@ -8,7 +8,7 @@ A tela `frontend/cadastro/code.html` cria contas usando `auth.signUp`. O trigger
 
 ## Usuários de teste
 
-Preencha `backend/.env` a partir de `backend/.env.example`, incluindo `SUPABASE_SERVICE_ROLE_KEY`, e execute:
+Crie `backend/.env` com base em `backend/config/env.example.js`, incluindo `SUPABASE_SERVICE_ROLE_KEY`, e execute:
 
 ```bash
 cd backend

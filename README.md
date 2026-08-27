@@ -13,7 +13,7 @@
 - `supabase_schema.sql`: tabelas, índices, funções, triggers e policies.
 - `supabase-client.js`: gateway único do frontend para Auth e domínio.
 - `supabase-config.js`: configuração pública consumida pelo browser.
-- `.env.example`: contrato de ambiente para ferramentas locais.
+- `config/env.example.js`: contrato de ambiente para ferramentas locais.
 - `config/`: documentação e exemplos de configuração.
 
 1. Execute `supabase_schema.sql` no SQL Editor do projeto Supabase.
@@ -29,4 +29,4 @@ window.OMINI_SUPABASE_CONFIG = {
 
 Nunca use a chave `service_role` no navegador.
 
-O frontend usa a camada `supabase-client.js`, que fornece autenticação, perfis, trilhas, redações, livros e empréstimos. As permissões são aplicadas pelas políticas RLS do schema. A documentação completa de pastas está em `docs/ARCHITECTURE.md`.
+O frontend usa a camada `supabase-client.js`, que fornece autenticação, perfis, trilhas, redações, livros e empréstimos. As permissões são aplicadas pelas políticas RLS do schema. A arquitetura está documentada em [`docs/arquitetura.md`](docs/arquitetura.md), e o inventário completo está em [`docs/estrutura-atual.md`](docs/estrutura-atual.md).
