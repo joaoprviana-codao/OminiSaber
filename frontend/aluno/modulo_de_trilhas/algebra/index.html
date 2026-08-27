@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Álgebra | EduTech</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="../../../backend/supabase-config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../../backend/supabase-client.js"></script>
+    <script defer src="script.js"></script>
+  </head>
+  <body>
+    <header>
+      <a href="../index.html">← Catálogo</a><strong>ÁLGEBRA</strong
+      ><a href="../../dashboard_principal/index.html">Dashboard ↗</a>
+    </header>
+    <main>
+      <section class="hero">
+        <div>
+          <small>MATEMÁTICA / MODELOS</small>
+          <h1>Encontre<br />o padrão.</h1>
+          <p>
+            Use símbolos para tornar relações visíveis e testar possibilidades.
+          </p>
+        </div>
+        <strong class="progress" data-progress>--%</strong>
+      </section>
+      <section class="equation">
+        <small>EXPLORADOR DE EQUAÇÕES</small>
+        <h2>Quando 2x + 4 = 18?</h2>
+        <div class="controls">
+          <label>Valor de x <input type="number" value="7" data-x /></label
+          ><span data-check>2(7) + 4 = 18</span>
+        </div>
+        <p data-feedback>
+          Experimente outro valor e veja se a igualdade permanece verdadeira.
+        </p>
+      </section>
+      <section class="trails">
+        <small>TRILHAS DISPONÍVEIS</small>
+        <div data-trails>Carregando...</div>
+      </section>
+    </main>
+  </body>
+</html>

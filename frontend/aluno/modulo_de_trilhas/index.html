@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Trilhas de estudo | EduTech</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:FILL@0..1"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <script src="../../../backend/supabase-config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../../backend/supabase-client.js"></script>
+    <script defer src="script.js"></script>
+  </head>
+  <body>
+    <header class="hub-header">
+      <a class="brand" href="../dashboard_principal/index.html"
+        ><span class="brand-mark"
+          ><span class="material-symbols-outlined">school</span></span
+        >EduTech</a
+      ><span class="header-label">CATÁLOGO DE APRENDIZAGEM</span
+      ><a class="avatar" href="../configuracoes/code.html">AL</a>
+    </header>
+    <main class="hub-shell">
+      <section class="hero">
+        <div>
+          <p class="eyebrow">TRILHAS DO ENSINO MÉDIO</p>
+          <h1>Escolha seu próximo território de descoberta.</h1>
+          <p>
+            Entre em uma disciplina para encontrar seu ritmo, seus desafios e
+            suas ferramentas de estudo.
+          </p>
+        </div>
+        <div class="hero-stamp">
+          <span>16</span><small>ecossistemas<br />de estudo</small>
+        </div>
+      </section>
+      <nav class="category-nav" aria-label="Filtrar áreas">
+        <button class="is-active" data-category="todos">Todas</button
+        ><button data-category="linguagens">Linguagens</button
+        ><button data-category="matematica">Matemática</button
+        ><button data-category="natureza">Ciências da Natureza</button
+        ><button data-category="humanas">Ciências Humanas</button>
+      </nav>
+      <section class="discipline-grid" aria-label="Disciplinas">
+        <a
+          class="discipline-card linguagens"
+          data-discipline
+          data-category="linguagens"
+          href="portugues/index.html"
+          ><span class="card-number">01</span
+          ><span class="discipline-icon">Aa</span>
+          <h2>Língua Portuguesa</h2>
+          <p>Leitura crítica, gramática aplicada e análise de sentidos.</p>
+          <span class="card-action"
+            >Abrir percurso
+            <span class="material-symbols-outlined">arrow_forward</span></span
+          ></a
+        >
+        <a
+          class="discipline-card linguagens"
+          data-discipline
+          data-category="linguagens"
+          href="redacao/index.html"
+          ><span class="card-number">02</span
+          ><span class="discipline-icon">✎</span>
+          <h2>Redação</h2>
+          <p>Argumentação, repertório e laboratório de textos ENEM.</p>
+          <span class="card-action"
+            >Abrir percurso
+            <span class="material-symbols-outlined">arrow_forward</span></span
+          ></a
+        >
+        <a
+          class="discipline-card linguagens"
+          data-discipline
+          data-category="linguagens"
+          href="literatura/index.html"
+          ><span class="card-number">03</span
+          ><span class="discipline-icon">◉</span>
+          <h2>Literatura</h2>
+          <p>Obras, movimentos e escutas para ler o mundo.</p>
+          <span class="card-action"
+            >Abrir percurso
+            <span class="material-symbols-outlined">arrow_forward</span></span
+          ></a
+        >
+        <a
+          class="discipline-card linguagens"
+          data-discipline
+          data-category="linguagens"
+          href="ingles-espanhol/index.html"
+          ><span class="card-number">04</span
+          ><span class="discipline-icon">語</span>
+          <h2>Inglês e Espanhol</h2>
+          <p>Vocabulário em contexto, áudio e comunicação real.</p>
+          <span class="card-action"
+            >Abrir percurso
+            <span class="material-symbols-outlined">arrow_forward</span></span
+          ></a
+        >
+        <a
+          class="discipline-card linguagens"
+          data-discipline
+          data-category="linguagens"
+          href="artes/index.html"
+          ><span class="card-number">05</span
+          ><span class="discipline-icon">✦</span>
+          <h2>Artes</h2>
+          <p>Repertórios visuais, processos e criação autoral.</p>
+          <span class="card-action"
+            >Abrir percurso
+            <span class="material-symbols-outlined">arrow_forward</span></span
+          ></a
+        >
+        <a
+          class="discipline-card linguagens"
+          data-discipline
+          data-category="linguagens"
+          href="educacao-fisica/index.html"
+          ><span class="card-number">06</span
+          ><span class="discipline-icon">↗</span>
+          <h2>Educação Física</h2>
+          <p>Corpo, saúde, esporte e cultura em movimento.</p>
+          <span class="card-action"
+            >Abrir percurso
+            <span class="material-symbols-outlined">arrow_forward</span></span
+          ></a
+        >
+        <a
+          class="discipline-card matematica"
+          data-discipline
+          data-category="matematica"
+          href="matematica/index.html"
+          ><span class="card-number">07</span
+          ><span class="discipline-icon">∑</span>
+          <h2>Matemática Geral</h2>
+          <p>Problemas, estratégias e visualização para pensar melhor.</p>
+          <span class="card-action"
+            >Abrir percurso
+            <span class="material-symbols-outlined">arrow_forward</span></span
+          ></a
+        >
+        <a
+          class="discipline-card matematica"
+          data-discipline
+          data-category="matematica"
+          href="algebra/index.html"
+          ><span class="card-number">08</span
+          ><span class="discipline-icon">x²</span>
+          <h2>Álgebra</h2>
+          <p>Modelagem, equações e relações que explicam padrões.</p>
+          <span class="card-action"
+            >Abrir percurso
+            <span class="material-symbols-outlined">arrow_forward</span></span
+          ></a
+        >
+        <a
+          class="discipline-card matematica"
+          data-discipline
+          data-category="matematica"
+          href="geometria/index.html"
+          ><span class="card-number">09</span
+          ><span class="discipline-icon">△</span>
+          <h2>Geometria</h2>
+          <p>Formas, medidas e espaço em construções interativas.</p>
+          <span class="card-action"
+            >Abrir percurso
+            <span class="material-symbols-outlined">arrow_forward</span></span
+          ></a
+        >
+        <a
+          class="discipline-card natureza"
+          data-discipline
+          data-category="natureza"
+          href="fisica/index.html"
+          ><span class="card-number">10</span
+          ><span class="discipline-icon">↯</span>
+          <h2>Física</h2>
+          <p>Simule forças, movimento e energia em ação.</p>
+          <span class="card-action"
+            >Abrir percurso
+            <span class="material-symbols-outlined">arrow_forward</span></span
+          ></a
+        >
+        <a
+          class="discipline-card natureza"
+          data-discipline
+          data-category="natureza"
+          href="quimica/index.html"
+          ><span class="card-number">11</span
+          ><span class="discipline-icon">⚗</span>
+          <h2>Química</h2>
+          <p>Partículas, transformações e tabela periódica viva.</p>
+          <span class="card-action"
+            >Abrir percurso
+            <span class="material-symbols-outlined">arrow_forward</span></span
+          ></a
+        >
+        <a
+          class="discipline-card natureza"
+          data-discipline
+          data-category="natureza"
+          href="biologia/index.html"
+          ><span class="card-number">12</span
+          ><span class="discipline-icon">⌬</span>
+          <h2>Biologia</h2>
+          <p>Vida, sistemas e diagramas para investigar fenômenos.</p>
+          <span class="card-action"
+            >Abrir percurso
+            <span class="material-symbols-outlined">arrow_forward</span></span
+          ></a
+        >
+        <a
+          class="discipline-card humanas"
+          data-discipline
+          data-category="humanas"
+          href="historia/index.html"
+          ><span class="card-number">13</span
+          ><span class="discipline-icon">◷</span>
+          <h2>História</h2>
+          <p>Linhas do tempo e documentos em perspectiva.</p>
+          <span class="card-action"
+            >Abrir percurso
+            <span class="material-symbols-outlined">arrow_forward</span></span
+          ></a
+        >
+        <a
+          class="discipline-card humanas"
+          data-discipline
+          data-category="humanas"
+          href="geografia/index.html"
+          ><span class="card-number">14</span
+          ><span class="discipline-icon">⌖</span>
+          <h2>Geografia</h2>
+          <p>Mapas, territórios e dados para ler o espaço.</p>
+          <span class="card-action"
+            >Abrir percurso
+            <span class="material-symbols-outlined">arrow_forward</span></span
+          ></a
+        >
+        <a
+          class="discipline-card humanas"
+          data-discipline
+          data-category="humanas"
+          href="filosofia/index.html"
+          ><span class="card-number">15</span
+          ><span class="discipline-icon">?</span>
+          <h2>Filosofia</h2>
+          <p>Perguntas, conceitos e diálogos que provocam.</p>
+          <span class="card-action"
+            >Abrir percurso
+            <span class="material-symbols-outlined">arrow_forward</span></span
+          ></a
+        >
+        <a
+          class="discipline-card humanas"
+          data-discipline
+          data-category="humanas"
+          href="sociologia/index.html"
+          ><span class="card-number">16</span
+          ><span class="discipline-icon">◎</span>
+          <h2>Sociologia</h2>
+          <p>Sociedade, cultura e pensamento coletivo.</p>
+          <span class="card-action"
+            >Abrir percurso
+            <span class="material-symbols-outlined">arrow_forward</span></span
+          ></a
+        >
+      </section>
+    </main>
+  </body>
+</html>

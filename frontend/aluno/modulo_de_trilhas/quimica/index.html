@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Química | EduTech</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="../../../backend/supabase-config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../../backend/supabase-client.js"></script>
+    <script defer src="script.js"></script>
+  </head>
+  <body>
+    <header>
+      <a href="../index.html">← Catálogo</a><strong>QUÍMICA</strong
+      ><a href="../../dashboard_principal/index.html">Dashboard ↗</a>
+    </header>
+    <main>
+      <section class="hero">
+        <small>CIÊNCIAS DA NATUREZA / MATÉRIA</small>
+        <h1>A matéria<br />em transformação.</h1>
+        <p>
+          Explore elementos e observe como suas propriedades organizam o mundo.
+        </p>
+        <strong data-progress>--%</strong>
+      </section>
+      <section class="periodic">
+        <div>
+          <small>TABELA PERIÓDICA DE BOLSO</small>
+          <h2 data-element-name>Carbono</h2>
+          <p data-element-info>
+            Não metal · número atômico 6 · base da vida orgânica.
+          </p>
+        </div>
+        <div class="element-grid">
+          <button data-element="H">H</button
+          ><button data-element="C" class="selected">C</button
+          ><button data-element="O">O</button
+          ><button data-element="Na">Na</button
+          ><button data-element="Fe">Fe</button
+          ><button data-element="Au">Au</button>
+        </div>
+      </section>
+      <section class="trails">
+        <small>TRILHAS DE QUÍMICA</small>
+        <div data-trails>Carregando...</div>
+      </section>
+    </main>
+  </body>
+</html>

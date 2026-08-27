@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Geografia | EduTech</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="../../../backend/supabase-config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../../backend/supabase-client.js"></script>
+    <script defer src="script.js"></script>
+  </head>
+  <body>
+    <header>
+      <a href="../index.html">← Catálogo</a><strong>GEOGRAFIA</strong
+      ><a href="../../dashboard_principal/index.html">Dashboard ↗</a>
+    </header>
+    <main>
+      <section class="hero">
+        <small>CIÊNCIAS HUMANAS / ESPAÇO</small>
+        <h1>Leia o<br />território.</h1>
+        <p>
+          Mapas não são apenas desenhos: são escolhas sobre o que merece ser
+          visto.
+        </p>
+        <strong data-progress>--%</strong>
+      </section>
+      <section class="map-lab">
+        <small>MAPA MENTAL EXPANSÍVEL</small>
+        <h2>Urbanização brasileira</h2>
+        <div class="nodes">
+          <button data-node="centro">Centro urbano</button
+          ><button data-node="fluxos">Fluxos</button
+          ><button data-node="desigualdade">Desigualdade</button>
+        </div>
+        <p data-node-info>Abra um nó para expandir o mapa de relações.</p>
+      </section>
+      <section class="trails">
+        <small>TRILHAS DE GEOGRAFIA</small>
+        <div data-trails>Carregando...</div>
+      </section>
+    </main>
+  </body>
+</html>

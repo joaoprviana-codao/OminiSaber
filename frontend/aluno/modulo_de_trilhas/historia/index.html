@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>História | EduTech</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="../../../backend/supabase-config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../../backend/supabase-client.js"></script>
+    <script defer src="script.js"></script>
+  </head>
+  <body>
+    <header>
+      <a href="../index.html">← Catálogo</a><strong>HISTÓRIA</strong
+      ><a href="../../dashboard_principal/index.html">Dashboard ↗</a>
+    </header>
+    <main>
+      <section class="hero">
+        <small>CIÊNCIAS HUMANAS / TEMPO</small>
+        <h1>O passado<br />em movimento.</h1>
+        <p>
+          Conecte acontecimentos, vozes e consequências para construir
+          perspectiva.
+        </p>
+        <strong data-progress>--%</strong>
+      </section>
+      <section class="timeline">
+        <small>LINHA DO TEMPO</small>
+        <div class="timeline-track">
+          <button data-year="1888">1888</button
+          ><button data-year="1930">1930</button
+          ><button data-year="1964">1964</button
+          ><button data-year="1988">1988</button>
+        </div>
+        <article>
+          <h2 data-event>Escolha um marco</h2>
+          <p data-event-info>
+            Selecione um ponto da linha para abrir seu contexto histórico.
+          </p>
+        </article>
+      </section>
+      <section class="trails">
+        <small>TRILHAS DE HISTÓRIA</small>
+        <div data-trails>Carregando...</div>
+      </section>
+    </main>
+  </body>
+</html>

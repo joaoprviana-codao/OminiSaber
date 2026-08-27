@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Física | EduTech</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="../../../backend/supabase-config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../../backend/supabase-client.js"></script>
+    <script defer src="script.js"></script>
+  </head>
+  <body>
+    <header>
+      <a href="../index.html">← Catálogo</a><strong>FÍSICA</strong
+      ><a href="../../dashboard_principal/index.html">Dashboard ↗</a>
+    </header>
+    <main>
+      <section class="hero">
+        <div>
+          <small>CIÊNCIAS DA NATUREZA / LABORATÓRIO</small>
+          <h1>Forças<br />em cena.</h1>
+          <p>Observe como uma variável muda o comportamento de um sistema.</p>
+        </div>
+        <strong data-progress>--%</strong>
+      </section>
+      <section class="simulator">
+        <small>SIMULAÇÃO DE MOVIMENTO</small>
+        <h2>Deslocamento no tempo</h2>
+        <label
+          >Velocidade <input type="range" min="1" max="20" value="8" data-speed
+        /></label>
+        <div class="track"><i data-runner></i></div>
+        <p data-reading>
+          Velocidade: 8 m/s · deslocamento calculado em 5 segundos: 40 m.
+        </p>
+      </section>
+      <section class="trails">
+        <small>SEU PERCURSO</small>
+        <div data-trails>Carregando...</div>
+      </section>
+    </main>
+  </body>
+</html>
