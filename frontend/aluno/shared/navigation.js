@@ -2,14 +2,14 @@
   const frontendIndex = window.location.pathname.indexOf('/frontend/');
   const frontendRoot = frontendIndex >= 0 ? window.location.pathname.slice(0, frontendIndex) + '/frontend/' : '/frontend/';
   const routes = {
-    dashboard: `${frontendRoot}aluno/dashboard_principal/code.html`,
-    inicio: `${frontendRoot}aluno/dashboard_principal/code.html`,
-    trilhas: `${frontendRoot}aluno/modulo_de_trilhas/code.html`,
+    dashboard: `${frontendRoot}aluno/dashboard_principal/index.html`,
+    inicio: `${frontendRoot}aluno/dashboard_principal/index.html`,
+    trilhas: `${frontendRoot}aluno/modulo_de_trilhas/index.html`,
     redacao: `${frontendRoot}aluno/laboratorio_de_redacao/index.html`,
-    evolucao: `${frontendRoot}aluno/minha_evolucao/code.html`,
-    biblioteca: `${frontendRoot}aluno/biblioteca_digital/code.html`,
-    configuracoes: `${frontendRoot}aluno/configuracoes/code.html`,
-    login: `${frontendRoot}login/code.html`,
+    evolucao: `${frontendRoot}aluno/minha_evolucao/index.html`,
+    biblioteca: `${frontendRoot}aluno/biblioteca_digital/index.html`,
+    configuracoes: `${frontendRoot}aluno/configuracoes/index.html`,
+    login: `${frontendRoot}login/index.html`,
     error: `${frontendRoot}erro/code.html`,
     professor: `${frontendRoot}professor/dashboard/code.html`,
     bibliotecaria: `${frontendRoot}bibliotecaria/dashboard/code.html`,

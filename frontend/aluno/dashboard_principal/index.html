@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html class="light" lang="pt-BR">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>EduTech - Dashboard Principal</title>
+    
+    <!-- Material Symbols -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet"/>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css"/>
+    <link rel="stylesheet" href="../shared/responsive.css"/>
+    
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../../backend/supabase-config.js"></script>
+    <script src="../../../backend/supabase-client.js"></script>
+    <script src="../shared/student-data.js"></script>
+</head>
+<body class="dashboard-body">
+    <!-- SideNavBar (Desktop) -->
+    <aside id="sidebar" class="sidebar" data-shared-sidebar>
+        <button id="sidebar-toggle" class="shared-sidebar-toggle" aria-label="Toggle sidebar">
+            <span class="material-symbols-outlined">menu</span>
+        </button>
+        
+        <button id="sidebar-theme-toggle" class="shared-theme-toggle" aria-label="Toggle theme">
+            <span class="material-symbols-outlined">dark_mode</span>
+        </button>
+        
+        <div class="sidebar-content">
+            <!-- Logo -->
+            <div class="sidebar-logo">
+                <div class="logo-icon">
+                    <span class="material-symbols-outlined fill">school</span>
+                </div>
+                <h1 class="logo-text">EduTech</h1>
+            </div>
+            
+            <!-- Navigation -->
+            <nav class="sidebar-nav" aria-label="Menu principal">
+                <a href="#" class="nav-item active" aria-current="page">
+                    <span class="material-symbols-outlined fill">dashboard</span>
+                    <span class="nav-label">Dashboard</span>
+                </a>
+                <a href="../modulo_de_trilhas/code.html" class="nav-item">
+                    <span class="material-symbols-outlined">auto_stories</span>
+                    <span class="nav-label">Trilhas</span>
+                </a>
+                <a href="../laboratorio_de_redacao/index.html" class="nav-item">
+                    <span class="material-symbols-outlined">edit_note</span>
+                    <span class="nav-label">Redação</span>
+                </a>
+                <a href="../minha_evolucao/code.html" class="nav-item">
+                    <span class="material-symbols-outlined">trending_up</span>
+                    <span class="nav-label">Evolução</span>
+                </a>
+                <a href="../biblioteca_digital/code.html" class="nav-item">
+                    <span class="material-symbols-outlined">local_library</span>
+                    <span class="nav-label">Biblioteca</span>
+                </a>
+            </nav>
+            
+            <!-- User Profile -->
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <img id="user-avatar" class="user-avatar" alt="Avatar do estudante" src=""/>
+                    <div class="user-info">
+                        <span id="user-name" class="user-name">Carregando...</span>
+                        <span id="user-role" class="user-role">Aluno</span>
+                    </div>
+                </div>
+                <button class="tutor-button">
+                    <span class="material-symbols-outlined">chat_bubble</span>
+                    Falar com Tutor
+                </button>
+            </div>
+        </div>
+    </aside>
+    
+    <!-- Sidebar Edge Reveal (Mobile) -->
+    <button id="sidebar-edge-reveal" class="sidebar-edge-reveal" aria-label="Abrir menu">
+        <span class="material-symbols-outlined">chevron_right</span>
+    </button>
+    
+    <!-- Main Content Area -->
+    <div class="main-wrapper">
+        <!-- TopNavBar -->
+        <header class="top-header">
+            <div class="header-content">
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="Abrir menu">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+                
+                <!-- Mobile Brand -->
+                <h1 class="mobile-brand">EduTech</h1>
+                
+                <!-- Desktop Greeting -->
+                <div class="desktop-greeting">
+                    <span id="greeting-text">Bem-vinda de volta! 👋</span>
+                </div>
+                
+                <!-- Actions -->
+                <div class="header-actions">
+                    <button class="action-button notification-btn" aria-label="Notificações">
+                        <span class="material-symbols-outlined">notifications</span>
+                        <span id="notification-dot" class="notification-dot hidden"></span>
+                    </button>
+                    <button class="action-button settings-btn hidden sm:block" aria-label="Configurações">
+                        <span class="material-symbols-outlined">settings</span>
+                    </button>
+                    <button id="theme-toggle" class="action-button theme-toggle header-theme-toggle" aria-label="Alternar tema">
+                        <span class="material-symbols-outlined">dark_mode</span>
+                    </button>
+                    <img id="mobile-avatar" class="mobile-avatar" alt="Avatar do estudante" src=""/>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Page Content -->
+        <main class="page-content">
+            <!-- Loading State -->
+            <div id="loading-state" class="loading-state">
+                <div class="spinner"></div>
+                <p>Carregando dashboard...</p>
+            </div>
+            
+            <!-- Error State -->
+            <div id="error-state" class="error-state hidden">
+                <span class="material-symbols-outlined">error_outline</span>
+                <h2>Erro ao carregar dados</h2>
+                <p id="error-message">Não foi possível carregar as informações do dashboard.</p>
+                <button id="retry-btn" class="retry-btn">Tentar novamente</button>
+            </div>
+            
+            <!-- Dashboard Content -->
+            <div id="dashboard-content" class="dashboard-content hidden">
+                <!-- Critical Warning Banner -->
+                <div id="warning-banner" class="warning-banner hidden">
+                    <div class="warning-icon">
+                        <span class="material-symbols-outlined fill">alarm_on</span>
+                    </div>
+                    <div class="warning-content">
+                        <h2 id="warning-title">Sua redação vence amanhã!</h2>
+                        <p id="warning-description">Tema: "Os impactos da inteligência artificial no mercado de trabalho".</p>
+                    </div>
+                    <button class="warning-action">Entregar Agora</button>
+                </div>
+                
+                <!-- Bento Grid Layout -->
+                <div class="bento-grid">
+                    <!-- Resumo de Evolução -->
+                    <section class="evolution-section">
+                        <div class="section-header">
+                            <h3>Resumo de Evolução</h3>
+                            <a href="../minha_evolucao/code.html" class="details-link">
+                                Ver detalhes
+                                <span class="material-symbols-outlined">chevron_right</span>
+                            </a>
+                        </div>
+                        
+                        <div class="evolution-card">
+                            <!-- Gamification -->
+                            <div class="gamification-row">
+                                <div class="level-info">
+                                    <div class="level-badge">
+                                        <span class="material-symbols-outlined fill">military_tech</span>
+                                    </div>
+                                    <div>
+                                        <span class="stat-label">Nível Atual</span>
+                                        <div class="level-value">
+                                            <span id="user-level" class="level-number">Lvl --</span>
+                                            <span id="user-xp" class="xp-earned">+0 XP hoje</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mini-stats">
+                                    <div class="mini-stat-card">
+                                        <span class="stat-label">Média Geral</span>
+                                        <span id="average-grade" class="stat-value primary">--</span>
+                                    </div>
+                                    <div class="mini-stat-card">
+                                        <span class="stat-label">Trilhas Conc.</span>
+                                        <span id="completed-trails" class="stat-value tertiary">--/--</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Progress Chart -->
+                            <div class="chart-section">
+                                <h4>Desempenho Trimestral</h4>
+                                <div id="progress-chart" class="progress-chart">
+                                    <!-- Chart bars will be rendered here -->
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <!-- Próximas Atividades -->
+                    <section class="activities-section">
+                        <h3>Próximas Atividades</h3>
+                        
+                        <div class="activities-card">
+                            <div id="activities-list" class="activities-list">
+                                <!-- Activity items will be rendered here -->
+                            </div>
+                            
+                            <div class="activities-footer">
+                                <button id="view-all-btn" class="view-all-btn">
+                                    Ver todas as pendências
+                                </button>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- BottomNavBar (Mobile) -->
+    <nav class="bottom-nav" aria-label="Menu mobile">
+        <a href="#" class="bottom-nav-item active" aria-current="page">
+            <div class="bottom-nav-icon">
+                <span class="material-symbols-outlined fill">home</span>
+            </div>
+            <span class="bottom-nav-label">Início</span>
+        </a>
+        <a href="../modulo_de_trilhas/code.html" class="bottom-nav-item">
+            <div class="bottom-nav-icon">
+                <span class="material-symbols-outlined">route</span>
+            </div>
+            <span class="bottom-nav-label">Trilhas</span>
+        </a>
+        <a href="../minha_evolucao/code.html" class="bottom-nav-item">
+            <div class="bottom-nav-icon">
+                <span class="material-symbols-outlined">leaderboard</span>
+            </div>
+            <span class="bottom-nav-label">Evolução</span>
+        </a>
+        <a href="../configuracoes/code.html" class="bottom-nav-item">
+            <div class="bottom-nav-icon">
+                <span class="material-symbols-outlined">person</span>
+            </div>
+            <span class="bottom-nav-label">Perfil</span>
+        </a>
+    </nav>
+    
+    <!-- Custom JS -->
+    <script src="script.js"></script>
+    <script src="../shared/navigation.js" defer></script>
+</body>
+</html>
