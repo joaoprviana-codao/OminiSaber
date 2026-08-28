@@ -4,10 +4,11 @@
   const passwordToggle = document.getElementById('togglePassword');
   const loginError = document.getElementById('loginError');
   const submitButton = form?.querySelector('button[type="submit"]');
+  const btnLabel = submitButton?.querySelector('.btn-label');
   const rememberInput = document.getElementById('remember-me');
   const savedEmail = localStorage.getItem('edutech-login-email');
 
-  if (!form || !passwordInput || !passwordToggle || !loginError || !submitButton) return;
+  if (!form || !passwordInput || !passwordToggle || !loginError || !submitButton || !btnLabel) return;
 
   if (savedEmail) {
     document.getElementById('email').value = savedEmail;
@@ -17,19 +18,39 @@
   const showError = (message) => {
     loginError.textContent = message;
     loginError.hidden = false;
+
+    // Reinicia a animação de "shake" mesmo se o erro já estiver visível
+    loginError.classList.remove('is-shaking');
+    // Força reflow para permitir reexecutar a animação
+    void loginError.offsetWidth;
+    loginError.classList.add('is-shaking');
+
     // Foca no erro para leitores de tela
-    loginError.focus(); 
+    loginError.focus();
   };
 
   const clearError = () => {
     loginError.textContent = '';
     loginError.hidden = true;
+    loginError.classList.remove('is-shaking');
+  };
+
+  const setLoading = (isLoading) => {
+    submitButton.disabled = isLoading;
+    submitButton.classList.toggle('is-loading', isLoading);
+    btnLabel.textContent = isLoading ? 'Autenticando...' : 'Entrar';
+  };
+
+  const setSuccess = () => {
+    submitButton.classList.remove('is-loading');
+    submitButton.classList.add('is-success');
+    btnLabel.textContent = 'Tudo certo! Redirecionando...';
   };
 
   passwordToggle.addEventListener('click', () => {
     const isShowing = passwordInput.type === 'text';
     passwordInput.type = isShowing ? 'password' : 'text';
-    
+
     // Atualiza atributos de acessibilidade e ícone
     passwordToggle.setAttribute('aria-pressed', String(!isShowing));
     passwordToggle.setAttribute('aria-label', isShowing ? 'Mostrar senha' : 'Ocultar senha');
@@ -61,9 +82,7 @@
       localStorage.removeItem('edutech-login-email');
     }
 
-    // Estado de Loading
-    submitButton.disabled = true;
-    submitButton.textContent = 'Autenticando...';
+    setLoading(true);
 
     try {
       if (!window.OminiSaber?.configured) {
@@ -74,28 +93,31 @@
       if (error) throw error;
 
       const profile = await window.OminiSaber.getProfile(data.user.id);
-      
+
       const routes = {
         aluno: '../aluno/dashboard_principal/index.html',
         bibliotecaria: '../bibliotecaria/dashboard/index.html',
         professor: '../professor/dashboard/code.html',
         gestor: '../gestor/dashboard/code.html'
       };
-      
+
+      setSuccess();
       window.location.href = routes[profile?.role] || routes.aluno;
+      return;
 
     } catch (error) {
       const message = /matr[ií]cula/i.test(error.message || '')
         ? 'Credenciais incorretas. Verifique seu e-mail ou matrícula.'
         : 'Ocorreu um erro ao tentar entrar. Verifique seus dados.';
-        
+
       showError(message);
       if (window.OminiSaber?.notify) window.OminiSaber.notify(message, 'error');
-      
+
     } finally {
-      // O bloco finally garante que o botão SEMPRE volte ao normal, mesmo se o try falhar
-      submitButton.disabled = false;
-      submitButton.textContent = 'Entrar';
+      // Só reverte o botão se não estivermos no caminho de sucesso (que já está redirecionando)
+      if (!submitButton.classList.contains('is-success')) {
+        setLoading(false);
+      }
     }
   });
 })();

@@ -7,7 +7,7 @@
   <title>EduTech | Login</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Material+Symbols+Outlined:wght@400&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Material+Symbols+Outlined:wght@400&family=Poppins:wght@600;700&family=Fraunces:ital,wght@1,500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- Mantendo seus scripts de backend -->
@@ -15,57 +15,100 @@
   <script src="../../backend/supabase-client.js"></script>
 </head>
 <body>
-  <!-- Adicionado 'poster' para UX caso o vídeo demore a carregar -->
-  <video class="background-video" autoplay loop muted playsinline aria-hidden="true" poster="https://via.placeholder.com/1920x1080/0f172a/0f172a">
-    <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" type="video/mp4">
-  </video>
-  <div class="video-overlay" aria-hidden="true"></div>
+
+  <!-- Fundo ambiente: gradiente animado + ícones de matérias flutuando -->
+  <div class="ambient" aria-hidden="true">
+    <div class="ambient-grid"></div>
+    <span class="floating-icon icon-1 material-symbols-outlined">auto_stories</span>
+    <span class="floating-icon icon-2 material-symbols-outlined">science</span>
+    <span class="floating-icon icon-3 material-symbols-outlined">calculate</span>
+    <span class="floating-icon icon-4 material-symbols-outlined">functions</span>
+    <span class="floating-icon icon-5 material-symbols-outlined">edit_square</span>
+  </div>
 
   <main class="login-shell">
+    <!-- O cartão é desenhado como um caderno aberto: página da esquerda (identidade)
+         + lombada encadernada + página da direita (formulário) -->
     <section class="login-card" aria-labelledby="login-title">
-      <header class="login-header">
-        <p class="brand">EduTech</p>
-        <p class="tagline">Sua jornada de aprendizado começa aqui.</p>
-      </header>
 
-      <div class="card-content">
-        <h1 id="login-title">Bem-vindo(a) de volta!</h1>
-        <!-- Adicionado aria-describedby para vincular o erro ao formulário -->
-        <form id="loginForm" novalidate aria-describedby="loginError">
-          <div id="loginError" class="login-error" role="alert" aria-live="assertive" hidden></div>
+      <div class="story-page">
+        <div class="punch-holes" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span>
+        </div>
 
-          <div class="form-field">
-            <label for="email">E-mail ou Matrícula</label>
-            <div class="input-wrapper">
-              <span class="material-symbols-outlined field-icon" aria-hidden="true">person</span>
-              <input id="email" name="email" type="text" autocomplete="username" placeholder="Digite seu e-mail ou matrícula" required>
-            </div>
+        <div class="brand-block">
+          <span class="brand-mark" aria-hidden="true">
+            <span class="material-symbols-outlined">school</span>
+          </span>
+          <div>
+            <p class="brand">EduTech</p>
+            <p class="tagline">Sua jornada de aprendizado começa aqui.</p>
           </div>
+        </div>
 
-          <div class="form-field">
-            <div class="password-label-row">
-              <label for="password">Senha</label>
-              <a href="#" data-forgot-password>Esqueci minha senha</a>
-            </div>
-            <div class="input-wrapper">
-              <span class="material-symbols-outlined field-icon" aria-hidden="true">lock</span>
-              <input id="password" name="password" type="password" autocomplete="current-password" placeholder="Sua senha secreta" required>
-              <button class="password-toggle" id="togglePassword" type="button" aria-label="Mostrar senha" aria-pressed="false">
-                <span class="material-symbols-outlined" aria-hidden="true">visibility</span>
-              </button>
-            </div>
-          </div>
+        <blockquote class="story-quote">
+          “Cada página virada é um passo mais perto do seu objetivo.”
+        </blockquote>
 
-          <label class="remember-option" for="remember-me">
-            <input id="remember-me" name="remember-me" type="checkbox">
-            <span>Lembrar-me neste dispositivo</span>
-          </label>
-
-          <button class="submit-button" type="submit">Entrar</button>
-        </form>
-
-        <p class="register-prompt">Ainda não tem acesso? <a href="../cadastro/code.html">Fale com a secretaria</a></p>
+        <ol class="journey-steps">
+          <li class="is-current"><span class="step-dot"></span>Entrar</li>
+          <li><span class="step-dot"></span>Aprender</li>
+          <li><span class="step-dot"></span>Evoluir</li>
+        </ol>
       </div>
+
+      <div class="spine" aria-hidden="true">
+        <span class="spine-ring"></span>
+        <span class="spine-ring"></span>
+        <span class="spine-ring"></span>
+        <span class="spine-ring"></span>
+        <span class="spine-ring"></span>
+      </div>
+
+      <div class="form-page">
+        <div class="card-content">
+          <h1 id="login-title">Bem-vindo(a) de volta!</h1>
+
+          <form id="loginForm" novalidate aria-describedby="loginError">
+            <div id="loginError" class="login-error" role="alert" aria-live="assertive" hidden></div>
+
+            <div class="form-field">
+              <label for="email">E-mail ou matrícula</label>
+              <div class="input-wrapper">
+                <span class="material-symbols-outlined field-icon" aria-hidden="true">person</span>
+                <input id="email" name="email" type="text" autocomplete="username" placeholder="ex: maria.souza@edutech.com.br" required>
+              </div>
+            </div>
+
+            <div class="form-field">
+              <div class="password-label-row">
+                <label for="password">Senha</label>
+                <a href="#" data-forgot-password>Esqueci minha senha</a>
+              </div>
+              <div class="input-wrapper">
+                <span class="material-symbols-outlined field-icon" aria-hidden="true">lock</span>
+                <input id="password" name="password" type="password" autocomplete="current-password" placeholder="Digite sua senha" required>
+                <button class="password-toggle" id="togglePassword" type="button" aria-label="Mostrar senha" aria-pressed="false">
+                  <span class="material-symbols-outlined" aria-hidden="true">visibility</span>
+                </button>
+              </div>
+            </div>
+
+            <label class="remember-option" for="remember-me">
+              <input id="remember-me" name="remember-me" type="checkbox">
+              <span>Lembrar-me neste dispositivo</span>
+            </label>
+
+            <button class="submit-button" type="submit">
+              <span class="btn-spinner" aria-hidden="true"></span>
+              <span class="btn-label">Entrar</span>
+            </button>
+          </form>
+
+          <p class="register-prompt">Ainda não tem acesso? <a href="../cadastro/code.html">Fale com a secretaria</a></p>
+        </div>
+      </div>
+
     </section>
   </main>
 
