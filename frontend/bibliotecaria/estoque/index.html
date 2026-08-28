@@ -40,9 +40,6 @@
             <h1>Acervo</h1>
             <p class="muted">Cadastre títulos, identifique cada exemplar e organize as estantes.</p>
           </div>
-          <button class="button secondary" type="button" data-section-open>
-            <span class="material-symbols-outlined">add</span>Criar nova seção
-          </button>
         </header>
 
         <section class="metrics" aria-label="Resumo do acervo">
@@ -58,23 +55,18 @@
               <div>
                 <p class="section-kicker">ETAPA 1</p>
                 <h2>Novo lote de exemplares</h2>
-                <p class="muted">O sistema cria uma série para cada cópia cadastrada.</p>
+                <p class="muted">O sistema cria uma série para cada cópia cadastrada de forma individualizada.</p>
               </div>
               <span class="step-number">01</span>
             </div>
-            <form class="form-grid" data-book-form>
-              <label class="full">Título<input class="input" name="titulo" required maxlength="180" placeholder="Ex.: Dom Casmurro" /></label>
-              <label>Autor<input class="input" name="autor" required maxlength="120" placeholder="Nome do autor" /></label>
-              <label>Gênero do livro<select class="input" name="genero" required><option value="">Selecione</option><option>Romance</option><option>Conto</option><option>Poesia</option><option>Literatura Juvenil</option><option>Didático</option><option>Biografia / Autobiografia</option><option>Histórias em Quadrinhos (HQ)</option><option>Teatro / Drama</option><option>Ensaios / Filosofia</option><option>Científico / Técnico</option></select></label>
-              <label>URL da capa<input class="input" name="capa_url" type="url" maxlength="500" placeholder="https://..." /></label>
-              <label>Quantidade de exemplares<input class="input" name="quantidade" type="number" min="1" max="500" value="1" required data-quantity /></label>
-              <label>Prefixo da série<input class="input" name="prefixo" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" value="9873" required data-prefix /></label>
-              <div class="full batch-preview" data-batch-preview aria-live="polite">Série gerada: 9873-001</div>
-              <div class="form-actions full">
-                <button class="button outline-button" type="button" data-scan-open><span class="material-symbols-outlined">photo_camera</span>Escanear ISBNs via câmera</button>
-                <button class="button" type="submit"><span class="material-symbols-outlined">add_circle</span>Cadastrar lote</button>
-              </div>
-            </form>
+            
+            <!-- O botão que redireciona para a nova página -->
+            <div class="form-actions full" style="margin-top: 1.5rem;">
+              <a href="etapa1/etapa1.html" class="button" style="text-decoration: none; display: flex; justify-content: center;">
+                <span class="material-symbols-outlined">arrow_forward</span>
+                Iniciar Cadastro (Etapa 1)
+              </a>
+            </div>
           </article>
 
           <article class="panel sections-panel">
@@ -82,7 +74,10 @@
               <div><p class="section-kicker">ETAPA 2</p><h2>Seções físicas</h2><p class="muted">Distribua exemplares por capacidade disponível.</p></div>
               <span class="step-number">02</span>
             </div>
-            <div class="section-list" data-sections><p class="empty">Carregando seções...</p></div>
+            <a href="etapa2/etapa2.html" class="button" style="text-decoration: none; display: flex; justify-content: center;">
+                <span class="material-symbols-outlined">arrow_forward</span>
+                Criar & Organizar Seções (Etapa 2)
+              </a>
           </article>
         </section>
 

@@ -6,7 +6,7 @@
   const frontendIndex = window.location.pathname.indexOf('/frontend/');
   const frontendRoot = frontendIndex >= 0 ? window.location.pathname.slice(0, frontendIndex) + '/frontend/' : '/frontend/';
   const routes = {
-    login: `${frontendRoot}login/code.html`,
+    login: `${frontendRoot}login/index.html`,
     dashboard: `${frontendRoot}aluno/dashboard_principal/code.html`,
     error: `${frontendRoot}erro/code.html`
   };
