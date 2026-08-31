@@ -4,10 +4,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="Gerencie seu perfil, segurança e preferências visuais." />
-    <title>Configurações | EduTech</title>
+    <title>Configurações | OminiSaber</title>
     <script>
       (() => {
-        const tema = localStorage.getItem('edutech_theme');
+        const tema = localStorage.getItem('ominisaber_theme');
         if (tema === 'dark' || tema === 'light') {
           document.documentElement.setAttribute('data-theme', tema);
         }
@@ -16,29 +16,33 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@700;800&family=Material+Symbols+Outlined:FILL@0..1" rel="stylesheet" />
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="style.css" /><link rel="stylesheet" href="../../shared/sidebar.css" />
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="../../../backend/supabase-config.js"></script>
-    <script src="../../../backend/supabase-client.js"></script>
+    <script src="../../../backend/ominisaber-supabase-config.js"></script>
+    <script src="../../../backend/ominisaber-supabase-client.js"></script>
     <script defer src="script.js"></script>
   </head>
-  <body>
+  <body data-app-role="student">
     <aside class="sidebar" aria-label="Navegação principal">
-      <a class="brand" href="../dashboard_principal/index.html"><span class="brand-mark"><span class="material-symbols-outlined">school</span></span>EduTech</a>
+      <a class="brand" href="../dashboard_principal/index.html"><span class="brand-mark"><span class="material-symbols-outlined">school</span></span>OminiSaber</a>
       <nav class="sidebar-nav">
         <a href="../dashboard_principal/index.html"><span class="material-symbols-outlined">dashboard</span>Início</a>
         <a href="../modulo_de_trilhas/index.html"><span class="material-symbols-outlined">route</span>Trilhas</a>
         <a href="../laboratorio_de_redacao/index.html"><span class="material-symbols-outlined">edit_note</span>Redação</a>
         <a href="../minha_evolucao/index.html"><span class="material-symbols-outlined">trending_up</span>Evolução</a>
         <a href="../biblioteca_digital/index.html"><span class="material-symbols-outlined">local_library</span>Biblioteca</a>
+        <a href="../notificacoes/index.html"><span class="material-symbols-outlined">notifications</span>Notificações</a>
+        <a href="../agenda/index.html"><span class="material-symbols-outlined">calendar_month</span>Agenda</a>
+        <a href="../perfil/index.html"><span class="material-symbols-outlined">person</span>Perfil</a>
         <a class="active" href="index.html" aria-current="page"><span class="material-symbols-outlined">settings</span>Configurações</a>
+        <a href="../ajuda-suporte/index.html"><span class="material-symbols-outlined">help</span>Ajuda e suporte</a>
       </nav>
-      <a class="sidebar-help" href="mailto:suporte@edutech.local"><span class="material-symbols-outlined">support_agent</span>Falar com suporte</a>
+      <a class="sidebar-help" href="../ajuda-suporte/index.html"><span class="material-symbols-outlined">support_agent</span>Falar com suporte</a>
     </aside>
 
     <main class="main-content">
       <header class="topbar">
-        <a class="mobile-brand" href="../dashboard_principal/index.html">EduTech</a>
+        <a class="mobile-brand" href="../dashboard_principal/index.html">OminiSaber</a>
         <div class="topbar-actions">
           <button class="icon-button" type="button" data-theme-toggle aria-label="Alternar tema"><span class="material-symbols-outlined">dark_mode</span></button>
           <a class="icon-button" href="../dashboard_principal/index.html" aria-label="Voltar ao início"><span class="material-symbols-outlined">home</span></a>
@@ -91,7 +95,7 @@
               <p class="sync-note"><span class="material-symbols-outlined">cloud_done</span><span data-theme-feedback>Preferência sincronizada com sua conta.</span></p>
             </section>
             <section class="panel support-panel">
-              <span class="material-symbols-outlined support-icon">help</span><h2>Precisa de ajuda?</h2><p>Fale com o suporte para dúvidas sobre sua conta ou acesso.</p><a class="button secondary" href="mailto:suporte@edutech.local"><span class="material-symbols-outlined">mail</span>Contatar suporte</a>
+              <span class="material-symbols-outlined support-icon">help</span><h2>Precisa de ajuda?</h2><p>Fale com o suporte para dúvidas sobre sua conta ou acesso.</p><a class="button secondary" href="mailto:suporte@ominisaber.local"><span class="material-symbols-outlined">mail</span>Contatar suporte</a>
             </section>
           </div>
         </div>

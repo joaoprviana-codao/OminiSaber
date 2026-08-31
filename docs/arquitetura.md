@@ -1,45 +1,74 @@
-# OminiSaber: arquitetura e organização
+# Arquitetura do OminiSaber
 
 ## Visão geral
 
-O projeto é uma aplicação estática no frontend com Supabase como backend gerenciado:
+O OminiSaber é uma aplicação web estática integrada ao Supabase. O navegador entrega experiências por papel; o gateway JavaScript organiza operações; Auth identifica o usuário; PostgreSQL persiste dados e RLS decide o acesso.
 
-- **Frontend:** HTML sem build obrigatório, Tailwind CDN para prototipação visual e JavaScript compartilhado.
-- **Backend:** PostgreSQL, Auth e RLS do Supabase. O navegador usa somente a chave pública `anon`.
-- **Segurança:** permissões de interface são apenas UX; autorização real está nas policies RLS e nas funções SQL.
-- **Ambiente:** `backend/config/env.example.js` documenta as variáveis para ferramentas locais. Segredos reais ficam em `backend/.env`, ignorado pelo Git.
+~~~text
+Navegador
+  ├─ Login e cadastro
+  ├─ Área do aluno
+  ├─ Área da bibliotecária
+  ├─ Quatro áreas docentes especializadas
+  └─ Área do gestor
+        │
+        ▼
+window.OminiSaber
+        │
+        ▼
+Supabase Auth + PostgREST + RPC
+        │
+        ▼
+PostgreSQL + RLS + triggers
+~~~
 
-## Árvore de pastas
+## Camadas
 
-```text
-Consulte [`docs/estrutura-atual.md`](estrutura-atual.md) para a listagem completa. Os pontos principais são:
+### Apresentação
 
-- `frontend/aluno/shared/`: navegação, responsividade e carregamento de dados do shell integrado.
-- `frontend/aluno/laboratorio_de_redacao/`: protótipo independente com `index.html`, `script.js` e `style.css`.
-- `backend/`: cliente Supabase, configuração pública, schema, ferramenta de seed e dependências Node.
+frontend contém HTML, CSS e scripts por tela. Aluno prioriza aprendizagem e motivação; bibliotecária prioriza fila e conclusão de tarefas; professor e gestor mantêm visões institucionais.
 
-`backend/.env` e `backend/node_modules/` podem existir localmente, mas são ignorados pelo Git e não fazem parte do inventário do projeto.
-```
+### Gateway
 
-As telas integradas usam `code.html` como entrada. O laboratório de redação é uma exceção atual e usa `index.html` com CSS e JavaScript próprios. O que é compartilhado permanece em `frontend/aluno/shared` até a migração das demais áreas para o mesmo shell.
+backend/ominisaber-supabase-client.js expõe sessão, perfil, trilhas, progresso, notas, redações, livros, empréstimos e operações docentes de laboratórios e avaliações.
 
-## RBAC
+O gateway reduz duplicação, mas não substitui RLS.
 
-- **aluno:** dashboard, trilhas publicadas, próprias notas/redações e solicitações de empréstimo.
-- **professor:** dados pedagógicos dos alunos da própria turma, criação de trilhas e notas.
-- **bibliotecária:** acervo e empréstimos globalmente.
-- **gestor:** visão institucional e administração global.
+### Dados e autorização
 
-A tela de role usa um guard de UX em `supabase-client.js`; o bloqueio definitivo é feito pelas policies RLS do SQL.
+O schema principal contém turmas, perfis, trilhas, atividades, progresso, notas, redações, livros e empréstimos. Schemas complementares adicionam biblioteca digital, estoque, configurações, conquistas e os espaços docentes funcionais.
 
-## Fluxo de inicialização
+Policies usam auth.uid, papel e turma. RPCs concentram operações atômicas.
 
-1. A tela carrega o SDK Supabase, `supabase-config.js` e `supabase-client.js`.
-2. O cliente recupera a sessão Auth.
-3. O perfil é consultado em `perfis`.
-4. A tela de role é validada e os dados são carregados por serviços RLS.
-5. Falhas são exibidas como estado explícito. Sem configuração, o cliente emite um aviso e as telas de dados não exibem valores fictícios.
+## Autenticação
 
-## Configuração
+1. Login recebe e-mail ou matrícula.
+2. Supabase Auth cria a sessão.
+3. O gateway carrega perfil e papel.
+4. A aplicação abre a área correspondente.
+   Professores são encaminhados pelo valor de `tipo_professor`.
+5. Cada consulta é novamente autorizada por RLS.
 
-Crie `backend/.env` com as variáveis descritas em `backend/config/env.example.js` para ferramentas locais. Como HTML estático não lê `.env`, configure apenas `SUPABASE_URL` e `SUPABASE_ANON_KEY` em `backend/supabase-config.js`. Nunca copie `service_role` para o frontend.
+## Fluxo do aluno
+
+O painel combina perfil, notas e progresso. O mapa de domínio transforma notas por matéria em indicador navegável. Selecionar uma matéria revela conceito, resultado e prática recomendada. Evolução calcula XP e níveis a partir de ações acadêmicas.
+
+## Fluxo da bibliotecária
+
+O painel resume pendências. Empréstimos seguem aprovar, entregar e devolver. Acervo agrega título, exemplar, ISBN e localização. Regras de prazo e limite ficam separadas da fila diária.
+
+## Fluxo do professor
+
+O professor entra na pasta da própria especialidade. O dashboard consulta turmas, alunos, laboratórios, avaliações e entregas permitidas por RLS. Laboratórios podem ser salvos como rascunho ou publicados. Avaliações são compostas com questões específicas da área e persistidas nas tabelas docentes. Português também acessa o fluxo de propostas e correções de redação.
+
+## Execução
+
+- Produção: sessão Supabase e dados reais; sem sessão, retorna ao login.
+- Visualização legada: ?preview=1 permanece apenas nas telas antigas. Os novos espaços docentes não simulam dados.
+
+## Limites atuais
+
+- Algumas páginas legadas ainda são independentes.
+- Parte da biblioteca acessa api.client diretamente e deve migrar ao gateway.
+- Não existe pipeline automatizado de testes.
+- QA de dados reais exige contas de homologação por papel.

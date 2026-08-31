@@ -29,7 +29,7 @@
     {
       id: "mock-fisica-movimento",
       titulo: "Física em Movimento",
-      autor: "Coleção EduTech",
+      autor: "Coleção OminiSaber",
       materia: "Física",
       categoria: "Didáticos",
       palavras_chave: "força, energia, velocidade",
@@ -42,7 +42,7 @@
     {
       id: "mock-biologia-celula",
       titulo: "A célula por dentro",
-      autor: "Coleção EduTech",
+      autor: "Coleção OminiSaber",
       materia: "Biologia",
       categoria: "Apostilas",
       palavras_chave: "célula, genética, vida",
@@ -55,7 +55,7 @@
     {
       id: "mock-matematica-algebra",
       titulo: "Álgebra para pensar",
-      autor: "Coleção EduTech",
+      autor: "Coleção OminiSaber",
       materia: "Matemática",
       categoria: "Didáticos",
       palavras_chave: "equações, álgebra, problemas",

@@ -1,56 +1,42 @@
 (() => {
-  const api = window.OminiSaber;
-
-  const showToast = (message, type = "success") => {
-    const element = document.querySelector("[data-toast]");
-    element.textContent = message;
-    element.className = `toast visible ${type}`;
-    window.clearTimeout(element.timer);
-    element.timer = window.setTimeout(() => {
-      element.className = "toast";
-    }, 4500);
+  const previewMode = new URLSearchParams(location.search).get("preview") === "1";
+  const api = () => window.OminiSaber;
+  const demo = { pending: 6, pickup: 4, overdue: 3, available: 284 };
+  const setText = (selector, value) => document.querySelectorAll(selector).forEach((node) => { node.textContent = value; });
+  const toast = (message) => {
+    const node = document.querySelector("[data-toast]"); node.textContent = message; node.classList.add("visible"); clearTimeout(node.timer); node.timer = setTimeout(() => node.classList.remove("visible"), 3200);
   };
-
-  const loadStats = async () => {
-    const [booksResult, requestsResult] = await Promise.all([
-      api.client
-        .from("livros")
-        .select("quantidade_total, quantidade_disponivel"),
-      api.client
-        .from("solicitacoes_emprestimo")
-        .select("status, devolucao_prevista_em"),
-    ]);
-
-    if (booksResult.error) throw booksResult.error;
-    if (requestsResult.error) throw requestsResult.error;
-
-    const books = booksResult.data || [];
-    const requests = requestsResult.data || [];
-    document.querySelector("[data-total]").textContent = books.reduce(
-      (sum, book) => sum + Number(book.quantidade_total || 0),
-      0,
-    );
-    document.querySelector("[data-available]").textContent = books.reduce(
-      (sum, book) => sum + Number(book.quantidade_disponivel || 0),
-      0,
-    );
-    document.querySelector("[data-pending]").textContent = requests.filter(
-      (request) => request.status === "pendente",
-    ).length;
-    document.querySelector("[data-overdue]").textContent = requests.filter(
-      (request) =>
-        request.status === "emprestado" &&
-        new Date(request.devolucao_prevista_em) < new Date(),
-    ).length;
+  const render = (stats) => { setText("[data-pending]", stats.pending); setText("[data-pickup]", stats.pickup); setText("[data-overdue]", stats.overdue); setText("[data-available]", stats.available); };
+  const load = async () => {
+    if (previewMode || !api()?.configured) { render(demo); return; }
+    try {
+      const [{ data: books, error: bookError }, { data: requests, error: requestError }] = await Promise.all([
+        api().client.from("livros").select("quantidade_disponivel"),
+        api().client.from("solicitacoes_emprestimo").select("status,devolucao_prevista_em"),
+      ]);
+      if (bookError) throw bookError; if (requestError) throw requestError;
+      render({
+        pending: requests.filter((item) => item.status === "pendente").length,
+        pickup: requests.filter((item) => item.status === "aprovado").length,
+        overdue: requests.filter((item) => item.status === "emprestado" && new Date(item.devolucao_prevista_em) < new Date()).length,
+        available: books.reduce((total, item) => total + Number(item.quantidade_disponivel || 0), 0),
+      });
+    } catch (error) { toast(error.message || "Não foi possível atualizar o resumo."); }
   };
-
-  document.addEventListener("ominisaber:ready", () => {
-    loadStats().catch(() => {
-      showToast("Não foi possível atualizar os indicadores agora.", "error");
-    });
+  document.querySelector("[data-queue]")?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-queue-action]");
+    if (!button) return;
+    button.textContent = "Contato registrado"; button.disabled = true; button.closest("article").classList.add("resolved"); toast("Contato registrado na fila de acompanhamento.");
   });
-
-  document.querySelector("[data-signout]")?.addEventListener("click", () => {
-    api.signOut();
+  const search = document.querySelector("[data-global-search]");
+  search?.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter" || !search.value.trim()) return;
+    const dialog = document.querySelector("[data-search-dialog]");
+    dialog.querySelector("[data-search-results]").innerHTML = `<article class="search-result"><strong>${search.value}</strong><span>Busca rápida pronta. Abra Empréstimos para consultar registros completos.</span></article>`;
+    dialog.showModal();
   });
+  document.querySelector("[data-menu-toggle]")?.addEventListener("click", () => document.body.classList.toggle("menu-open"));
+  document.querySelector("[data-signout]")?.addEventListener("click", () => api()?.signOut());
+  document.addEventListener("ominisaber:ready", load);
+  load();
 })();

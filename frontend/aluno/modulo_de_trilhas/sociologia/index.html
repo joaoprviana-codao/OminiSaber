@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sociologia | OminiSaber</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="../../../../backend/ominisaber-supabase-config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../../../backend/ominisaber-supabase-client.js"></script>
+    <script defer src="script.js"></script>
+  </head>
+  <body data-matter="Sociologia" data-mode="society">
+    <header>
+      <a href="../index.html">← Catálogo</a><strong>SOCIOLOGIA</strong
+      ><a href="../../dashboard_principal/index.html">Dashboard ↗</a>
+    </header>
+    <main>
+      <section class="hero">
+        <small>CIÊNCIAS HUMANAS / SOCIEDADE</small>
+        <h1>Enxergue<br />as estruturas.</h1>
+        <p>Conecte experiências individuais a forças sociais maiores.</p>
+        <strong data-progress>--%</strong>
+      </section>
+      <section class="matrix">
+        <small>MAPA DE PERSPECTIVAS</small>
+        <h2>Uma situação cotidiana</h2>
+        <p>
+          “O acesso à internet muda as chances de estudar, trabalhar e
+          participar da cidade.”
+        </p>
+        <div class="perspectives">
+          <button data-perspective="renda">Renda</button
+          ><button data-perspective="cultura">Cultura</button
+          ><button data-perspective="poder">Poder</button>
+        </div>
+        <p data-perspective-info>Escolha uma lente sociológica.</p>
+      </section>
+      <section class="trails">
+        <small>TRILHAS DE SOCIOLOGIA</small>
+        <div data-trails>Carregando...</div>
+      </section>
+    </main>
+  </body>
+</html>

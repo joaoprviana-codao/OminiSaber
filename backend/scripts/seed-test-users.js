@@ -12,7 +12,10 @@ const admin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
 
 const users = [
   { username: 'useraluno', email: 'useraluno@ominisaber.test', password: 'senha123aluno', role: 'aluno', nome: 'Usuário Aluno' },
-  { username: 'userprofessor', email: 'userprofessor@ominisaber.test', password: 'senha123professor', role: 'professor', nome: 'Usuário Professor' },
+  { username: 'profmatematica', email: 'profmatematica@ominisaber.test', password: 'senha123matematica', role: 'professor', tipoProfessor: 'matematica', nome: 'Marcos Nogueira' },
+  { username: 'profportugues', email: 'profportugues@ominisaber.test', password: 'senha123portugues', role: 'professor', tipoProfessor: 'portugues', nome: 'Helena Costa' },
+  { username: 'profadministracao', email: 'profadministracao@ominisaber.test', password: 'senha123administracao', role: 'professor', tipoProfessor: 'tecnico_administracao', nome: 'Renata Alves' },
+  { username: 'profinformatica', email: 'profinformatica@ominisaber.test', password: 'senha123informatica', role: 'professor', tipoProfessor: 'tecnico_informatica', nome: 'Caio Martins' },
   { username: 'userbibliotecaria', email: 'userbibliotecaria@ominisaber.test', password: 'senha123bibliotecaria', role: 'bibliotecaria', nome: 'Usuária Bibliotecária' },
   { username: 'usergestor', email: 'usergestor@ominisaber.test', password: 'senha123gestor', role: 'gestor', nome: 'Usuário Gestor' }
 ];
@@ -53,7 +56,8 @@ for (const definition of users) {
     id: user.id,
     nome: definition.nome,
     matricula: definition.username,
-    role: definition.role
+    role: definition.role,
+    tipo_professor: definition.tipoProfessor || null
   }, { onConflict: 'id' });
   if (profileError) throw profileError;
 

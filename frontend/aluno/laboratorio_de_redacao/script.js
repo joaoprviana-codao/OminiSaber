@@ -1,313 +1,217 @@
 (() => {
-  const themes = {
-    "inclusao-digital": {
-      title:
-        "Os desafios da inclusão digital e da inteligência artificial no cotidiano brasileiro",
-      category: "Tecnologia",
-      motivators: [
-        [
-          "Texto I",
-          "A conectividade amplia o acesso a serviços e oportunidades, mas ainda convive com desigualdades de infraestrutura, renda e letramento digital.",
-        ],
-        [
-          "Texto II",
-          "O avanço da inteligência artificial exige formação crítica para que seus benefícios não aprofundem exclusões já existentes.",
-        ],
-      ],
-    },
-    "infraestrutura-climatica": {
-      title:
-        "Os impactos das mudanças climáticas na infraestrutura urbana do Brasil",
-      category: "Meio ambiente",
-      motivators: [
-        [
-          "Texto I",
-          "Eventos climáticos extremos expõem a fragilidade de sistemas urbanos e atingem de modo desproporcional áreas com menor infraestrutura.",
-        ],
-        [
-          "Texto II",
-          "Planejamento preventivo, adaptação e participação social são elementos centrais para construir cidades mais resilientes.",
-        ],
-      ],
-    },
-    "acesso-cultura": {
-      title:
-        "A democratização do acesso à cultura e ao lazer nas periferias brasileiras",
-      category: "Sociedade",
-      motivators: [
-        [
-          "Texto I",
-          "Equipamentos culturais concentrados e custos de deslocamento limitam a participação de moradores das periferias na vida cultural.",
-        ],
-        [
-          "Texto II",
-          "Iniciativas comunitárias mostram que políticas públicas contínuas podem fortalecer a produção cultural local e a cidadania.",
-        ],
-      ],
-    },
-  };
-  const state = {
-    step: 1,
-    selectedTheme: null,
-    invalid: false,
-    submitting: false,
-  };
-  const elements = {
-    steps: [...document.querySelectorAll("[data-step]")],
-    stepButtons: [...document.querySelectorAll("[data-step-target]")],
-    feedback: document.querySelector("[data-feedback]"),
-    selectedTheme: document.querySelector("[data-selected-theme]"),
-    motivators: document.querySelector("[data-motivators]"),
-    planner: document.querySelector("[data-planning-notes]"),
-    plannerCount: document.querySelector("[data-planning-count]"),
-    title: document.querySelector("[data-official-title]"),
-    text: document.querySelector("[data-official-text]"),
-    wordCount: document.querySelector("[data-word-count]"),
-    lineCount: document.querySelector("[data-line-count]"),
-    saveStatus: document.querySelector("[data-save-status]"),
-    submit: document.querySelector("[data-submit]"),
-    integrityStatus: document.querySelector("[data-integrity-status]"),
-    invalidAttempt: document.querySelector("[data-invalid-attempt]"),
-    restart: document.querySelector("[data-restart]"),
-  };
-
+  const params = new URLSearchParams(location.search);
+  const preview = params.get('preview') === '1';
   const api = () => window.OminiSaber;
-  const showFeedback = (message, type = "") => {
-    elements.feedback.textContent = message;
-    elements.feedback.className = `feedback${type ? ` is-${type}` : ""}`;
-  };
-  const escapeHTML = (value) =>
-    String(value ?? "").replace(
-      /[&<>'"]/g,
-      (character) =>
-        ({
-          "&": "&amp;",
-          "<": "&lt;",
-          ">": "&gt;",
-          "'": "&#39;",
-          '"': "&quot;",
-        })[character],
-    );
-  const setStep = (step) => {
-    if (step === 2 && !state.selectedTheme) {
-      showFeedback("Escolha um tema antes de continuar.", "error");
-      return;
+  const fixedThemes = [
+    {
+      id: 'fixed:saude-mental-juventude', title: 'Caminhos para promover a saúde mental entre jovens brasileiros', category: 'saude', categoryLabel: 'Saúde', axis: 'Juventude e bem-estar', difficulty: 'intermediaria', estimatedMinutes: 90,
+      summary: 'Analise como escola, família, poder público e plataformas digitais podem construir redes de cuidado acessíveis.',
+      command: 'Escreva um texto dissertativo-argumentativo sobre os desafios para promover a saúde mental entre jovens no Brasil, apresentando proposta de intervenção que respeite os direitos humanos.',
+      keywords: ['saúde mental', 'juventude', 'escola', 'cuidado'],
+      motivators: [{ title: 'Ponto de partida', text: 'O sofrimento psíquico juvenil não pode ser reduzido a uma fragilidade individual: ele envolve relações sociais, acesso a serviços e ambientes de convivência.' }, { title: 'Questão para observar', text: 'Como criar acolhimento sem transformar toda dificuldade cotidiana em diagnóstico e sem silenciar situações que precisam de atenção profissional?' }],
+      details: { recorte: 'Redes de prevenção, acolhimento e acesso a atendimento qualificado.', perguntas: ['Quais barreiras impedem o pedido de ajuda?', 'Que papel cabe à escola sem substituir profissionais da saúde?'] },
+      repertoires: [{ id: 'fixed:sm:cultural', category: 'cultural', title: 'Divertida Mente 2', reference: 'A animação representa ansiedade, pertencimento e mudanças emocionais na adolescência.', application: 'Use para discutir alfabetização emocional e a necessidade de espaços seguros de escuta.' }, { id: 'fixed:sm:legal', category: 'legal', title: 'Lei nº 14.819/2024', reference: 'Institui a Política Nacional de Atenção Psicossocial nas Comunidades Escolares.', application: 'Relacione a lei à implementação concreta de prevenção e cuidado no ambiente escolar.' }]
+    },
+    {
+      id: 'fixed:desinformacao-digital', title: 'Os impactos da desinformação na participação cidadã brasileira', category: 'tecnologia', categoryLabel: 'Tecnologia', axis: 'Informação e democracia', difficulty: 'avancada', estimatedMinutes: 100,
+      summary: 'Discuta formação crítica, responsabilidade das plataformas e acesso a informação confiável.',
+      command: 'Produza uma redação sobre os impactos da desinformação digital na participação cidadã brasileira e proponha medidas de enfrentamento.', keywords: ['desinformação', 'cidadania', 'plataformas', 'educação midiática'],
+      motivators: [{ title: 'Ponto de partida', text: 'Conteúdos falsos circulam em ambientes moldados por recomendação algorítmica, confiança entre pares e respostas emocionais.' }, { title: 'Tensão central', text: 'O combate à desinformação precisa proteger o debate público sem legitimar censura arbitrária.' }],
+      details: { recorte: 'Educação midiática, transparência e responsabilização proporcional.', perguntas: ['Por que conteúdos enganosos convencem?', 'Como fortalecer a verificação sem restringir a liberdade de expressão?'] },
+      repertoires: [{ id: 'fixed:desinfo:cientifico', category: 'cientifico', title: 'Viés de confirmação', reference: 'Pessoas tendem a valorizar informações coerentes com crenças já existentes.', application: 'Explique por que apenas disponibilizar fatos pode não desfazer uma narrativa falsa.' }, { id: 'fixed:desinfo:cultural', category: 'cultural', title: 'O Dilema das Redes', reference: 'O documentário discute modelos de negócio baseados em atenção e recomendação.', application: 'Relacione arquitetura de plataformas à amplificação de conteúdo polarizador.' }]
+    },
+    {
+      id: 'fixed:memoria-indigena', title: 'A valorização da memória e dos saberes dos povos indígenas no Brasil', category: 'educacao', categoryLabel: 'Educação', axis: 'Memória e diversidade', difficulty: 'intermediaria', estimatedMinutes: 90,
+      summary: 'Reflita sobre currículo, patrimônio, autoria indígena e combate a representações estereotipadas.',
+      command: 'Discuta desafios para valorizar a memória e os saberes dos povos indígenas no Brasil, com proposta de intervenção socialmente responsável.', keywords: ['povos indígenas', 'memória', 'currículo', 'patrimônio'],
+      motivators: [{ title: 'Ponto de partida', text: 'Os povos indígenas são diversos e contemporâneos; tratá-los apenas no passado apaga suas vozes e seus projetos de futuro.' }, { title: 'Questão para observar', text: 'Valorizar saberes exige reconhecer autoria, território e contexto, evitando apropriação cultural.' }],
+      details: { recorte: 'Educação, produção cultural e políticas de memória.', perguntas: ['Quem narra essas histórias?', 'Como superar abordagens folclorizadas?'] },
+      repertoires: [{ id: 'fixed:indigena:literario', category: 'literario', title: 'Ailton Krenak', reference: 'Em Ideias para adiar o fim do mundo, o autor questiona a separação entre humanidade e natureza.', application: 'Use para discutir como saberes indígenas ampliam concepções de sociedade e ambiente.' }, { id: 'fixed:indigena:legal', category: 'legal', title: 'Lei nº 11.645/2008', reference: 'Torna obrigatório o estudo da história e cultura afro-brasileira e indígena.', application: 'Contraste a previsão legal com dificuldades de formação docente e material didático.' }]
+    },
+    {
+      id: 'fixed:mobilidade-urbana', title: 'Desafios para garantir mobilidade urbana inclusiva nas cidades brasileiras', category: 'sociedade', categoryLabel: 'Sociedade', axis: 'Cidade e direito', difficulty: 'intermediaria', estimatedMinutes: 90,
+      summary: 'Analise tempo de deslocamento, acessibilidade, transporte coletivo e desigualdade territorial.',
+      command: 'Escreva sobre os desafios da mobilidade urbana inclusiva no Brasil e apresente uma proposta de intervenção detalhada.', keywords: ['mobilidade', 'acessibilidade', 'transporte público', 'cidade'],
+      motivators: [{ title: 'Ponto de partida', text: 'O acesso à cidade depende de deslocamentos seguros, acessíveis e compatíveis com a rotina de estudo, trabalho e cuidado.' }, { title: 'Tensão central', text: 'A prioridade ao automóvel particular disputa espaço e investimento com transporte coletivo e mobilidade ativa.' }],
+      details: { recorte: 'Transporte coletivo, acessibilidade universal e planejamento urbano.', perguntas: ['Quem perde mais tempo no deslocamento?', 'Como integrar diferentes meios de transporte?'] },
+      repertoires: [{ id: 'fixed:mobi:legal', category: 'legal', title: 'Estatuto da Cidade', reference: 'A Lei nº 10.257/2001 estabelece diretrizes para a função social da cidade.', application: 'Relacione planejamento urbano ao acesso equitativo a serviços e oportunidades.' }, { id: 'fixed:mobi:cultural', category: 'cultural', title: 'Tempos Modernos', reference: 'O filme de Chaplin representa rotinas humanas subordinadas à organização produtiva.', application: 'Faça uma analogia cuidadosa com o tempo cotidiano consumido por deslocamentos precários.' }]
+    },
+    {
+      id: 'fixed:residuos-eletronicos', title: 'Responsabilidade compartilhada diante do descarte de resíduos eletrônicos', category: 'meio-ambiente', categoryLabel: 'Meio ambiente', axis: 'Consumo e sustentabilidade', difficulty: 'avancada', estimatedMinutes: 100,
+      summary: 'Investigue consumo acelerado, logística reversa, reparabilidade e inclusão de trabalhadores da reciclagem.',
+      command: 'Produza um texto sobre a responsabilidade compartilhada no descarte de resíduos eletrônicos no Brasil.', keywords: ['lixo eletrônico', 'logística reversa', 'consumo', 'reciclagem'],
+      motivators: [{ title: 'Ponto de partida', text: 'A renovação frequente de dispositivos gera resíduos com materiais valiosos e componentes potencialmente tóxicos.' }, { title: 'Questão para observar', text: 'Fabricantes, comércio, consumidores e governo ocupam posições diferentes na cadeia de responsabilidade.' }],
+      details: { recorte: 'Ciclo de vida dos produtos e implementação da logística reversa.', perguntas: ['Quem arca com o custo do descarte?', 'Como ampliar reparo, coleta e rastreabilidade?'] },
+      repertoires: [{ id: 'fixed:residuo:legal', category: 'legal', title: 'Política Nacional de Resíduos Sólidos', reference: 'A Lei nº 12.305/2010 prevê responsabilidade compartilhada pelo ciclo de vida dos produtos.', application: 'Use como parâmetro para avaliar a distância entre norma, infraestrutura de coleta e informação ao consumidor.' }, { id: 'fixed:residuo:cultural', category: 'cultural', title: 'Obsolescência programada', reference: 'O conceito descreve estratégias que reduzem intencionalmente a vida útil percebida ou funcional de produtos.', application: 'Relacione design, reparabilidade e pressão por consumo à geração de resíduos eletrônicos.' }]
+    },
+    {
+      id: 'fixed:envelhecimento-populacional', title: 'Caminhos para uma sociedade preparada para o envelhecimento da população', category: 'sociedade', categoryLabel: 'Sociedade', axis: 'Demografia e cuidado', difficulty: 'intermediaria', estimatedMinutes: 90,
+      summary: 'Debata cuidado, autonomia, trabalho, acessibilidade e combate ao etarismo.',
+      command: 'Discuta como o Brasil pode se preparar para o envelhecimento populacional, garantindo autonomia e dignidade.', keywords: ['envelhecimento', 'etarismo', 'cuidado', 'acessibilidade'],
+      motivators: [{ title: 'Ponto de partida', text: 'O envelhecimento populacional transforma demandas de saúde, previdência, moradia, mobilidade e redes familiares de cuidado.' }, { title: 'Tensão central', text: 'A longevidade é uma conquista social, mas seus benefícios não são distribuídos igualmente.' }],
+      details: { recorte: 'Políticas de cuidado e participação social das pessoas idosas.', perguntas: ['Como preservar autonomia?', 'Quem realiza o trabalho de cuidado e em quais condições?'] },
+      repertoires: [{ id: 'fixed:idoso:legal', category: 'legal', title: 'Estatuto da Pessoa Idosa', reference: 'A Lei nº 10.741/2003 assegura direitos e prioridade à população idosa.', application: 'Use para avaliar obstáculos concretos à autonomia, proteção e participação social.' }, { id: 'fixed:idoso:historico', category: 'historico', title: 'Transição demográfica brasileira', reference: 'Queda da fecundidade e aumento da expectativa de vida alteraram rapidamente a estrutura etária.', application: 'Contextualize por que políticas de cuidado e infraestrutura precisam se antecipar à mudança demográfica.' }]
     }
-    if (step === 3 && !state.selectedTheme) {
-      showFeedback(
-        "Escolha um tema antes de abrir a redação oficial.",
-        "error",
-      );
-      return;
-    }
-    state.step = step;
-    elements.steps.forEach((panel) =>
-      panel.classList.toggle("is-hidden", Number(panel.dataset.step) !== step),
-    );
-    elements.stepButtons.forEach((button) => {
-      const active = Number(button.dataset.stepTarget) === step;
-      button.classList.toggle("is-active", active);
-      if (active) button.setAttribute("aria-current", "step");
-      else button.removeAttribute("aria-current");
-    });
-    if (step === 3) {
-      elements.title.focus();
-    }
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-  const renderPlanning = () => {
-    const theme = themes[state.selectedTheme];
-    elements.selectedTheme.innerHTML = `<span class="material-symbols-outlined">topic</span><span>Tema selecionado: <strong>${escapeHTML(theme.title)}</strong></span>`;
-    elements.motivators.innerHTML = theme.motivators
-      .map(
-        ([title, text]) =>
-          `<div class="motivator"><h4>${escapeHTML(title)}</h4><p>${escapeHTML(text)}</p></div>`,
-      )
-      .join("");
-    elements.title.value = theme.title;
-  };
-  const updatePlanningCount = () => {
-    elements.plannerCount.textContent = `${elements.planner.value.length} caracteres`;
-  };
-  const updateOfficialCount = () => {
-    const text = elements.text.value.trim();
-    const words = text ? text.split(/\s+/).filter(Boolean).length : 0;
-    const lines = text ? text.split(/\n/).length : 0;
-    elements.wordCount.textContent = words;
-    elements.lineCount.textContent = lines;
-    elements.saveStatus.textContent = text
-      ? "Texto em edição"
-      : "Pronto para começar";
-  };
-  const invalidateAttempt = () => {
-    if (state.step !== 3 || state.invalid) return;
-    state.invalid = true;
-    elements.invalidAttempt.classList.remove("is-hidden");
-    elements.integrityStatus.classList.add("is-invalid");
-    elements.integrityStatus.innerHTML =
-      '<span class="material-symbols-outlined">gpp_bad</span>Tentativa inválida';
-    elements.title.disabled = true;
-    elements.text.disabled = true;
-    elements.submit.disabled = true;
-    showFeedback("A tentativa foi bloqueada por troca de tela.", "error");
-  };
-  const handleIntegrityEvent = (event) => {
-    if (state.step !== 3 || state.invalid) return;
-    if (["copy", "paste", "cut", "contextmenu"].includes(event.type)) {
-      event.preventDefault();
-      showFeedback(
-        "Esta ação está desabilitada durante a redação oficial.",
-        "error",
-      );
-    }
-  };
-  const handleKeydown = (event) => {
-    if (state.step !== 3 || state.invalid) return;
-    const key = event.key.toLowerCase();
-    const blockedShortcut =
-      event.key === "F12" ||
-      (event.ctrlKey && event.shiftKey && ["i", "j"].includes(key)) ||
-      (event.ctrlKey && ["u", "c", "v"].includes(key));
-    if (blockedShortcut) {
-      event.preventDefault();
-      showFeedback(
-        "Este atalho está desabilitado durante a redação oficial.",
-        "error",
-      );
-    }
-  };
-  const resetFlow = () => {
-    state.step = 1;
-    state.selectedTheme = null;
-    state.invalid = false;
-    state.submitting = false;
-    elements.title.disabled = false;
-    elements.text.disabled = false;
-    elements.submit.disabled = false;
-    elements.title.value = "";
-    elements.text.value = "";
-    elements.planner.value = "";
-    updatePlanningCount();
-    updateOfficialCount();
-    elements.invalidAttempt.classList.add("is-hidden");
-    elements.integrityStatus.classList.remove("is-invalid");
-    elements.integrityStatus.innerHTML =
-      '<span class="material-symbols-outlined">shield</span>Ambiente protegido';
-    showFeedback("");
-    setStep(1);
-  };
-  const submitEssay = async () => {
-    if (state.invalid || state.submitting) return;
-    const title = elements.title.value.trim();
-    const text = elements.text.value.trim();
-    if (!title || !text) {
-      showFeedback(
-        "Preencha o título e o texto final antes de enviar.",
-        "error",
-      );
-      return;
-    }
-    if (text.split(/\s+/).filter(Boolean).length < 20) {
-      showFeedback(
-        "Escreva pelo menos 20 palavras para enviar sua redação.",
-        "error",
-      );
-      return;
-    }
-    state.submitting = true;
-    elements.submit.disabled = true;
-    elements.submit.innerHTML =
-      '<span class="material-symbols-outlined">progress_activity</span>Enviando...';
-    try {
-      if (!api()?.configured)
-        throw new Error("O Supabase não está configurado para este ambiente.");
-      const session = await api().getSession();
-      if (!session) {
-        window.location.href = "../../login/code.html";
-        return;
-      }
-      await api().createRedacao({ titulo: title, texto: text, trilhaId: null });
-      showFeedback("Redação enviada com sucesso para avaliação.", "success");
-      elements.saveStatus.textContent = "Enviada para avaliação";
-    } catch (error) {
-      showFeedback(
-        error.message || "Não foi possível enviar sua redação.",
-        "error",
-      );
-      state.submitting = false;
-      elements.submit.disabled = false;
-    } finally {
-      if (!state.submitting)
-        elements.submit.innerHTML =
-          'Enviar para avaliação <span class="material-symbols-outlined">send</span>';
-    }
-  };
+  ];
 
-  document.querySelectorAll("[data-theme-filter]").forEach((button) =>
-    button.addEventListener("click", () => {
-      document
-        .querySelectorAll("[data-theme-filter]")
-        .forEach((item) => item.classList.toggle("is-active", item === button));
-      document
-        .querySelectorAll("[data-theme-card]")
-        .forEach((card) =>
-          card.classList.toggle(
-            "is-filtered",
-            button.dataset.themeFilter !== "todos" &&
-              card.dataset.category !== button.dataset.themeFilter,
-          ),
-        );
-    }),
-  );
-  document
-    .querySelectorAll("[data-theme-card] .select-theme")
-    .forEach((button) =>
-      button.addEventListener("click", (event) => {
-        state.selectedTheme =
-          event.currentTarget.closest("[data-theme-card]").dataset.themeId;
-        renderPlanning();
-        setStep(2);
-      }),
-    );
-  elements.stepButtons.forEach((button) =>
-    button.addEventListener("click", () =>
-      setStep(Number(button.dataset.stepTarget)),
-    ),
-  );
-  document
-    .querySelectorAll("[data-back-step], [data-next-step]")
-    .forEach((button) =>
-      button.addEventListener("click", () =>
-        setStep(Number(button.dataset.backStep || button.dataset.nextStep)),
-      ),
-    );
-  elements.planner.addEventListener("input", updatePlanningCount);
-  elements.text.addEventListener("input", updateOfficialCount);
-  elements.submit.addEventListener("click", submitEssay);
-  elements.restart.addEventListener("click", resetFlow);
-  ["copy", "paste", "cut", "contextmenu"].forEach((eventName) =>
-    document.addEventListener(eventName, handleIntegrityEvent),
-  );
-  document.addEventListener("keydown", handleKeydown);
-  document.addEventListener("visibilitychange", () => {
-    if (document.hidden) invalidateAttempt();
+  const state = { step: 1, themes: [...fixedThemes], selected: null, planning: null, essayId: params.get('redacao'), repertoires: [], selectedRepertoires: new Set(), themeFilter: 'todos', repertoireFilter: 'todos', savingPlan: false, savingDraft: false };
+  const $ = (selector) => document.querySelector(selector);
+  const $$ = (selector) => [...document.querySelectorAll(selector)];
+  const el = { panels: $$('[data-step]'), steps: $$('[data-step-target]'), pinned: $('[data-pinned-grid]'), grid: $('[data-theme-grid]'), total: $('[data-theme-total]'), search: $('[data-theme-search]'), selected: $('[data-selected-theme]'), notes: $('[data-planning-notes]'), thesis: $('[data-planning-thesis]'), arguments: $$('[data-argument]'), interventions: $$('[data-intervention]'), planStatus: $('[data-planning-status]'), repertoireGrid: $('[data-repertoire-grid]'), repertoireCount: $('[data-repertoire-count]'), title: $('[data-official-title]'), text: $('[data-official-text]'), draftStatus: $('[data-draft-status]'), notesContent: $('[data-notes-content]'), writingTheme: $('[data-writing-theme]'), feedback: $('[data-feedback]'), dialog: $('[data-theme-dialog]'), dialogContent: $('[data-theme-dialog-content]') };
+  const escapeHTML = (value = '') => String(value).replace(/[&<>'"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[char]));
+  const slug = (value = '') => String(value).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+  const safeUrl = (value = '') => { try { const url = new URL(value, location.href); return ['http:', 'https:'].includes(url.protocol) ? url.href : ''; } catch { return ''; } };
+  const categoryIcon = { sociedade: 'groups', tecnologia: 'devices', 'meio-ambiente': 'eco', educacao: 'school', saude: 'health_and_safety', cultura: 'theater_comedy' };
+  const categoryClass = { tecnologia: 'theme-tech', 'meio-ambiente': 'theme-nature', sociedade: 'theme-society', educacao: 'theme-education', saude: 'theme-health', cultura: 'theme-culture' };
+  const repertoireLabels = { cultural: 'Cultural', estatistico: 'Estatístico', historico: 'Histórico', cientifico: 'Científico', legal: 'Legal', literario: 'Literário' };
+  const notify = (message, type = '') => { el.feedback.textContent = message; el.feedback.className = `feedback${type ? ` is-${type}` : ''}`; };
+  const setPill = (node, message, mode = '') => { node.className = `save-pill${mode ? ` is-${mode}` : ''}`; node.innerHTML = `<span class="material-symbols-outlined" aria-hidden="true">${mode === 'saving' ? 'sync' : mode === 'error' ? 'cloud_off' : 'cloud_done'}</span>${escapeHTML(message)}`; };
+  const fixedThemeFromDb = (prompt) => ({
+    id: `db:${prompt.id}`, proposalId: prompt.id, title: prompt.titulo, category: slug(prompt.categoria || 'sociedade'), categoryLabel: prompt.categoria || 'Sociedade', axis: prompt.eixo_tematico || prompt.categoria || 'Tema contemporâneo', difficulty: prompt.dificuldade || 'intermediaria', estimatedMinutes: prompt.tempo_estimado_min || 90, summary: prompt.resumo || prompt.comando, command: prompt.comando, keywords: prompt.palavras_chave || [], motivators: (prompt.textos_motivadores || []).map((item, index) => typeof item === 'string' ? { title: `Texto ${index + 1}`, text: item } : { title: item.titulo || `Texto ${index + 1}`, text: item.texto || item.conteudo || '' }), materials: prompt.materiais_redacao || [], details: prompt.detalhes || {}, pinned: prompt.fixada, deadline: prompt.prazo, source: 'supabase', repertoires: []
   });
-  document.addEventListener("DOMContentLoaded", async () => {
-    if (api()?.configured) {
-      const profile = await api()
-        .getProfile()
-        .catch(() => null);
-      const name = profile?.nome || "Aluno";
-      document.querySelectorAll("[data-initials]").forEach((element) => {
-        element.textContent = name
-          .split(" ")
-          .slice(0, 2)
-          .map((part) => part[0])
-          .join("")
-          .toUpperCase();
-      });
+  const renderThemeCard = (theme) => `<article class="theme-card" data-theme-card="${escapeHTML(theme.id)}" data-category="${escapeHTML(theme.category)}"><div class="theme-card-top ${categoryClass[theme.category] || 'theme-society'}"><span class="theme-badge">${escapeHTML(theme.categoryLabel)}</span><span class="material-symbols-outlined" aria-hidden="true">${categoryIcon[theme.category] || 'edit_note'}</span></div><div class="theme-card-body"><span class="source-label"><span class="material-symbols-outlined" aria-hidden="true">${theme.source === 'supabase' ? 'database' : 'verified'}</span>${theme.source === 'supabase' ? 'Professora' : 'Acervo OminiSaber'}</span><h3>${escapeHTML(theme.title)}</h3><p>${escapeHTML(theme.summary)}</p><div class="theme-meta"><span><span class="material-symbols-outlined" aria-hidden="true">schedule</span>${Number(theme.estimatedMinutes)} min</span><span><span class="material-symbols-outlined" aria-hidden="true">signal_cellular_alt</span>${escapeHTML(theme.difficulty)}</span><span><span class="material-symbols-outlined" aria-hidden="true">article</span>${(theme.motivators || []).length + (theme.materials || []).length} materiais</span></div><div class="theme-card-actions"><button class="button button-primary" type="button" data-select-theme="${escapeHTML(theme.id)}">Escolher tema<span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span></button><button class="details-button" type="button" data-open-theme="${escapeHTML(theme.id)}" aria-label="Ver detalhes de ${escapeHTML(theme.title)}"><span class="material-symbols-outlined" aria-hidden="true">info</span></button></div></div></article>`;
+  const renderThemes = () => {
+    const query = el.search.value.trim().toLowerCase();
+    const filtered = state.themes.filter((theme) => (state.themeFilter === 'todos' || theme.category === state.themeFilter) && (!query || `${theme.title} ${theme.summary} ${theme.axis} ${(theme.keywords || []).join(' ')}`.toLowerCase().includes(query)));
+    el.grid.innerHTML = filtered.length ? filtered.map(renderThemeCard).join('') : '<p class="empty-inline"><span class="material-symbols-outlined">search_off</span>Nenhum tema encontrado. Tente outro filtro ou termo.</p>';
+    el.total.textContent = `${filtered.length} ${filtered.length === 1 ? 'tema' : 'temas'}`;
+  };
+  const renderPinned = () => {
+    const pinnedThemes = state.themes.filter((theme) => theme.source === 'supabase' && theme.pinned);
+    const pinnedMaterials = state.themes.flatMap((theme) => (theme.materials || []).filter((item) => item.fixado).map((item) => ({ theme, item })));
+    const cards = [
+      ...pinnedThemes.map((theme) => `<article class="pinned-card"><span class="material-symbols-outlined" aria-hidden="true">assignment</span><div><h4>${escapeHTML(theme.title)}</h4><p>Proposta fixada · ${escapeHTML(theme.categoryLabel)}</p></div><button type="button" data-open-theme="${escapeHTML(theme.id)}" aria-label="Abrir proposta fixada"><span class="material-symbols-outlined">arrow_forward</span></button></article>`),
+      ...pinnedMaterials.map(({ theme, item }) => `<article class="pinned-card"><span class="material-symbols-outlined" aria-hidden="true">article</span><div><h4>${escapeHTML(item.titulo)}</h4><p>${escapeHTML(item.tipo.replaceAll('_', ' '))} · ${escapeHTML(theme.title)}</p></div><button type="button" data-open-theme="${escapeHTML(theme.id)}" aria-label="Abrir texto fixado"><span class="material-symbols-outlined">arrow_forward</span></button></article>`)
+    ];
+    el.pinned.innerHTML = cards.length ? cards.join('') : '<p class="empty-inline"><span class="material-symbols-outlined">keep_off</span>Nenhum texto ou proposta foi fixado pela professora para sua turma.</p>';
+  };
+  const openDetails = (theme) => {
+    const materials = [...(theme.motivators || []).map((item) => ({ titulo: item.title, conteudo: item.text })), ...(theme.materials || [])];
+    el.dialogContent.innerHTML = `<header class="dialog-hero"><p class="eyebrow">${escapeHTML(theme.categoryLabel)} · ${escapeHTML(theme.axis)}</p><h2 id="theme-dialog-title">${escapeHTML(theme.title)}</h2><p>${escapeHTML(theme.summary)}</p></header><div class="dialog-body"><div class="dialog-facts"><div><span>Dificuldade</span><strong>${escapeHTML(theme.difficulty)}</strong></div><div><span>Tempo sugerido</span><strong>${Number(theme.estimatedMinutes)} min</strong></div><div><span>Materiais</span><strong>${materials.length}</strong></div><div><span>Origem</span><strong>${theme.source === 'supabase' ? 'Professora' : 'OminiSaber'}</strong></div></div><section class="dialog-command"><h3>Comando da proposta</h3><p>${escapeHTML(theme.command)}</p></section><section class="dialog-materials"><h3>Textos e materiais</h3>${materials.length ? materials.map((item) => { const url = safeUrl(item.url); return `<article class="dialog-material"><strong>${escapeHTML(item.titulo || 'Material')}</strong>${item.autoria || item.fonte ? `<small>${escapeHTML([item.autoria, item.fonte].filter(Boolean).join(' · '))}</small>` : ''}<p>${escapeHTML(item.conteudo || '')}</p>${url ? `<a href="${escapeHTML(url)}" target="_blank" rel="noopener noreferrer">Abrir fonte</a>` : ''}</article>`; }).join('') : '<p class="empty-inline">A professora ainda não adicionou materiais complementares.</p>'}</section><div class="dialog-actions"><button class="button button-primary" type="button" data-select-theme="${escapeHTML(theme.id)}">Usar esta proposta<span class="material-symbols-outlined">arrow_forward</span></button></div></div>`;
+    el.dialog.showModal();
+  };
+  const currentPlanningPayload = () => ({ themeCode: state.selected.id, proposalId: state.selected.proposalId || null, notes: el.notes.value, thesis: el.thesis.value, arguments: el.arguments.map((field) => field.value), intervention: Object.fromEntries(el.interventions.map((field) => [field.dataset.intervention, field.value])), repertoireIds: [...state.selectedRepertoires].filter((id) => !id.startsWith('fixed:')), contextualRepertoires: state.repertoires.filter((item) => state.selectedRepertoires.has(item.id) && item.id.startsWith('fixed:')).map((item) => ({ codigo: item.id, categoria: item.category, titulo: item.title, referencia: item.reference, aplicacao: item.application })) });
+  const savePlanning = async ({ quiet = false } = {}) => {
+    if (!state.selected || state.savingPlan) return state.planning;
+    state.savingPlan = true; setPill(el.planStatus, 'Salvando planejamento...', 'saving');
+    const payload = currentPlanningPayload();
+    try {
+      localStorage.setItem('ominisaber:redacao:buffer-planejamento', JSON.stringify({ ...payload, savedAt: new Date().toISOString() }));
+      if (!preview && api()?.configured) state.planning = await api().saveEssayPlanning(payload);
+      else state.planning = { id: 'preview-planning', ...payload };
+      setPill(el.planStatus, 'Planejamento salvo');
+      if (!quiet) notify('Seu planejamento foi salvo.', 'success');
+      return state.planning;
+    } catch (error) { setPill(el.planStatus, 'Falha ao salvar', 'error'); notify(error.message || 'Não foi possível salvar o planejamento.', 'error'); throw error; }
+    finally { state.savingPlan = false; }
+  };
+  const debouncePlanning = () => { clearTimeout(debouncePlanning.timer); setPill(el.planStatus, 'Alterações pendentes', 'saving'); debouncePlanning.timer = setTimeout(() => savePlanning({ quiet: true }).catch(() => {}), 900); };
+  const renderRepertoires = () => {
+    const visible = state.repertoires.filter((item) => state.repertoireFilter === 'todos' || item.category === state.repertoireFilter);
+    el.repertoireGrid.innerHTML = visible.length ? visible.map((item) => { const selected = state.selectedRepertoires.has(item.id); return `<article class="repertoire-card ${selected ? 'is-selected' : ''}" data-repertoire-card="${escapeHTML(item.id)}"><header><span class="repertoire-type">${escapeHTML(repertoireLabels[item.category] || item.category)}</span><span class="material-symbols-outlined" aria-hidden="true">${selected ? 'check_circle' : 'add_circle'}</span></header><h4>${escapeHTML(item.title)}</h4><p>${escapeHTML(item.reference)}</p><p class="application"><strong>Como aplicar:</strong> ${escapeHTML(item.application)}</p><button type="button" data-toggle-repertoire="${escapeHTML(item.id)}">${selected ? 'Remover do planejamento' : 'Adicionar ao planejamento'}</button></article>`; }).join('') : '<p class="empty-inline"><span class="material-symbols-outlined">category</span>Nenhum repertório contextualizado nesta categoria.</p>';
+    el.repertoireCount.textContent = `${state.selectedRepertoires.size} selecionado${state.selectedRepertoires.size === 1 ? '' : 's'}`;
+  };
+  const loadPlanning = async () => {
+    let planning = null; let dbRepertoires = [];
+    if (!preview && api()?.configured) {
+      [planning, dbRepertoires] = await Promise.all([api().getEssayPlanning(state.selected.id), api().listWritingRepertoires({ proposalId: state.selected.proposalId || null })]);
     }
-    updatePlanningCount();
-    updateOfficialCount();
-  });
+    state.planning = planning;
+    state.repertoires = [...(state.selected.repertoires || []), ...dbRepertoires.map((item) => ({ id: item.id, category: item.categoria, title: item.titulo, reference: item.referencia, application: item.aplicacao, sourceUrl: item.fonte_url }))];
+    state.selectedRepertoires = new Set([...(planning?.planejamento_repertorios || []).map((item) => item.repertorio_id), ...(planning?.repertorios_contextuais || []).map((item) => item.codigo)]);
+    el.notes.value = planning?.anotacoes || '';
+    el.thesis.value = planning?.tese || '';
+    el.arguments.forEach((field, index) => { field.value = planning?.argumentos?.[index] || ''; });
+    el.interventions.forEach((field) => { field.value = planning?.intervencao?.[field.dataset.intervention] || ''; });
+    $('[data-planning-count]').textContent = `${el.notes.value.length} caracteres`;
+    renderRepertoires();
+    setPill(el.planStatus, planning ? 'Planejamento recuperado' : 'Pronto para planejar');
+  };
+  const chooseTheme = async (id) => {
+    const theme = state.themes.find((item) => item.id === id); if (!theme) return;
+    state.selected = theme; el.dialog.open && el.dialog.close();
+    el.selected.innerHTML = `<span class="material-symbols-outlined" aria-hidden="true">topic</span><span><small>${escapeHTML(theme.categoryLabel)} · ${escapeHTML(theme.axis)}</small>Tema selecionado: <strong>${escapeHTML(theme.title)}</strong></span>`;
+    await loadPlanning().catch((error) => notify(error.message, 'error'));
+    setStep(2);
+  };
+  const renderNotesDrawer = () => {
+    const selectedItems = state.repertoires.filter((item) => state.selectedRepertoires.has(item.id));
+    const intervention = Object.fromEntries(el.interventions.map((field) => [field.dataset.intervention, field.value]));
+    el.notesContent.innerHTML = `<section><h3>Anotações</h3><p>${escapeHTML(el.notes.value || 'Nenhuma anotação registrada.')}</p></section><section><h3>Tese</h3><p>${escapeHTML(el.thesis.value || 'Tese ainda não definida.')}</p></section><section><h3>Argumentos</h3><ul>${el.arguments.map((field) => `<li>${escapeHTML(field.value || 'Argumento ainda não definido.')}</li>`).join('')}</ul></section><section><h3>Repertórios escolhidos</h3><ul>${selectedItems.length ? selectedItems.map((item) => `<li>${escapeHTML(item.title)}</li>`).join('') : '<li>Nenhum repertório selecionado.</li>'}</ul></section><section><h3>Intervenção</h3><p>${escapeHTML(Object.values(intervention).filter(Boolean).join(' · ') || 'Ainda não esboçada.')}</p></section>`;
+  };
+  const loadDraft = async () => {
+    let draft = null;
+    if (state.essayId && !preview && api()?.configured) draft = await api().getStudentEssay(state.essayId);
+    else if (!preview && api()?.configured) draft = await api().getEssayDraft(state.selected.id);
+    if (!draft) { try { const buffer = JSON.parse(localStorage.getItem(`ominisaber:redacao:buffer:${state.selected.id}`) || 'null'); if (buffer) draft = buffer; } catch {} }
+    if (draft) { state.essayId = draft.id && !String(draft.id).startsWith('preview') ? draft.id : state.essayId; el.title.value = draft.titulo || ''; el.text.value = draft.texto || ''; }
+    else { el.title.value = ''; el.text.value = ''; }
+    updateWritingStats();
+  };
+  const saveDraft = async ({ quiet = true } = {}) => {
+    if (!state.selected || state.savingDraft) return;
+    state.savingDraft = true; setPill(el.draftStatus, 'Salvando rascunho...', 'saving');
+    const payload = { essayId: state.essayId, titulo: el.title.value.trim() || 'Redação sem título', texto: el.text.value, themeCode: state.selected.id, proposalId: state.selected.proposalId || null, planningId: state.planning?.id && state.planning.id !== 'preview-planning' ? state.planning.id : null };
+    try {
+      localStorage.setItem(`ominisaber:redacao:buffer:${state.selected.id}`, JSON.stringify({ id: 'preview-draft', ...payload, savedAt: new Date().toISOString() }));
+      if (!preview && api()?.configured) { const draft = await api().saveEssayDraft(payload); state.essayId = draft.id; }
+      else state.essayId = 'preview-draft';
+      const time = new Intl.DateTimeFormat('pt-BR', { hour: '2-digit', minute: '2-digit' }).format(new Date());
+      setPill(el.draftStatus, `Salvo às ${time}`); $('[data-last-saved]').textContent = `Último salvamento: ${time}`;
+      if (!quiet) notify('Rascunho salvo na sua conta.', 'success');
+    } catch (error) { setPill(el.draftStatus, 'Buffer local preservado', 'error'); notify('O Supabase não respondeu. Mantivemos um buffer temporário neste dispositivo.', 'error'); throw error; }
+    finally { state.savingDraft = false; }
+  };
+  const debounceDraft = () => { clearTimeout(debounceDraft.timer); setPill(el.draftStatus, 'Alterações pendentes', 'saving'); debounceDraft.timer = setTimeout(() => saveDraft().catch(() => {}), 1000); };
+  const updateWritingStats = () => {
+    const text = el.text.value.trim(); const words = text ? text.split(/\s+/).filter(Boolean).length : 0; const paragraphs = text ? text.split(/\n\s*\n|\n(?=\s{4})/).filter((item) => item.trim()).length : 0;
+    $('[data-word-count]').textContent = words; $('[data-paragraph-count]').textContent = paragraphs; $('[data-character-count]').textContent = el.text.value.length;
+  };
+  const prepareWriting = async () => {
+    await savePlanning({ quiet: true }); renderNotesDrawer(); el.writingTheme.textContent = state.selected.title; await loadDraft();
+  };
+  const setStep = async (step) => {
+    if (step > 1 && !state.selected) return notify('Escolha uma proposta antes de continuar.', 'error');
+    if (step === 3) { try { await prepareWriting(); } catch { return; } }
+    state.step = step; el.panels.forEach((panel) => panel.classList.toggle('is-hidden', Number(panel.dataset.step) !== step)); el.steps.forEach((button) => { const active = Number(button.dataset.stepTarget) === step; button.classList.toggle('is-active', active); active ? button.setAttribute('aria-current', 'step') : button.removeAttribute('aria-current'); });
+    if (step === 3) el.text.focus(); window.scrollTo({ top: 0, behavior: 'smooth' }); notify('');
+  };
+  const handleParagraphShortcut = (event) => {
+    const position = el.text.selectionStart; const lineStart = el.text.value.lastIndexOf('\n', position - 1) + 1; const atLineStart = !el.text.value.slice(lineStart, position).trim();
+    if ((event.key === 'Tab' && atLineStart) || (event.key === 'Enter' && event.shiftKey)) {
+      event.preventDefault(); const insertion = '\n    '; el.text.setRangeText(insertion, position, el.text.selectionEnd, 'end'); updateWritingStats(); debounceDraft(); notify('Novo parágrafo iniciado.', 'success');
+    }
+  };
+  const openReview = async () => {
+    if (!el.text.value.trim() || el.text.value.trim().split(/\s+/).length < 20) return notify('Escreva pelo menos 20 palavras antes de abrir a revisão.', 'error');
+    try { await saveDraft({ quiet: false }); const query = new URLSearchParams({ redacao: state.essayId || 'preview-draft' }); if (preview) query.set('preview', '1'); location.href = `revisao/index.html?${query}`; } catch {}
+  };
+  const bindEvents = () => {
+    el.search.addEventListener('input', renderThemes);
+    $$('[data-theme-filter]').forEach((button) => button.addEventListener('click', () => { state.themeFilter = button.dataset.themeFilter; $$('[data-theme-filter]').forEach((item) => item.classList.toggle('is-active', item === button)); renderThemes(); }));
+    document.addEventListener('click', (event) => { const open = event.target.closest('[data-open-theme]'); if (open) openDetails(state.themes.find((item) => item.id === open.dataset.openTheme)); const select = event.target.closest('[data-select-theme]'); if (select) chooseTheme(select.dataset.selectTheme); const toggle = event.target.closest('[data-toggle-repertoire]'); if (toggle) { const id = toggle.dataset.toggleRepertoire; state.selectedRepertoires.has(id) ? state.selectedRepertoires.delete(id) : state.selectedRepertoires.add(id); renderRepertoires(); debouncePlanning(); } });
+    $('[data-close-dialog]').addEventListener('click', () => el.dialog.close()); el.dialog.addEventListener('click', (event) => { if (event.target === el.dialog) el.dialog.close(); });
+    el.steps.forEach((button) => button.addEventListener('click', () => setStep(Number(button.dataset.stepTarget))));
+    $$('[data-back-step]').forEach((button) => button.addEventListener('click', () => setStep(Number(button.dataset.backStep)))); $('[data-next-step]').addEventListener('click', () => setStep(3));
+    [el.notes, el.thesis, ...el.arguments, ...el.interventions].forEach((field) => field.addEventListener('input', () => { $('[data-planning-count]').textContent = `${el.notes.value.length} caracteres`; debouncePlanning(); }));
+    $$('[data-repertoire-filter]').forEach((button) => button.addEventListener('click', () => { state.repertoireFilter = button.dataset.repertoireFilter; $$('[data-repertoire-filter]').forEach((item) => item.classList.toggle('is-active', item === button)); renderRepertoires(); }));
+    $('[data-toggle-notes]').addEventListener('click', (event) => { const collapsed = $('[data-writing-workspace]').classList.toggle('notes-collapsed'); event.currentTarget.setAttribute('aria-expanded', String(!collapsed)); event.currentTarget.setAttribute('aria-label', collapsed ? 'Expandir bloco de anotações' : 'Minimizar bloco de anotações'); event.currentTarget.querySelector('span').textContent = collapsed ? 'right_panel_open' : 'left_panel_close'; });
+    [el.title, el.text].forEach((field) => field.addEventListener('input', () => { updateWritingStats(); debounceDraft(); })); el.text.addEventListener('keydown', handleParagraphShortcut); $('[data-open-review]').addEventListener('click', openReview);
+  };
+  const restoreFromEssay = async () => {
+    if (!state.essayId || preview || !api()?.configured) return false;
+    const essay = await api().getStudentEssay(state.essayId); if (!essay) return false;
+    const theme = state.themes.find((item) => item.id === essay.tema_codigo) || (essay.propostas_redacao ? fixedThemeFromDb({ ...essay.propostas_redacao, materiais_redacao: [] }) : null); if (!theme) return false;
+    state.selected = theme; state.planning = essay.planejamentos_redacao; el.title.value = essay.titulo; el.text.value = essay.texto; await chooseTheme(theme.id); await setStep(Number(params.get('step') || 3)); return true;
+  };
+  const init = async () => {
+    bindEvents(); renderThemes(); renderPinned();
+    if (!preview && api()?.configured) {
+      try { const prompts = await api().listWritingPrompts(); state.themes = [...prompts.map(fixedThemeFromDb), ...fixedThemes]; renderPinned(); renderThemes(); } catch (error) { notify(`Os temas da professora não puderam ser carregados: ${error.message}`, 'error'); }
+      try { const profile = await api().getProfile(); const initials = (profile?.nome || 'Aluno').split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase(); $$('[data-initials]').forEach((node) => { node.textContent = initials; }); } catch {}
+    }
+    if (await restoreFromEssay().catch(() => false)) return;
+    const requestedTheme = params.get('tema'); if (requestedTheme && state.themes.some((item) => item.id === requestedTheme)) await chooseTheme(requestedTheme);
+  };
+  window.addEventListener('DOMContentLoaded', init);
 })();

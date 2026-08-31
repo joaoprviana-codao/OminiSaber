@@ -34,7 +34,7 @@ Medalhas desbloqueadas recebem cor e destaque; as demais permanecem em escala ne
 
 O gráfico de linha agrupa notas pelos bimestres 1 a 4. O gráfico de rosca compara atividades concluídas e pendentes. Quando não existem notas ou atividades, o canvas é ocultado e uma mensagem contextual aparece no mesmo espaço. O histórico combina avaliações, redações e atividades em uma tabela responsiva.
 
-A interface usa os tokens do EduTech Clarity: Poppins para títulos, Inter para leitura, índigo para foco, esmeralda para conclusão e superfícies claras com bordas sutis.
+A interface usa os tokens do OminiSaber Clarity: Poppins para títulos, Inter para leitura, índigo para foco, esmeralda para conclusão e superfícies claras com bordas sutis.
 
 ## Galeria de conquistas
 
@@ -44,4 +44,4 @@ Os filtros de `Todas`, `Trilhas`, `Redação`, `Leitura` e `Geral` são aplicado
 
 Como o escopo desta tela não altera o gateway, a galeria usa o cliente público já inicializado em `window.OminiSaber.client`. As consultas continuam protegidas pelas políticas RLS do Supabase.
 
-Se `conquistas` ou `conquistas_aluno` ainda não existirem, ou se o PostgREST retornar `PGRST200`, `PGRST205` ou uma mensagem de `schema cache`, `medalhas.js` carrega quatro medalhas locais padrão e sinaliza o modo de demonstração sem interromper a página. O catálogo persistente pode ser instalado executando `backend/schema-conquistas.sql`, que cria as tabelas, policies, grants e registros iniciais.
+Se `conquistas` ou `conquistas_aluno` ainda não existirem, ou se o PostgREST retornar `PGRST200`, `PGRST205` ou uma mensagem de `schema cache`, `medalhas.js` carrega quatro medalhas locais padrão e sinaliza o modo de demonstração sem interromper a página. O catálogo persistente pode ser instalado executando `backend/ominisaber-schema-conquistas.sql`, que cria as tabelas, policies, grants e registros iniciais.

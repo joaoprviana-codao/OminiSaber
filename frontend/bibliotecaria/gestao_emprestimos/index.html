@@ -3,20 +3,23 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Empréstimos | Biblioteca</title>
-    <link rel="stylesheet" href="../library.css" />
+    <title>Empréstimos | Biblioteca | OminiSaber</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&family=Material+Symbols+Outlined:FILL@0..1" rel="stylesheet" />
+    <link rel="stylesheet" href="../library.css" /><link rel="stylesheet" href="../../shared/sidebar.css" />
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="../../../backend/supabase-config.js"></script>
-    <script src="../../../backend/supabase-client.js"></script>
+    <script src="../../../backend/ominisaber-supabase-config.js"></script>
+    <script src="../../../backend/ominisaber-supabase-client.js"></script>
     <script defer src="../app.js"></script>
   </head>
-  <body>
+  <body data-app-role="library">
     <div class="library-shell">
       <aside class="library-sidebar">
         <a class="brand" href="../dashboard/index.html"
           ><span class="brand-mark"
             ><span class="material-symbols-outlined">local_library</span></span
-          >Biblioteca</a
+          ><span>OminiSaber<small>Biblioteca</small></span></a
         >
         <nav aria-label="Navegação da biblioteca">
           <a href="../dashboard/index.html"
@@ -39,18 +42,18 @@
       <main class="library-main">
         <header class="topbar">
           <div>
-            <p class="eyebrow">CIRCULAÇÃO</p>
+            <p class="eyebrow">FILA OPERACIONAL</p>
             <h1>Empréstimos</h1>
             <p class="muted">
-              Aprove solicitações, registre entregas e dê baixa nas devoluções.
+              Cada aba corresponde a uma ação. Resolva a fila da esquerda para a direita.
             </p>
           </div>
         </header>
         <section class="card">
           <div class="toolbar">
             <div>
-              <h2>Controle unificado</h2>
-              <p class="muted">Pesquise por aluno, turma ou título.</p>
+              <h2>O que precisa ser resolvido</h2>
+              <p class="muted">Pesquise por aluno, turma ou título e conclua a ação na própria linha.</p>
             </div>
             <input
               class="input search"
@@ -61,10 +64,10 @@
           </div>
           <div class="tabs" role="tablist">
             <button class="tab active" data-tab="pendente" role="tab">
-              Solicitações</button
+              1 · Aprovar</button
             ><button class="tab" data-tab="aprovado" role="tab">
-              Aguardando retirada</button
-            ><button class="tab" data-tab="emprestado" role="tab">Ativos</button
+              2 · Entregar</button
+            ><button class="tab" data-tab="emprestado" role="tab">3 · Devolver</button
             ><button class="tab" data-tab="atrasado" role="tab">
               Atrasados</button
             ><button class="tab" data-tab="devolvido" role="tab">

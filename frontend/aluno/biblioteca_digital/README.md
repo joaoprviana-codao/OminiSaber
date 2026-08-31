@@ -20,6 +20,6 @@ A ação de leitura usa `upsert` com conflito em `aluno_id,livro_id`. O primeiro
 
 ## Modelo recomendado
 
-O arquivo `backend/schema-biblioteca.sql` cria ou complementa `livros` com `materia`, `categoria`, `capa_url`, `pdf_url`, `sinopse`, `paginas` e `palavras_chave`. Também cria `leituras_aluno` com status, progresso e timestamp de atualização.
+O arquivo `backend/ominisaber-schema-biblioteca.sql` cria ou complementa `livros` com `materia`, `categoria`, `capa_url`, `pdf_url`, `sinopse`, `paginas` e `palavras_chave`. Também cria `leituras_aluno` com status, progresso e timestamp de atualização.
 
 As políticas RLS deixam o catálogo público para leitura e restringem inserção, atualização e leitura de leituras à própria identidade autenticada. O SQL foi criado fora desta pasta porque isso foi autorizado explicitamente para viabilizar a instalação no Supabase.

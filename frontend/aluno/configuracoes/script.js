@@ -1,5 +1,5 @@
 (() => {
-  const themeKey = 'edutech_theme';
+  const themeKey = 'ominisaber_theme';
   const validThemes = ['light', 'dark'];
   const profileForm = document.querySelector('[data-profile-form]');
   const passwordForm = document.querySelector('[data-password-form]');
@@ -23,7 +23,7 @@
     if (!validThemes.includes(theme)) return;
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem(themeKey, theme);
-    localStorage.setItem('edutech-theme', theme);
+    localStorage.setItem('ominisaber-theme', theme);
     document.documentElement.classList.toggle('dark', theme === 'dark');
     document.querySelectorAll('[data-theme-choice]').forEach((button) => {
       button.setAttribute('aria-pressed', String(button.dataset.themeChoice === theme));
@@ -122,7 +122,7 @@
       button.disabled = false;
     }
   };
-
+// Não toque, nem eu sei oque eu fiz
   setTheme(getTheme());
   document.querySelectorAll('[data-theme-choice]').forEach((button) => {
     button.addEventListener('click', async () => {

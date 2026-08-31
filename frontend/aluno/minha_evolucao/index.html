@@ -1,11 +1,51 @@
 <!doctype html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="refresh" content="0; url=code.html" />
-    <title>Minha evolução | EduTech</title>
-  </head>
-  <body>
-    <p>Abra sua <a href="code.html">evolução acadêmica</a>.</p>
-  </body>
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Níveis, conquistas e evolução acadêmica no OminiSaber."><title>Minha evolução | OminiSaber</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&family=Material+Symbols+Outlined:FILL@0..1" rel="stylesheet">
+  <link rel="stylesheet" href="style.css"><link rel="stylesheet" href="../../shared/sidebar.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="../../../backend/ominisaber-supabase-config.js"></script><script src="../../../backend/ominisaber-supabase-client.js"></script><script defer src="script.js"></script>
+</head>
+<body data-app-role="student">
+  <aside class="sidebar" data-sidebar aria-label="Navegação principal">
+    <a class="brand" href="../dashboard_principal/index.html"><span class="brand-mark material-symbols-outlined">school</span><span>OminiSaber</span></a>
+    <nav><a href="../dashboard_principal/index.html"><span class="material-symbols-outlined">home</span>Início</a><a href="../modulo_de_trilhas/index.html"><span class="material-symbols-outlined">route</span>Trilhas</a><a href="../laboratorio_de_redacao/index.html"><span class="material-symbols-outlined">edit_note</span>Redação</a><a class="active" href="index.html" aria-current="page"><span class="material-symbols-outlined">monitoring</span>Evolução</a><a href="../biblioteca_digital/index.html"><span class="material-symbols-outlined">bookmark</span>Biblioteca</a></nav>
+  <div class="profile"><img class="avatar" src="../../assets/avatar-marina.png" alt="Foto de Marina Souza"><div><strong data-profile-name>Marina Souza</strong><span>2º ano do Ensino Médio</span></div></div>
+  </aside>
+  <main>
+    <header class="topbar"><button class="icon-button menu-button" type="button" data-menu-toggle aria-label="Abrir navegação"><span class="material-symbols-outlined">menu</span></button><div><p class="eyebrow">Sua jornada</p><h1 data-greeting>Você está evoluindo, Marina</h1></div><a class="icon-button" href="../configuracoes/index.html" aria-label="Configurações"><span class="material-symbols-outlined">settings</span></a></header>
+    <section class="state-panel" data-state="loading" aria-live="polite"><span class="loader"></span><p>Montando sua jornada...</p></section>
+    <section class="state-panel is-hidden" data-state="error" role="alert"><span class="material-symbols-outlined">cloud_off</span><h2>Não foi possível carregar sua evolução</h2><p data-error-message>Tente novamente.</p><button class="button primary" data-retry>Tentar novamente</button></section>
+    <div class="evolution is-hidden" data-evolution>
+      <section class="level-hero">
+        <div class="level-copy"><p class="eyebrow">Nível atual</p><div class="level-title"><span class="level-number" data-level-number>4</span><div><h2 data-level-title>Investigadora</h2><p>Você transforma curiosidade em conhecimento.</p></div></div><div class="xp-row"><div><strong><span data-xp-total>1.840</span> XP</strong><span data-xp-detail>160 XP para o próximo nível</span></div><span class="xp-next">Próximo: <b data-next-level>Especialista</b></span></div><div class="xp-track" role="progressbar" aria-label="Progresso para o próximo nível" aria-valuemin="0" aria-valuemax="100" aria-valuenow="82"><span data-xp-bar style="width:82%"></span></div></div>
+        <button class="level-emblem" type="button" data-level-open aria-label="Ver detalhes do nível Investigadora"><span class="material-symbols-outlined">explore</span><strong>Nível 4</strong><small>Investigadora</small></button>
+      </section>
+
+      <section class="level-path" aria-labelledby="path-title"><div class="section-heading"><div><p class="eyebrow">Expedição do conhecimento</p><h2 id="path-title">Seu caminho de níveis</h2></div><p>Selecione um nível para ver o marco.</p></div><div class="path-scroll" data-level-path>
+        <button class="milestone complete" data-level="1" aria-pressed="false"><span class="material-symbols-outlined">flag</span><strong>1</strong><small>Curiosa</small></button><span class="path-line complete"></span>
+        <button class="milestone complete" data-level="2" aria-pressed="false"><span class="material-symbols-outlined">menu_book</span><strong>2</strong><small>Leitora</small></button><span class="path-line complete"></span>
+        <button class="milestone complete" data-level="3" aria-pressed="false"><span class="material-symbols-outlined">science</span><strong>3</strong><small>Exploradora</small></button><span class="path-line complete"></span>
+        <button class="milestone current" data-level="4" aria-pressed="true"><span class="material-symbols-outlined">explore</span><strong>4</strong><small>Investigadora</small></button><span class="path-line"></span>
+        <button class="milestone locked" data-level="5" aria-pressed="false"><span class="material-symbols-outlined">psychology</span><strong>5</strong><small>Especialista</small></button><span class="path-line"></span>
+        <button class="milestone locked" data-level="6" aria-pressed="false"><span class="material-symbols-outlined">workspace_premium</span><strong>6</strong><small>Mestre</small></button>
+      </div><div class="milestone-detail" data-milestone-detail aria-live="polite"><span class="material-symbols-outlined">explore</span><div><strong>Investigadora · Nível 4</strong><p>Marco alcançado ao concluir 24 atividades e explorar quatro áreas do conhecimento.</p></div><span class="status">Atual</span></div></section>
+
+      <section class="progress-overview"><article><p class="eyebrow">Ritmo semanal</p><h2>5 dias de consistência</h2><div class="week-pulses" aria-label="Atividades concluídas por dia"><span style="--h:42%"><b>3</b><small>Seg</small></span><span style="--h:70%"><b>5</b><small>Ter</small></span><span style="--h:56%"><b>4</b><small>Qua</small></span><span style="--h:84%"><b>6</b><small>Qui</small></span><span style="--h:70%"><b>5</b><small>Sex</small></span><span style="--h:28%"><b>2</b><small>Sáb</small></span><span class="today" style="--h:42%"><b>3</b><small>Hoje</small></span></div></article><article class="next-goal"><span class="material-symbols-outlined">target</span><div><p class="eyebrow">Próximo desafio</p><h2>Sequência de 7 dias</h2><p>Estude amanhã para conquistar <strong>Foco Total</strong> e ganhar 120 XP.</p><div class="goal-progress"><span style="width:71%"></span></div></div></article></section>
+
+      <section class="achievements" aria-labelledby="achievement-title"><div class="section-heading"><div><p class="eyebrow">Coleção de conquistas</p><h2 id="achievement-title">Medalhas que contam sua história</h2></div><div class="filters" role="group" aria-label="Filtrar conquistas"><button class="active" data-filter="all">Todas</button><button data-filter="unlocked">Conquistadas</button><button data-filter="locked">Próximas</button></div></div><div class="achievement-grid" data-achievement-grid>
+        <button class="achievement unlocked" data-status="unlocked" data-achievement="primeira-redacao"><span class="medal-icon material-symbols-outlined">edit_note</span><strong>Primeira voz</strong><small>Primeira redação enviada</small><span>+80 XP</span></button>
+        <button class="achievement unlocked" data-status="unlocked" data-achievement="explorador-trilhas"><span class="medal-icon material-symbols-outlined">route</span><strong>Mapa aberto</strong><small>5 trilhas iniciadas</small><span>+100 XP</span></button>
+        <button class="achievement unlocked" data-status="unlocked" data-achievement="leitor-assiduo"><span class="medal-icon material-symbols-outlined">auto_stories</span><strong>Entre páginas</strong><small>3 livros concluídos</small><span>+120 XP</span></button>
+        <button class="achievement locked" data-status="locked" data-achievement="foco-total"><span class="medal-icon material-symbols-outlined">local_fire_department</span><strong>Foco total</strong><small>7 dias de consistência</small><span>5 de 7 dias</span></button>
+        <button class="achievement locked" data-status="locked" data-achievement="mente-cientifica"><span class="medal-icon material-symbols-outlined">experiment</span><strong>Mente científica</strong><small>80% em Ciências</small><span>72% atual</span></button>
+        <button class="achievement locked" data-status="locked" data-achievement="dominio-matematico"><span class="medal-icon material-symbols-outlined">functions</span><strong>Domínio matemático</strong><small>10 desafios concluídos</small><span>6 de 10</span></button>
+      </div></section>
+      <section class="recent-journey"><div class="section-heading"><div><p class="eyebrow">Últimos passos</p><h2>O que fez você avançar</h2></div><a href="medalhas.html">Ver galeria completa <span class="material-symbols-outlined">arrow_forward</span></a></div><ol><li><span class="material-symbols-outlined">task_alt</span><div><strong>Atividade concluída</strong><p>Função quadrática: interpretação de gráficos</p></div><b>+45 XP</b></li><li><span class="material-symbols-outlined">edit_note</span><div><strong>Redação enviada</strong><p>Desafios da educação midiática no Brasil</p></div><b>+80 XP</b></li><li><span class="material-symbols-outlined">menu_book</span><div><strong>Leitura finalizada</strong><p>Capitães da Areia</p></div><b>+60 XP</b></li></ol></section>
+    </div>
+  </main>
+  <dialog data-level-dialog><form method="dialog"><button class="icon-button close" aria-label="Fechar"><span class="material-symbols-outlined">close</span></button><span class="dialog-emblem material-symbols-outlined">explore</span><p class="eyebrow">Nível 4</p><h2>Investigadora</h2><p>Seu olhar já conecta diferentes fontes e transforma perguntas em caminhos de aprendizagem.</p><ul><li>24 atividades concluídas</li><li>4 áreas do conhecimento exploradas</li><li>3 conquistas desbloqueadas</li></ul><button class="button primary">Continuar explorando</button></form></dialog>
+  <div class="toast" data-toast role="status" aria-live="polite"></div>
+</body>
 </html>

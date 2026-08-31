@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Literatura | OminiSaber</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="../../../../backend/ominisaber-supabase-config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../../../backend/ominisaber-supabase-client.js"></script>
+    <script defer src="script.js"></script>
+  </head>
+  <body data-matter="Literatura" data-mode="literature">
+    <header>
+      <a href="../index.html">← Catálogo</a><strong>LITERATURA</strong
+      ><a href="../../dashboard_principal/index.html">Dashboard ↗</a>
+    </header>
+    <main>
+      <section class="hero">
+        <small>LINGUAGENS / OBRAS E VOZES</small>
+        <h1>Leia o tempo<br />em cada voz.</h1>
+        <p>
+          Movimentos literários são formas diferentes de sentir e narrar uma
+          época.
+        </p>
+        <strong data-progress>--%</strong>
+      </section>
+      <section class="reading">
+        <small>LEITURA EM CAMADAS</small>
+        <h2>Escolha um movimento</h2>
+        <div class="movement-list">
+          <button data-movement="romantismo">Romantismo</button
+          ><button data-movement="modernismo">Modernismo</button
+          ><button data-movement="realismo">Realismo</button>
+        </div>
+        <blockquote data-quote>
+          Uma obra começa antes da primeira palavra: começa no mundo que a torna
+          necessária.
+        </blockquote>
+      </section>
+      <section class="trails">
+        <small>TRILHAS DE LITERATURA</small>
+        <div data-trails>Carregando...</div>
+      </section>
+    </main>
+  </body>
+</html>

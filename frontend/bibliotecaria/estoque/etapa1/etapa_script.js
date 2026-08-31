@@ -156,5 +156,5 @@
 
 	const initialize = () => { setupAuthors(); setupIsbns(); setupScanner(); const form = $("[data-book-form]"); form.addEventListener("submit", submitBatch); form.addEventListener("input", (event) => { if (["quantidade", "prefixo", "isbn"].includes(event.target.name)) updatePreview(); }); updatePreview(); };
 	document.addEventListener("DOMContentLoaded", initialize);
-	window.EduTechEstoque = { serial, buildLabel };
+	window.OminiSaberEstoque = { serial, buildLabel };
 })();

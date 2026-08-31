@@ -5,15 +5,18 @@
     dashboard: `${frontendRoot}aluno/dashboard_principal/index.html`,
     inicio: `${frontendRoot}aluno/dashboard_principal/index.html`,
     trilhas: `${frontendRoot}aluno/modulo_de_trilhas/index.html`,
+    favoritos: `${frontendRoot}aluno/modulo_de_trilhas/salvos/index.html`,
+    salvos: `${frontendRoot}aluno/modulo_de_trilhas/salvos/index.html`,
+    historico: `${frontendRoot}aluno/modulo_de_trilhas/historico/index.html`,
     redacao: `${frontendRoot}aluno/laboratorio_de_redacao/index.html`,
-    evolucao: `${frontendRoot}aluno/minha_evolucao/code.html`,
+    evolucao: `${frontendRoot}aluno/minha_evolucao/index.html`,
     biblioteca: `${frontendRoot}aluno/biblioteca_digital/index.html`,
     configuracoes: `${frontendRoot}aluno/configuracoes/index.html`,
     login: `${frontendRoot}login/index.html`,
-    error: `${frontendRoot}erro/code.html`,
-    professor: `${frontendRoot}professor/dashboard/code.html`,
-    bibliotecaria: `${frontendRoot}bibliotecaria/dashboard/code.html`,
-    gestor: `${frontendRoot}gestor/dashboard/code.html`
+    error: `${frontendRoot}erro/index.html`,
+    professor: `${frontendRoot}professor/dashboard/index.html`,
+    bibliotecaria: `${frontendRoot}bibliotecaria/dashboard/index.html`,
+    gestor: `${frontendRoot}gestor/dashboard/index.html`
   };
 
   const normalize = (value) => value
@@ -56,7 +59,7 @@
     button.innerHTML = '<span class="material-symbols-outlined" aria-hidden="true">dark_mode</span>';
     button.addEventListener('click', () => {
       const nextTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
-      localStorage.setItem('edutech-theme', nextTheme);
+      localStorage.setItem('ominisaber-theme', nextTheme);
       applyTheme(nextTheme);
     });
     container.appendChild(button);
@@ -120,7 +123,7 @@
       if (theme) {
         button.dataset.themeChoice = theme;
         button.addEventListener('click', () => {
-          localStorage.setItem('edutech-theme', theme);
+          localStorage.setItem('ominisaber-theme', theme);
           applyTheme(theme);
         });
       }
@@ -167,10 +170,10 @@
       }
     });
   }
-  const theme = localStorage.getItem('edutech-theme') || 'system';
+  const theme = localStorage.getItem('ominisaber-theme') || 'system';
   applyTheme(theme);
 
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-    if ((localStorage.getItem('edutech-theme') || 'system') === 'system') applyTheme('system');
+    if ((localStorage.getItem('ominisaber-theme') || 'system') === 'system') applyTheme('system');
   });
 })();

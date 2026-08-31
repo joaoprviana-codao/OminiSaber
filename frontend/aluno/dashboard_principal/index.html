@@ -1,195 +1,64 @@
 <!doctype html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta
-      name="description"
-      content="Acompanhe seu desempenho e suas atividades na EduTech."
-    />
-    <title>Dashboard do aluno | EduTech</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:FILL@0..1"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="style.css" />
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="../../../backend/supabase-config.js"></script>
-    <script src="../../../backend/supabase-client.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
-    <script defer src="script.js"></script>
-  </head>
-  <body>
-    <aside class="sidebar" aria-label="Navegação principal">
-      <a class="brand" href="index.html"
-        ><span class="brand-mark"
-          ><span class="material-symbols-outlined">school</span></span
-        ><span>EduTech</span></a
-      >
-      <nav class="sidebar-nav">
-        <a class="nav-link active" href="index.html" aria-current="page"
-          ><span class="material-symbols-outlined">dashboard</span>Início</a
-        >
-        <a class="nav-link" href="../modulo_de_trilhas/code.html"
-          ><span class="material-symbols-outlined">route</span>Trilhas</a
-        >
-        <a class="nav-link" href="../laboratorio_de_redacao/index.html"
-          ><span class="material-symbols-outlined">edit_note</span>Redação</a
-        >
-        <a class="nav-link" href="../minha_evolucao/code.html"
-          ><span class="material-symbols-outlined">trending_up</span>Evolução</a
-        >
-        <a class="nav-link" href="../biblioteca_digital/code.html"
-          ><span class="material-symbols-outlined">local_library</span
-          >Biblioteca</a
-        >
-      </nav>
-      <div class="sidebar-profile">
-        <div class="avatar" aria-hidden="true" data-initials>--</div>
-        <div>
-          <strong data-profile-name>Carregando...</strong><span>Aluno</span>
-        </div>
-      </div>
-    </aside>
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Painel interativo de aprendizagem do OminiSaber."><title>Painel do aluno | OminiSaber</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&family=Material+Symbols+Outlined:FILL@0..1" rel="stylesheet">
+  <link rel="stylesheet" href="style.css"><link rel="stylesheet" href="../../shared/sidebar.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="../../../backend/ominisaber-supabase-config.js"></script><script src="../../../backend/ominisaber-supabase-client.js"></script><script defer src="script.js"></script>
+</head>
+<body data-app-role="student">
+  <aside class="sidebar" data-sidebar aria-label="Navegação principal">
+    <a class="brand" href="index.html"><span class="brand-mark material-symbols-outlined" aria-hidden="true">school</span><span>OminiSaber</span></a>
+    <nav class="sidebar-nav">
+      <a class="nav-link active" href="index.html" aria-current="page"><span class="material-symbols-outlined">home</span><span>Início</span></a>
+      <a class="nav-link" href="../modulo_de_trilhas/index.html"><span class="material-symbols-outlined">route</span><span>Trilhas</span></a>
+      <a class="nav-link" href="../laboratorio_de_redacao/index.html"><span class="material-symbols-outlined">edit_note</span><span>Redação</span></a>
+      <a class="nav-link" href="../minha_evolucao/index.html"><span class="material-symbols-outlined">monitoring</span><span>Evolução</span></a>
+      <a class="nav-link" href="../biblioteca_digital/index.html"><span class="material-symbols-outlined">bookmark</span><span>Biblioteca</span></a>
+    </nav>
+    <div class="sidebar-profile"><img class="avatar" src="../../assets/avatar-marina.png" alt="Foto de Marina Souza"><div><strong data-profile-name>Marina Souza</strong><span>2º ano do Ensino Médio</span></div><a href="../configuracoes/index.html" aria-label="Abrir configurações"><span class="material-symbols-outlined">settings</span></a></div>
+  </aside>
 
-    <main class="main-content">
-      <header class="topbar">
-        <button
-          class="icon-button mobile-menu"
-          type="button"
-          aria-label="Abrir navegação"
-          data-menu-toggle
-        >
-          <span class="material-symbols-outlined">menu</span>
-        </button>
-        <div>
-          <p class="eyebrow">PAINEL DE ESTUDOS</p>
-          <h1 data-greeting>Olá, estudante</h1>
-        </div>
-        <div class="topbar-actions">
-          <a
-            class="icon-button"
-            href="../configuracoes/index.html"
-            aria-label="Abrir configurações"
-            ><span class="material-symbols-outlined">settings</span></a
-          ><a
-            class="avatar avatar-small"
-            href="../configuracoes/index.html"
-            aria-label="Abrir perfil"
-            data-initials
-            >--</a
-          >
-        </div>
-      </header>
+  <main class="main-content">
+    <header class="topbar">
+      <button class="icon-button menu-button" type="button" data-menu-toggle aria-label="Abrir navegação" aria-expanded="false"><span class="material-symbols-outlined">menu</span></button>
+      <div><h1 data-greeting>Olá, Marina</h1><p data-current-date>Domingo, 30 de agosto de 2026</p></div>
+      <div class="topbar-actions"><button class="icon-button" type="button" data-focus-open aria-label="Abrir modo foco"><span class="material-symbols-outlined">timer</span></button><button class="icon-button notification-button" type="button" data-notification-toggle aria-label="Abrir notificações" aria-expanded="false"><span class="material-symbols-outlined">notifications</span><span class="notification-dot"></span></button><div class="notification-popover" data-notifications hidden><strong>Você está em dia</strong><p>Sua próxima meta é concluir Funções do 2º grau.</p></div></div>
+    </header>
+    <section class="state-panel" data-state="loading" aria-live="polite"><span class="loader" aria-hidden="true"></span><p>Preparando sua jornada...</p></section>
+    <section class="state-panel is-hidden" data-state="error" role="alert"><span class="material-symbols-outlined">cloud_off</span><h2>Não foi possível carregar o painel</h2><p data-error-message>Verifique sua conexão e tente novamente.</p><button class="button primary" type="button" data-retry>Tentar novamente</button></section>
 
-      <div class="content-shell">
-        <section class="state-panel" data-state="loading" aria-live="polite">
-          <span class="loader" aria-hidden="true"></span>
-          <p>Carregando seu painel...</p>
-        </section>
-        <section
-          class="state-panel is-hidden"
-          data-state="error"
-          aria-live="assertive"
-        >
-          <span class="state-icon material-symbols-outlined">cloud_off</span>
-          <h2>Não foi possível carregar o painel</h2>
-          <p data-error-message>Verifique sua conexão e tente novamente.</p>
-          <button class="button button-primary" type="button" data-retry>
-            Tentar novamente
-          </button>
-        </section>
+    <div class="dashboard is-hidden" data-dashboard>
+      <section class="next-step" aria-labelledby="next-step-title">
+        <div class="lesson-summary"><p class="section-kicker">Seu próximo passo</p><div class="lesson-title-row"><span class="subject-icon material-symbols-outlined">functions</span><div><h2 id="next-step-title">Funções do 2º grau</h2><p>Aula 5 de 8 · Introdução às funções quadráticas</p></div></div><div class="lesson-progress"><div class="progress-track" role="progressbar" aria-label="Progresso da aula" aria-valuemin="0" aria-valuemax="100" aria-valuenow="60"><span style="width:60%"></span></div><strong>60% concluído</strong></div></div>
+        <div class="lesson-meta"><span><span class="material-symbols-outlined">schedule</span>32 min restantes</span><span><span class="material-symbols-outlined">bar_chart</span>Nível intermediário</span><a class="button lesson-action" href="../modulo_de_trilhas/matematica/index.html">Continuar aprendendo<span class="material-symbols-outlined">arrow_forward</span></a></div>
+        <ol class="lesson-steps" aria-label="Etapas da aula"><li class="done"><span>1</span>Revisão: funções</li><li class="done"><span>2</span>Forma geral e coeficientes</li><li class="done"><span>3</span>Gráfico da parábola</li><li class="done"><span>4</span>Zeros da função</li><li class="current"><span>5</span>Introdução às funções quadráticas</li><li><span>6</span>Vértice da parábola</li><li><span>7</span>Função do 2º grau na prática</li><li><span>8</span>Exercícios de fixação</li></ol>
+      </section>
 
-        <div class="dashboard is-hidden" data-dashboard>
-          <section class="welcome-band">
-            <div>
-              <p class="eyebrow">SUA JORNADA, EM UM SÓ LUGAR</p>
-              <h2 data-welcome>Continue avançando.</h2>
-              <p>Veja onde você está e escolha o próximo passo.</p>
-            </div>
-            <span class="welcome-icon material-symbols-outlined"
-              >auto_awesome</span
-            >
-          </section>
-
-          <section class="metrics-grid" aria-label="Resumo do desempenho">
-            <article class="metric-card metric-card-featured">
-              <span class="metric-icon material-symbols-outlined">grade</span>
-              <p>Média geral</p>
-              <strong data-average>--</strong
-              ><span data-average-caption>Sem notas lançadas</span>
-            </article>
-            <article class="metric-card">
-              <span
-                class="metric-icon metric-icon-green material-symbols-outlined"
-                >task_alt</span
-              >
-              <p>Atividades concluídas</p>
-              <strong data-completed>--</strong
-              ><span data-progress-caption>Sem atividades registradas</span>
-            </article>
-            <article class="metric-card">
-              <span
-                class="metric-icon metric-icon-coral material-symbols-outlined"
-                >edit_note</span
-              >
-              <p>Redações enviadas</p>
-              <strong data-essays>--</strong><span>produções registradas</span>
-            </article>
-            <article class="metric-card">
-              <span
-                class="metric-icon metric-icon-blue material-symbols-outlined"
-                >menu_book</span
-              >
-              <p>Empréstimo atual</p>
-              <strong class="metric-text" data-loan>--</strong
-              ><span data-loan-status>Consultando biblioteca</span>
-            </article>
-          </section>
-
-          <div class="dashboard-grid">
-            <section class="panel radar-panel">
-              <div class="panel-heading">
-                <div>
-                  <p class="eyebrow">DESEMPENHO</p>
-                  <h2>Média por matéria</h2>
-                </div>
-                <span class="panel-chip">Notas</span>
-              </div>
-              <div class="chart-wrap" data-chart-empty>
-                <canvas
-                  id="subject-radar"
-                  aria-label="Gráfico radar da média por matéria"
-                ></canvas>
-                <p class="empty-message">
-                  Suas médias por matéria aparecerão aqui quando houver notas.
-                </p>
-              </div>
-            </section>
-            <section class="panel activities-panel">
-              <div class="panel-heading">
-                <div>
-                  <p class="eyebrow">PRÓXIMOS PASSOS</p>
-                  <h2>Atividades recentes</h2>
-                </div>
-                <a class="text-link" href="../modulo_de_trilhas/code.html"
-                  >Ver trilhas
-                  <span class="material-symbols-outlined"
-                    >arrow_forward</span
-                  ></a
-                >
-              </div>
-              <ul class="activity-list" data-activities></ul>
-            </section>
+      <section class="mastery-section" aria-labelledby="mastery-title">
+        <div class="section-heading"><div><p class="section-kicker">Explore seu conhecimento</p><h2 id="mastery-title">Mapa de domínio</h2></div><div class="filters"><label><span class="sr-only">Período</span><select data-term-filter><option>2º trimestre</option><option>1º trimestre</option><option>Ano inteiro</option></select></label><label><span class="sr-only">Filtrar matéria</span><select data-subject-filter><option value="all">Todas as matérias</option><option value="Matemática">Matemática</option><option value="Português">Português</option><option value="Ciências">Ciências</option></select></label></div></div>
+        <div class="mastery-layout">
+          <div class="mastery-map" data-mastery-map aria-label="Selecione uma matéria para explorar seu domínio">
+            <svg class="map-links" viewBox="0 0 760 520" aria-hidden="true"><g><line x1="380" y1="260" x2="380" y2="72"/><line x1="380" y1="260" x2="170" y2="118"/><line x1="380" y1="260" x2="590" y2="118"/><line x1="380" y1="260" x2="100" y2="280"/><line x1="380" y1="260" x2="660" y2="280"/><line x1="380" y1="260" x2="205" y2="430"/><line x1="380" y1="260" x2="380" y2="465"/><line x1="380" y1="260" x2="555" y2="430"/></g></svg>
+            <button class="subject-node center selected" style="--x:50%;--y:50%" data-subject="Matemática" aria-pressed="true"><span class="node-icon material-symbols-outlined">functions</span><strong>Matemática</strong><b>58%</b><small>Em desenvolvimento</small></button>
+            <button class="subject-node" style="--x:50%;--y:13%" data-subject="Português" aria-pressed="false"><span class="node-icon material-symbols-outlined">menu_book</span><strong>Português</strong><b>78%</b><small>Bom domínio</small></button>
+            <button class="subject-node" style="--x:22%;--y:22%" data-subject="Ciências" aria-pressed="false"><span class="node-icon material-symbols-outlined">science</span><strong>Ciências</strong><b>72%</b><small>Bom domínio</small></button>
+            <button class="subject-node attention" style="--x:78%;--y:22%" data-subject="História" aria-pressed="false"><span class="node-icon material-symbols-outlined">account_balance</span><strong>História</strong><b>64%</b><small>Em evolução</small></button>
+            <button class="subject-node attention" style="--x:12%;--y:54%" data-subject="Geografia" aria-pressed="false"><span class="node-icon material-symbols-outlined">public</span><strong>Geografia</strong><b>60%</b><small>Em evolução</small></button>
+            <button class="subject-node" style="--x:88%;--y:54%" data-subject="Inglês" aria-pressed="false"><span class="node-icon material-symbols-outlined">translate</span><strong>Inglês</strong><b>85%</b><small>Domínio forte</small></button>
+            <button class="subject-node attention" style="--x:27%;--y:83%" data-subject="Redação" aria-pressed="false"><span class="node-icon material-symbols-outlined">edit</span><strong>Redação</strong><b>66%</b><small>Em evolução</small></button>
+            <button class="subject-node danger" style="--x:50%;--y:91%" data-subject="Física" aria-pressed="false"><span class="node-icon material-symbols-outlined">experiment</span><strong>Física</strong><b>45%</b><small>Atenção necessária</small></button>
+            <button class="subject-node danger" style="--x:73%;--y:83%" data-subject="Química" aria-pressed="false"><span class="node-icon material-symbols-outlined">deployed_code</span><strong>Química</strong><b>40%</b><small>Atenção necessária</small></button>
           </div>
+          <aside class="subject-detail" data-subject-detail aria-live="polite"><header><span class="detail-icon material-symbols-outlined" data-detail-icon>functions</span><div><h3 data-detail-subject>Matemática</h3><p>Seu domínio: <strong data-detail-score>58%</strong></p></div></header><div class="detail-section"><p class="detail-label"><span class="material-symbols-outlined">target</span>Conceito atual</p><h4 data-detail-concept>Equações quadráticas</h4><p data-detail-description>Resolver equações do 2º grau completas e incompletas e interpretar as soluções.</p></div><div class="detail-section"><p class="detail-label"><span class="material-symbols-outlined">monitoring</span>Desempenho recente</p><p data-detail-result>Você acertou 6 de 10 questões neste tema.</p><div class="mini-progress"><span data-detail-bar style="width:60%"></span></div></div><div class="recommendation"><p><span class="material-symbols-outlined">star</span>Recomendado para você</p><span data-detail-recommendation>Este conceito prepara os próximos temas de Funções e Inequações.</span></div><div class="suggested-activity"><p class="detail-label"><span class="material-symbols-outlined">assignment</span>Próxima atividade sugerida</p><h4 data-detail-activity>Equações quadráticas: exercícios resolvidos</h4><small>12 questões · Nível intermediário · ~20 min</small><a class="button primary" data-practice-link href="../modulo_de_trilhas/matematica/index.html">Praticar agora<span class="material-symbols-outlined">arrow_forward</span></a></div></aside>
         </div>
-      </div>
-    </main>
-  </body>
+      </section>
+      <section class="weekly-progress" aria-labelledby="weekly-title"><div><h2 id="weekly-title">Progresso da semana</h2><p>Meta: 20 atividades</p></div><ol><li class="done"><span>Seg</span><b>3</b></li><li class="done"><span>Ter</span><b>2</b></li><li class="done"><span>Qua</span><b>3</b></li><li class="done"><span>Qui</span><b>2</b></li><li class="done"><span>Sex</span><b>3</b></li><li class="partial"><span>Sáb</span><b>1</b></li><li class="today"><span>Dom</span><b>Hoje</b></li></ol><div class="weekly-total"><span class="ring-progress">14<small>de 20</small></span><p><strong>70% da meta</strong><span>Continue assim!</span></p></div></section>
+    </div>
+  </main>
+  <dialog class="focus-dialog" data-focus-dialog><form method="dialog"><button class="icon-button dialog-close" aria-label="Fechar"><span class="material-symbols-outlined">close</span></button><span class="focus-icon material-symbols-outlined">timer</span><p class="section-kicker">Modo foco</p><h2>25:00</h2><p>Escolha uma atividade e estude sem distrações.</p><div class="focus-options"><button type="button" class="chip selected" data-focus-minutes="25">25 min</button><button type="button" class="chip" data-focus-minutes="45">45 min</button><button type="button" class="chip" data-focus-minutes="60">60 min</button></div><button class="button primary" value="start">Começar sessão</button></form></dialog>
+  <div class="toast" data-toast role="status" aria-live="polite"></div>
+</body>
 </html>

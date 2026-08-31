@@ -1,10 +1,10 @@
 # Módulo do Aluno: telas, layouts e contratos
 
-Este é o inventário das telas de autenticação e do frontend de `aluno`. As telas integradas usam `tela/code.html`, com carregamento de dados centralizado em `frontend/aluno/shared/student-data.js`; autenticação e chamadas Supabase ficam em `backend/supabase-client.js`. O laboratório de redação é um protótipo independente.
+Este é o inventário das telas de autenticação e do frontend de `aluno`. As telas integradas usam `tela/code.html`, com carregamento de dados centralizado em `frontend/aluno/shared/student-data.js`; autenticação e chamadas Supabase ficam em `backend/ominisaber-supabase-client.js`. O laboratório de redação é um protótipo independente.
 
 ## Estado atual
 
-As oito telas documentadas não têm o mesmo nível de integração. Login, cadastro e as cinco telas do shell integrado usam Supabase quando configurado. O laboratório mantém estado e envio simulados no navegador, sem consultar ou inserir dados no Supabase.
+As telas integradas usam Supabase quando configurado. O laboratório de redação também persiste propostas, planejamento, rascunhos, versões, envio e correção; o navegador mantém apenas um buffer temporário de emergência.
 
 ## Tela 1: Login
 
@@ -44,7 +44,7 @@ frontend/aluno/dashboard_principal/
 `-- code.html
 ```
 
-Layout necessário:
+Implementação atual:
 
 - Saudação e perfil.
 - Média calculada a partir de `notas`.
@@ -64,15 +64,37 @@ frontend/aluno/modulo_de_trilhas/
 
 Layout necessário:
 
-- Abas de trilhas obrigatórias e de aprendizagem.
-- Filtro por tipo.
-- Cards com matéria, descritor SEDU, prazo, descrição e atividades.
-- Estado vazio quando não houver trilhas publicadas para a turma.
-- Ação para abrir trilha e iniciar atividade.
+- Catálogo visual filtrável por busca, área, série, trimestre e dificuldade.
+- Detalhe com pré-requisitos, etapas bloqueadas, recompensas e progresso real.
+- Aula com blocos editoriais, vídeo, materiais, anotações e conclusão.
+- Atividade com dicas, resposta imediata e tentativa persistida.
+- Resultado com acertos, explicações e próximos passos.
+- Favoritos, conteúdos salvos e histórico cronológico do aluno.
+- Estados vazios quando o Supabase não possui conteúdo publicado; não há fallback com dados simulados.
 
-Serviços: `listTrilhas`, `listStudentProgress`.
+Serviços: `listStudyCatalog`, `getStudyTrail`, `getStudyActivity`, `toggleSavedContent`, `listSavedContent`, `saveLessonNotes`, `completeLesson`, `startActivityAttempt`, `getActiveActivityAttempt`, `answerActivityQuestion`, `getActivityResult`, `recordStudyEvent`, `listStudyHistory` e `getStudyXp`.
 
-Observação: a abertura detalhada de uma atividade exige uma tela adicional caso o produto precise de questionários, respostas e correção. O schema atual possui atividades e progresso, mas não possui tabela de respostas.
+O contrato de dados, as sete rotas e as políticas de acesso estão detalhados em [Trilhas e estudos](trilhas-e-estudos.md). A estrutura SQL incremental fica em `backend/migrations/20260831_trilhas_estudos_completos.sql`.
+
+As experiências detalhadas de Língua Portuguesa possuem telas próprias e consomem as avaliações publicadas pelo professor. As respostas são persistidas em `tentativas_avaliacao`, respeitando o vínculo entre aluno e turma.
+
+### Experiências de Língua Portuguesa
+
+```text
+frontend/aluno/modulo_de_trilhas/portugues/
+|-- index.html
+|-- mapa-da-lingua/
+|-- investigacao-argumentativa/
+`-- interpretacao-visual/
+```
+
+- `Mapa da Língua`: 1º ano, 1º trimestre, `EM13LP10` e `D103_P`. Trabalha locutor, interlocutor, contexto, escuta e marcas linguísticas.
+- `Investigação Argumentativa`: 2º ano, 3º trimestre, `EM13LP05` e `D055_P`. Permite selecionar ou arrastar tese, argumentos, evidência e contra-argumento.
+- `Interpretação Visual`: 3º ano, 1º trimestre, `EM13LP48` e `D057_P`. Articula fotografia, título, gráfico e crítica social.
+- As três telas usam o mesmo shell responsivo, menu móvel, navegação por teclado, foco visível, mensagens acessíveis e redução de movimento.
+- O conteúdo-base é curricular e autoral. Avaliações, questões, perfil e tentativas não são simulados: são carregados ou gravados no Supabase.
+- `listStudentEvaluations`, `getStudentEvaluationAttempt` e `saveStudentEvaluationAttempt` formam o contrato do quiz publicado pelo professor de Português.
+- Quando o Supabase não está configurado ou não existe avaliação publicada, a tela informa o estado indisponível sem inventar dados.
 
 ## Tela 5: Laboratório de redação
 
@@ -83,18 +105,19 @@ frontend/aluno/laboratorio_de_redacao/
 `-- style.css
 ```
 
-Layout necessário:
+Implementação atual:
 
-- Editor de título e texto.
-- Editor visual com título, texto, formatação e contagem de palavras.
-- Rascunho salvo e restaurado em `localStorage`.
-- Banco de temas estático e navegação em demonstração.
-- Modal e envio simulados; o botão não grava em `redacoes`.
-- Alerta de análise de originalidade/adequação por IA é apenas informativo.
+- Etapa 1 com propostas e textos fixados pela professora, busca, filtros, detalhes e seis propostas autorais de base.
+- Etapa 2 com anotações, tese, argumentos, intervenção e repertórios contextuais classificados.
+- Etapa 3 focada na redação, painel de planejamento minimizável e atalhos acessíveis para criar parágrafos.
+- Revisão anterior ao envio com checklist automático e consciente.
+- Redação corrigida com versões, comentários e cinco competências.
+- Histórico com rascunhos, envios, correções e evolução de versões.
+- Supabase como fonte oficial; `localStorage` é somente buffer temporário de recuperação.
 
-Serviços: nenhum serviço Supabase; a implementação usa `localStorage` e `setTimeout`.
+Serviços: `listWritingPrompts`, `getWritingPrompt`, `listWritingRepertoires`, `getEssayPlanning`, `saveEssayPlanning`, `getEssayDraft`, `saveEssayDraft`, `submitEssayDraft`, `getStudentEssay` e `listStudentEssayHistory`.
 
-Para autosave real, adicionar uma operação `updateRedacao` e usar `status = 'rascunho'` antes do envio final.
+Consulte [Jornada completa de redação](redacao-jornada-completa.md) para o contrato editorial, persistência e políticas de acesso.
 
 ## Tela 6: Minha evolução
 
@@ -160,7 +183,7 @@ frontend/aluno/shared/
 
 ## Limitações conhecidas
 
-- Os cards de trilhas exibem um botão `Abrir`, mas ainda não existe listener para abrir a trilha ou iniciar uma atividade.
+- Os cards genéricos do catálogo principal ainda não abrem qualquer formato de trilha; Língua Portuguesa já possui rotas detalhadas e interativas.
 - O filtro de trilhas é local e os cards filtrados não exibem a ação `Abrir`.
 - O prazo da trilha não é renderizado atualmente, embora exista no contrato visual.
 - Preferências de notificação, autosave remoto, feedback/nota do laboratório e respostas de atividades ainda não têm persistência implementada.
@@ -169,7 +192,7 @@ frontend/aluno/shared/
 
 Para completar além do escopo atual, o SQL precisará de:
 
-- `respostas_atividades`: respostas, tentativas, correção e feedback.
+- `respostas_atividades`: ainda será necessária somente para atividades genéricas fora do fluxo de `avaliacoes_docentes`; quizzes docentes já usam `tentativas_avaliacao`.
 - `rascunhos_redacoes` ou atualização completa de `redacoes` para autosave.
 - `preferencias_usuario`: notificações e preferências persistentes.
 - `conquistas_usuario`: medalhas, ranking e XP exibidos anteriormente.

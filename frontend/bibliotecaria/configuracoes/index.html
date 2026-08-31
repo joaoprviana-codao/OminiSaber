@@ -3,20 +3,20 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Regras | Biblioteca</title>
-    <link rel="stylesheet" href="../library.css" />
+    <title>Regras | Biblioteca | OminiSaber</title>
+    <link rel="stylesheet" href="../library.css" /><link rel="stylesheet" href="../../shared/sidebar.css" />
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="../../../backend/supabase-config.js"></script>
-    <script src="../../../backend/supabase-client.js"></script>
+    <script src="../../../backend/ominisaber-supabase-config.js"></script>
+    <script src="../../../backend/ominisaber-supabase-client.js"></script>
     <script defer src="../app.js"></script>
   </head>
-  <body>
+  <body data-app-role="library">
     <div class="library-shell">
       <aside class="library-sidebar">
         <a class="brand" href="../dashboard/index.html"
           ><span class="brand-mark"
             ><span class="material-symbols-outlined">local_library</span></span
-          >Biblioteca</a
+          ><span>OminiSaber<small>Biblioteca</small></span></a
         >
         <nav aria-label="Navegação da biblioteca">
           <a href="../dashboard/index.html"

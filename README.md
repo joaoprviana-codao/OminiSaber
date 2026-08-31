@@ -1,32 +1,43 @@
-# Backend Supabase | OminiSaber
+# OminiSaber
 
-## Stack
+Plataforma educacional com jornadas para aluno, professor, gestor e bibliotecária, integrada ao Supabase.
 
-- Supabase Auth para identidade e sessão.
-- PostgreSQL para dados relacionais.
-- RLS para autorização por `aluno`, `professor`, `bibliotecaria` e `gestor`.
-- JavaScript no browser somente com a chave pública `anon`.
-- `.env` apenas para ambiente local/deploy; nunca para transportar segredo ao HTML.
+## Executar localmente
 
-## Organização
+Sirva a raiz do projeto com um servidor HTTP estático:
 
-- `supabase_schema.sql`: tabelas, índices, funções, triggers e policies.
-- `supabase-client.js`: gateway único do frontend para Auth e domínio.
-- `supabase-config.js`: configuração pública consumida pelo browser.
-- `config/env.example.js`: contrato de ambiente para ferramentas locais.
-- `config/`: documentação e exemplos de configuração.
+~~~powershell
+python -m http.server 4173
+~~~
 
-1. Execute `supabase_schema.sql` no SQL Editor do projeto Supabase.
-2. Em Authentication > Users, crie os usuários ou habilite o método de e-mail/senha.
-3. Copie a URL do projeto e a chave pública `anon` para `supabase-config.js`:
+Abra o endereço local na porta 4173. O arquivo raiz redireciona para o login.
 
-```js
-window.OMINI_SUPABASE_CONFIG = {
-  url: 'https://seu-projeto.supabase.co',
-  anonKey: 'sua-chave-anon'
-};
-```
+Para QA visual das páginas antigas, use ?preview=1. Os novos espaços docentes não utilizam dados fictícios: exigem sessão Supabase e mostram estados vazios quando ainda não há conteúdo.
 
-Nunca use a chave `service_role` no navegador.
+- frontend/aluno/dashboard_principal/index.html?preview=1
+- frontend/aluno/minha_evolucao/index.html?preview=1
+- frontend/bibliotecaria/dashboard/index.html?preview=1
+- frontend/bibliotecaria/gestao_emprestimos/index.html?preview=1
+- frontend/professor/dashboard/index.html?preview=1
+- frontend/professor/redacoes/index.html?preview=1
+- frontend/aluno/laboratorio_de_redacao/index.html?preview=1
 
-O frontend usa a camada `supabase-client.js`, que fornece autenticação, perfis, trilhas, redações, livros e empréstimos. As permissões são aplicadas pelas políticas RLS do schema. A arquitetura está documentada em [`docs/arquitetura.md`](docs/arquitetura.md), e o inventário completo está em [`docs/estrutura-atual.md`](docs/estrutura-atual.md).
+As rotas docentes de produção ficam em `frontend/professor/professor_*/`.
+
+## Configurar Supabase
+
+1. Execute backend/ominisaber-schema.sql.
+2. Execute `backend/ominisaber-schema-espacos-docentes.sql` e os demais schemas complementares na ordem descrita em docs/padroes-do-projeto.md.
+3. Configure URL e chave anon em backend/ominisaber-supabase-config.js.
+4. Nunca use service_role no navegador.
+
+## Documentação
+
+- [Índice técnico](docs/README.md)
+- [Arquitetura](docs/arquitetura.md)
+- [Stack](docs/stack.md)
+- [Decisões](docs/decisoes-arquiteturais.md)
+- [Segurança](docs/seguranca.md)
+- [Padrões](docs/padroes-do-projeto.md)
+- [Experiência e acessibilidade](docs/experiencia-e-acessibilidade.md)
+- [Área do professor](docs/area-do-professor.md)

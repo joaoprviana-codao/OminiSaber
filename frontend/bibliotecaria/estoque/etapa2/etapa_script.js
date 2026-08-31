@@ -62,5 +62,5 @@
 
 	const initialize = async () => { setupSections(); setupAllocation(); setupScanner(); try { await loadData(); renderSections(); } catch (error) { renderSections(); toast(error.message || "Não foi possível carregar as seções.", "error"); } };
 	document.addEventListener("DOMContentLoaded", initialize);
-	window.EduTechSecoes = { updateSelection };
+	window.OminiSaberSecoes = { updateSelection };
 })();

@@ -5,14 +5,14 @@ Esta página apresenta uma visão resumida da jornada acadêmica do aluno: perfi
 ## Arquitetura
 
 - `index.html` contém a estrutura semântica, navegação e os estados visuais da tela.
-- `style.css` define os tokens do `EduTech Clarity`, o layout fluido e os breakpoints para mobile, tablet e desktop.
+- `style.css` define os tokens do `OminiSaber Clarity`, o layout fluido e os breakpoints para mobile, tablet e desktop.
 - `script.js` concentra a apresentação e usa exclusivamente as funções públicas de `window.OminiSaber`: `getSession`, `getProfile`, `listStudentNotes`, `listStudentProgress`, `listStudentRedacoes` e `listStudentLoans`.
-- O gateway em `backend/supabase-client.js` é responsável por autenticação, consultas e RLS. A tela não acessa tabelas diretamente.
+- O gateway em `backend/ominisaber-supabase-client.js` é responsável por autenticação, consultas e RLS. A tela não acessa tabelas diretamente.
 - Os dados continuam centralizados no contrato compartilhado do aluno (`frontend/aluno/shared/student-data.js`); este dashboard usa o mesmo gateway público para evitar duplicação de acesso ao Supabase.
 
 ## Execução
 
-Abra `index.html` por meio de um servidor estático para que os scripts relativos sejam resolvidos. Configure `backend/supabase-config.js` e tenha uma sessão autenticada de aluno para visualizar dados reais. Chart.js é carregado por CDN.
+Abra `index.html` por meio de um servidor estático para que os scripts relativos sejam resolvidos. Configure `backend/ominisaber-supabase-config.js` e tenha uma sessão autenticada de aluno para visualizar dados reais. Chart.js é carregado por CDN.
 
 ## Estados
 

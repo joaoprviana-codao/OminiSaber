@@ -3,399 +3,76 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta
-      name="description"
-      content="Laboratório guiado de redação no formato ENEM."
-    />
-    <title>Laboratório de Redação | EduTech</title>
+    <meta name="description" content="Jornada guiada de proposta, planejamento e escrita do OminiSaber." />
+    <title>Laboratório de Redação | OminiSaber</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:FILL@0..1"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,500;0,600;1,500&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:FILL@0..1" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
-    <script src="../../../backend/supabase-config.js"></script>
+    <script src="../../../backend/ominisaber-supabase-config.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="../../../backend/supabase-client.js"></script>
+    <script src="../../../backend/ominisaber-supabase-client.js"></script>
     <script defer src="script.js"></script>
   </head>
-  <body>
+  <body data-required-role="aluno">
     <header class="site-header">
-      <a class="brand" href="../dashboard_principal/index.html"
-        ><span class="brand-mark"
-          ><span class="material-symbols-outlined">school</span></span
-        ><span>EduTech</span></a
-      >
-      <nav class="header-nav" aria-label="Navegação do aluno">
-        <a href="../dashboard_principal/index.html">Dashboard</a>
-        <a class="active" href="index.html" aria-current="page">Redação</a>
-        <a href="../minha_evolucao/code.html">Evolução</a>
-      </nav>
-      <a
-        class="avatar"
-        href="../configuracoes/index.html"
-        aria-label="Abrir perfil"
-        data-initials
-        >--</a
-      >
+      <a class="brand" href="../dashboard_principal/index.html"><span class="brand-mark"><span class="material-symbols-outlined" aria-hidden="true">draw</span></span><span>OminiSaber<small>Ateliê de escrita</small></span></a>
+      <nav class="header-nav" aria-label="Navegação do laboratório"><a class="active" href="index.html" aria-current="page">Laboratório</a><a href="historico/index.html">Minhas redações</a><a href="../minha_evolucao/index.html">Evolução</a></nav>
+      <a class="history-shortcut" href="historico/index.html"><span class="material-symbols-outlined" aria-hidden="true">history</span><span>Histórico</span></a>
+      <a class="avatar" href="../perfil/index.html" aria-label="Abrir perfil" data-initials>AL</a>
     </header>
 
     <main class="page-shell">
-      <section class="intro">
-        <div>
-          <p class="eyebrow">LABORATÓRIO DE REDAÇÃO</p>
-          <h1>Escreva com intenção.</h1>
-          <p>
-            Escolha uma proposta, organize seu raciocínio e entregue uma redação
-            pronta para avaliação.
-          </p>
-        </div>
-        <div class="intro-note">
-          <span class="material-symbols-outlined">verified_user</span
-          ><span>Fluxo protegido<br /><strong>3 etapas guiadas</strong></span>
-        </div>
-      </section>
+      <section class="intro writing-intro"><div><p class="eyebrow">LABORATÓRIO DE REDAÇÃO</p><h1>Da ideia ao texto, sem pular etapas.</h1><p>Explore uma proposta, construa argumentos com repertório pertinente e escreva com foco.</p></div><div class="intro-note"><span class="material-symbols-outlined" aria-hidden="true">cloud_done</span><span>Ligado ao Supabase<br /><strong>Planejamento e versões salvos</strong></span></div></section>
 
       <nav class="stepper" aria-label="Etapas da redação">
-        <button
-          class="step is-active"
-          type="button"
-          data-step-target="1"
-          aria-current="step"
-        >
-          <span>01</span><strong>Tema</strong><small>Escolha a proposta</small>
-        </button>
-        <span class="step-line" aria-hidden="true"></span>
-        <button class="step" type="button" data-step-target="2">
-          <span>02</span><strong>Planejamento</strong
-          ><small>Organize suas ideias</small>
-        </button>
-        <span class="step-line" aria-hidden="true"></span>
-        <button class="step" type="button" data-step-target="3">
-          <span>03</span><strong>Redação oficial</strong
-          ><small>Escreva e envie</small>
-        </button>
+        <button class="step is-active" type="button" data-step-target="1" aria-current="step"><span>01</span><strong>Explorar</strong><small>Propostas e textos</small></button><span class="step-line" aria-hidden="true"></span>
+        <button class="step" type="button" data-step-target="2"><span>02</span><strong>Planejar</strong><small>Argumentos e repertório</small></button><span class="step-line" aria-hidden="true"></span>
+        <button class="step" type="button" data-step-target="3"><span>03</span><strong>Escrever</strong><small>Somente sua redação</small></button>
       </nav>
 
-      <section
-        class="step-panel"
-        data-step="1"
-        aria-labelledby="step-one-title"
-      >
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">ETAPA 1</p>
-            <h2 id="step-one-title">Banco de temas</h2>
-            <p>
-              Selecione uma proposta no modelo ENEM para começar sua jornada.
-            </p>
-          </div>
-          <span class="material-symbols-outlined heading-icon">lightbulb</span>
-        </div>
-        <div class="theme-filters" role="tablist" aria-label="Filtrar temas">
-          <button
-            class="filter-button is-active"
-            type="button"
-            data-theme-filter="todos"
-          >
-            Todos</button
-          ><button
-            class="filter-button"
-            type="button"
-            data-theme-filter="tecnologia"
-          >
-            Tecnologia</button
-          ><button
-            class="filter-button"
-            type="button"
-            data-theme-filter="meio-ambiente"
-          >
-            Meio ambiente</button
-          ><button
-            class="filter-button"
-            type="button"
-            data-theme-filter="sociedade"
-          >
-            Sociedade
-          </button>
-        </div>
-        <div class="theme-grid">
-          <article
-            class="theme-card"
-            data-theme-card
-            data-category="tecnologia"
-            data-theme-id="inclusao-digital"
-          >
-            <div class="theme-card-top theme-tech">
-              <span class="theme-badge">Tecnologia</span
-              ><span class="material-symbols-outlined">devices</span>
-            </div>
-            <div class="theme-card-body">
-              <h3>
-                Os desafios da inclusão digital e da inteligência artificial no
-                cotidiano brasileiro
-              </h3>
-              <p>
-                Discuta caminhos para ampliar o acesso responsável e reduzir
-                desigualdades tecnológicas.
-              </p>
-              <div class="theme-meta">
-                <span
-                  ><span class="material-symbols-outlined">menu_book</span>2
-                  textos motivadores</span
-                ><span
-                  ><span class="material-symbols-outlined">schedule</span>30
-                  min</span
-                >
-              </div>
-              <button class="button button-primary select-theme" type="button">
-                Escolher tema
-                <span class="material-symbols-outlined">arrow_forward</span>
-              </button>
-            </div>
-          </article>
-          <article
-            class="theme-card"
-            data-theme-card
-            data-category="meio-ambiente"
-            data-theme-id="infraestrutura-climatica"
-          >
-            <div class="theme-card-top theme-nature">
-              <span class="theme-badge">Meio ambiente</span
-              ><span class="material-symbols-outlined">park</span>
-            </div>
-            <div class="theme-card-body">
-              <h3>
-                Os impactos das mudanças climáticas na infraestrutura urbana do
-                Brasil
-              </h3>
-              <p>
-                Analise os efeitos da crise climática e as responsabilidades na
-                adaptação das cidades.
-              </p>
-              <div class="theme-meta">
-                <span
-                  ><span class="material-symbols-outlined">menu_book</span>2
-                  textos motivadores</span
-                ><span
-                  ><span class="material-symbols-outlined">schedule</span>30
-                  min</span
-                >
-              </div>
-              <button class="button button-primary select-theme" type="button">
-                Escolher tema
-                <span class="material-symbols-outlined">arrow_forward</span>
-              </button>
-            </div>
-          </article>
-          <article
-            class="theme-card"
-            data-theme-card
-            data-category="sociedade"
-            data-theme-id="acesso-cultura"
-          >
-            <div class="theme-card-top theme-society">
-              <span class="theme-badge">Sociedade</span
-              ><span class="material-symbols-outlined">groups</span>
-            </div>
-            <div class="theme-card-body">
-              <h3>
-                A democratização do acesso à cultura e ao lazer nas periferias
-                brasileiras
-              </h3>
-              <p>
-                Proponha ações para tornar experiências culturais mais
-                acessíveis e contínuas.
-              </p>
-              <div class="theme-meta">
-                <span
-                  ><span class="material-symbols-outlined">menu_book</span>2
-                  textos motivadores</span
-                ><span
-                  ><span class="material-symbols-outlined">schedule</span>30
-                  min</span
-                >
-              </div>
-              <button class="button button-primary select-theme" type="button">
-                Escolher tema
-                <span class="material-symbols-outlined">arrow_forward</span>
-              </button>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <section
-        class="step-panel is-hidden"
-        data-step="2"
-        aria-labelledby="step-two-title"
-      >
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">ETAPA 2</p>
-            <h2 id="step-two-title">Planejamento textual</h2>
-            <p>
-              Leia a proposta e registre seu caminho antes de escrever a versão
-              final.
-            </p>
-          </div>
-          <span class="material-symbols-outlined heading-icon"
-            >account_tree</span
-          >
-        </div>
-        <div class="selected-theme" data-selected-theme></div>
-        <div class="planning-grid">
-          <article class="motivation-panel">
-            <div class="subheading">
-              <span class="material-symbols-outlined">article</span>
-              <h3>Textos motivadores</h3>
-            </div>
-            <div data-motivators></div>
-          </article>
-          <article class="brainstorm-panel">
-            <div class="subheading">
-              <span class="material-symbols-outlined">edit_note</span>
-              <h3>Bloco de anotações</h3>
-            </div>
-            <label for="planning-notes"
-              >Tese, argumentos e proposta de intervenção</label
-            ><textarea
-              id="planning-notes"
-              data-planning-notes
-              placeholder="Registre palavras-chave, relações de causa e efeito, repertórios e uma possível intervenção..."
-            ></textarea>
-            <div class="planning-footer">
-              <span data-planning-count>0 caracteres</span
-              ><span>Rascunho local</span>
-            </div>
-          </article>
-        </div>
-        <section class="competencies">
-          <div class="subheading">
-            <span class="material-symbols-outlined">military_tech</span>
-            <h3>Matriz de referência ENEM</h3>
-          </div>
-          <div class="competency-grid">
-            <div><strong>C1</strong><span>Norma-padrão</span></div>
-            <div><strong>C2</strong><span>Tema e repertório</span></div>
-            <div><strong>C3</strong><span>Argumentação</span></div>
-            <div><strong>C4</strong><span>Coesão</span></div>
-            <div><strong>C5</strong><span>Intervenção</span></div>
-          </div>
+      <section class="step-panel" data-step="1" aria-labelledby="step-one-title">
+        <div class="section-heading"><div><p class="eyebrow">ETAPA 1 · EXPLORAÇÃO</p><h2 id="step-one-title">Escolha uma proposta que provoque boas perguntas.</h2><p>Veja primeiro o que sua professora fixou. Depois, explore todo o banco de temas.</p></div><span class="material-symbols-outlined heading-icon" aria-hidden="true">travel_explore</span></div>
+        <section class="pinned-section" aria-labelledby="pinned-title">
+          <div class="subheading row-heading"><div><span class="material-symbols-outlined" aria-hidden="true">keep</span><h3 id="pinned-title">Fixados pela professora</h3></div><span class="live-source"><i></i> Atualizado pelo Supabase</span></div>
+          <div class="pinned-grid" data-pinned-grid aria-live="polite"></div>
         </section>
-        <div class="step-actions">
-          <button
-            class="button button-secondary"
-            type="button"
-            data-back-step="1"
-          >
-            <span class="material-symbols-outlined">arrow_back</span>Voltar aos
-            temas</button
-          ><button
-            class="button button-primary"
-            type="button"
-            data-next-step="3"
-          >
-            Ir para a redação oficial
-            <span class="material-symbols-outlined">arrow_forward</span>
-          </button>
-        </div>
+        <section class="theme-bank" aria-labelledby="theme-bank-title">
+          <div class="bank-heading"><div><p class="eyebrow">BANCO DE TEMAS</p><h3 id="theme-bank-title">Outras propostas para praticar</h3></div><span data-theme-total>0 temas</span></div>
+          <div class="theme-toolbar"><label class="theme-search"><span class="material-symbols-outlined" aria-hidden="true">search</span><input type="search" data-theme-search placeholder="Buscar tema, eixo ou palavra-chave" aria-label="Buscar no banco de temas" /></label><div class="theme-filters" role="group" aria-label="Filtrar temas"><button class="filter-button is-active" type="button" data-theme-filter="todos">Todos</button><button class="filter-button" type="button" data-theme-filter="sociedade">Sociedade</button><button class="filter-button" type="button" data-theme-filter="tecnologia">Tecnologia</button><button class="filter-button" type="button" data-theme-filter="meio-ambiente">Meio ambiente</button><button class="filter-button" type="button" data-theme-filter="educacao">Educação</button><button class="filter-button" type="button" data-theme-filter="saude">Saúde</button></div></div>
+          <div class="theme-grid" data-theme-grid aria-live="polite"></div>
+        </section>
       </section>
 
-      <section
-        class="step-panel is-hidden"
-        data-step="3"
-        aria-labelledby="step-three-title"
-      >
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">ETAPA 3</p>
-            <h2 id="step-three-title">Construção da redação oficial</h2>
-            <p>
-              Agora é hora de transformar seu planejamento em um texto completo.
-            </p>
-          </div>
-          <span class="integrity-status" data-integrity-status
-            ><span class="material-symbols-outlined">shield</span>Ambiente
-            protegido</span
-          >
+      <section class="step-panel is-hidden" data-step="2" aria-labelledby="step-two-title">
+        <div class="section-heading"><div><p class="eyebrow">ETAPA 2 · PLANEJAMENTO</p><h2 id="step-two-title">Construa a espinha dorsal do texto.</h2><p>Registre suas ideias e escolha apenas repertórios que tenham relação comprovável com o tema.</p></div><span class="save-pill" data-planning-status><span class="material-symbols-outlined" aria-hidden="true">cloud</span>Aguardando edição</span></div>
+        <div class="selected-theme" data-selected-theme></div>
+        <aside class="shortcut-explainer"><span class="material-symbols-outlined" aria-hidden="true">keyboard</span><div><strong>Atalhos que estarão disponíveis na escrita</strong><p><kbd>Tab</kbd> no início de uma linha ou <kbd>Shift</kbd> + <kbd>Enter</kbd> cria automaticamente um novo parágrafo na linha de baixo. Na etapa 3 você também poderá minimizar este bloco de anotações.</p></div></aside>
+        <div class="planning-workspace">
+          <section class="planning-column notes-column"><div class="subheading"><span class="material-symbols-outlined" aria-hidden="true">edit_note</span><h3>Bloco de anotações</h3></div><label for="planning-notes">Ideias, dúvidas e conexões</label><textarea id="planning-notes" data-planning-notes maxlength="20000" placeholder="Anote livremente antes de organizar sua tese..."></textarea><div class="planning-footer"><span data-planning-count>0 caracteres</span><span>Salvo na sua conta</span></div></section>
+          <section class="planning-column argument-map"><div class="subheading"><span class="material-symbols-outlined" aria-hidden="true">account_tree</span><h3>Mapa de argumentos</h3></div><label for="planning-thesis">Tese central</label><textarea id="planning-thesis" data-planning-thesis rows="3" placeholder="Qual posição você defenderá?"></textarea><div class="argument-fields"><label>Argumento 1<textarea data-argument="0" rows="3" placeholder="Causa, problema ou perspectiva..."></textarea></label><label>Argumento 2<textarea data-argument="1" rows="3" placeholder="Consequência, contraponto ou aprofundamento..."></textarea></label></div><p class="field-hint">Evite repetir a tese: cada argumento precisa acrescentar uma razão verificável.</p></section>
         </div>
-        <div class="integrity-alert" data-integrity-alert>
-          <span class="material-symbols-outlined">info</span>
-          <p>
-            Durante a redação oficial, sua sessão precisa permanecer nesta tela.
-            Trocas de aba ou janela invalidam a tentativa e bloqueiam o envio.
-          </p>
-        </div>
-        <div class="official-editor" data-official-editor>
-          <label for="official-title">Título da redação</label
-          ><input
-            id="official-title"
-            type="text"
-            maxlength="160"
-            placeholder="Digite um título para sua redação"
-            data-official-title
-            autocomplete="off"
-          /><label for="official-text">Texto final</label
-          ><textarea
-            id="official-text"
-            placeholder="Comece sua introdução aqui..."
-            data-official-text
-            spellcheck="true"
-          ></textarea>
-          <div class="editor-footer">
-            <span><strong data-word-count>0</strong> palavras</span
-            ><span><strong data-line-count>0</strong> linhas</span
-            ><span data-save-status>Pronto para começar</span>
-          </div>
-        </div>
-        <div
-          class="invalid-attempt is-hidden"
-          data-invalid-attempt
-          role="alert"
-        >
-          <span class="material-symbols-outlined">gpp_bad</span>
-          <div>
-            <strong>Tentativa inválida por troca de tela</strong>
-            <p>
-              Por segurança acadêmica, esta redação não pode mais ser enviada.
-              Reinicie o fluxo para começar uma nova tentativa.
-            </p>
-          </div>
-          <button class="button button-secondary" type="button" data-restart>
-            Reiniciar fluxo
-          </button>
-        </div>
-        <div class="step-actions">
-          <button
-            class="button button-secondary"
-            type="button"
-            data-back-step="2"
-          >
-            <span class="material-symbols-outlined">arrow_back</span>Voltar ao
-            planejamento</button
-          ><button class="button button-primary" type="button" data-submit>
-            Enviar para avaliação
-            <span class="material-symbols-outlined">send</span>
-          </button>
-        </div>
+        <section class="repertoire-lab" aria-labelledby="repertoire-title">
+          <div class="repertoire-head"><div><p class="eyebrow">REPERTÓRIO PRODUTIVO</p><h3 id="repertoire-title">Classifique e conecte referências ao seu argumento</h3><p>Não usamos repertório coringa. Cada referência explica onde e como pode ser aplicada.</p></div><span class="selected-counter" data-repertoire-count>0 selecionados</span></div>
+          <div class="repertoire-categories" role="group" aria-label="Categorias de repertório"><button class="repertoire-filter is-active" type="button" data-repertoire-filter="todos">Todos</button><button class="repertoire-filter" type="button" data-repertoire-filter="cultural">Cultural</button><button class="repertoire-filter" type="button" data-repertoire-filter="estatistico">Estatístico</button><button class="repertoire-filter" type="button" data-repertoire-filter="historico">Histórico</button><button class="repertoire-filter" type="button" data-repertoire-filter="cientifico">Científico</button><button class="repertoire-filter" type="button" data-repertoire-filter="legal">Legal</button><button class="repertoire-filter" type="button" data-repertoire-filter="literario">Literário</button></div>
+          <div class="repertoire-grid" data-repertoire-grid aria-live="polite"></div>
+        </section>
+        <section class="intervention-builder"><div class="subheading"><span class="material-symbols-outlined" aria-hidden="true">construction</span><h3>Esboço da proposta de intervenção</h3></div><div class="intervention-grid"><label>Agente<input data-intervention="agente" placeholder="Quem deve agir?" /></label><label>Ação<input data-intervention="acao" placeholder="O que deve ser feito?" /></label><label>Meio<input data-intervention="meio" placeholder="Como será realizado?" /></label><label>Finalidade<input data-intervention="finalidade" placeholder="Qual resultado esperado?" /></label><label>Detalhamento<input data-intervention="detalhamento" placeholder="Que detalhe torna a proposta concreta?" /></label></div></section>
+        <div class="step-actions"><button class="button button-secondary" type="button" data-back-step="1"><span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>Voltar aos temas</button><button class="button button-primary" type="button" data-next-step="3">Salvar planejamento e escrever<span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span></button></div>
       </section>
 
-      <div
-        class="feedback"
-        data-feedback
-        role="status"
-        aria-live="polite"
-      ></div>
+      <section class="step-panel writing-panel is-hidden" data-step="3" aria-labelledby="step-three-title">
+        <div class="writing-focus-head"><div><p class="eyebrow">ETAPA 3 · REDAÇÃO</p><h2 id="step-three-title">Agora, somente o seu texto.</h2><p data-writing-theme>Proposta selecionada</p></div><span class="save-pill" data-draft-status><span class="material-symbols-outlined" aria-hidden="true">cloud_done</span>Pronto para escrever</span></div>
+        <div class="writing-workspace" data-writing-workspace>
+          <aside class="notes-drawer" data-notes-drawer><header><div><span class="material-symbols-outlined" aria-hidden="true">sticky_note_2</span><strong>Meu planejamento</strong></div><button class="icon-button" type="button" data-toggle-notes aria-label="Minimizar bloco de anotações" aria-expanded="true"><span class="material-symbols-outlined" aria-hidden="true">left_panel_close</span></button></header><div class="notes-drawer-content" data-notes-content></div></aside>
+          <article class="paper-editor"><div class="paper-toolbar"><span><span class="material-symbols-outlined" aria-hidden="true">keyboard_tab</span><kbd>Tab</kbd> no início ou <kbd>Shift</kbd> + <kbd>Enter</kbd>: novo parágrafo</span><span data-last-saved></span></div><label for="official-title">Título</label><input id="official-title" type="text" maxlength="160" placeholder="Dê um título ao seu texto" data-official-title autocomplete="off" /><label for="official-text">Redação</label><textarea id="official-text" data-official-text spellcheck="true" placeholder="Comece sua introdução aqui..."></textarea><footer class="editor-footer"><span><strong data-word-count>0</strong> palavras</span><span><strong data-paragraph-count>0</strong> parágrafos</span><span><strong data-character-count>0</strong> caracteres</span></footer></article>
+        </div>
+        <div class="step-actions"><button class="button button-secondary" type="button" data-back-step="2"><span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>Rever planejamento</button><button class="button button-primary" type="button" data-open-review>Revisar antes de enviar<span class="material-symbols-outlined" aria-hidden="true">fact_check</span></button></div>
+      </section>
+      <div class="feedback" data-feedback role="status" aria-live="polite"></div>
     </main>
-    <footer class="site-footer">
-      <span class="material-symbols-outlined">lock</span> Sua produção é enviada
-      somente após sua confirmação e fica associada à sua conta.
-    </footer>
+    <dialog class="theme-dialog" data-theme-dialog aria-labelledby="theme-dialog-title"><button class="dialog-close" type="button" data-close-dialog aria-label="Fechar detalhes"><span class="material-symbols-outlined" aria-hidden="true">close</span></button><div data-theme-dialog-content></div></dialog>
+    <footer class="site-footer"><span class="material-symbols-outlined" aria-hidden="true">lock</span> Seus rascunhos, anotações e versões ficam associados à sua conta.</footer>
   </body>
 </html>

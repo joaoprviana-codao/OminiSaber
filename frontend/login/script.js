@@ -6,7 +6,7 @@
   const submitButton = form?.querySelector('button[type="submit"]');
   const btnLabel = submitButton?.querySelector('.btn-label');
   const rememberInput = document.getElementById('remember-me');
-  const savedEmail = localStorage.getItem('edutech-login-email');
+  const savedEmail = localStorage.getItem('ominisaber-login-email');
 
   if (!form || !passwordInput || !passwordToggle || !loginError || !submitButton || !btnLabel) return;
 
@@ -77,9 +77,9 @@
 
     // Gerencia o "Lembrar-me"
     if (rememberInput.checked) {
-      localStorage.setItem('edutech-login-email', email);
+      localStorage.setItem('ominisaber-login-email', email);
     } else {
-      localStorage.removeItem('edutech-login-email');
+      localStorage.removeItem('ominisaber-login-email');
     }
 
     setLoading(true);
@@ -97,12 +97,20 @@
       const routes = {
         aluno: '../aluno/dashboard_principal/index.html',
         bibliotecaria: '../bibliotecaria/dashboard/index.html',
-        professor: '../professor/dashboard/code.html',
-        gestor: '../gestor/dashboard/code.html'
+        gestor: '../gestor/dashboard/index.html'
+      };
+
+      const teacherRoutes = {
+        matematica: '../professor/professor_matematica/dashboard/index.html',
+        portugues: '../professor/professor_portugues/dashboard/index.html',
+        tecnico_administracao: '../professor/professor_tecnico_administracao/dashboard/index.html',
+        tecnico_informatica: '../professor/professor_tecnico_informatica/dashboard/index.html'
       };
 
       setSuccess();
-      window.location.href = routes[profile?.role] || routes.aluno;
+      window.location.href = profile?.role === 'professor'
+        ? teacherRoutes[profile?.tipo_professor] || '../erro/index.html?code=teacher-specialty'
+        : routes[profile?.role] || routes.aluno;
       return;
 
     } catch (error) {

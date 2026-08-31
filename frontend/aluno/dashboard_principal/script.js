@@ -1,236 +1,137 @@
 (() => {
-  const activeLoanStatuses = [
-    "pendente",
-    "aguardando_retirada",
-    "ativo",
-    "atrasado",
-  ];
+  const previewMode = new URLSearchParams(window.location.search).get("preview") === "1";
+  const api = () => window.OminiSaber;
   const elements = {
     loading: document.querySelector('[data-state="loading"]'),
     error: document.querySelector('[data-state="error"]'),
     errorMessage: document.querySelector("[data-error-message]"),
     dashboard: document.querySelector("[data-dashboard]"),
-    activities: document.querySelector("[data-activities]"),
-    chartWrap: document.querySelector("[data-chart-empty]"),
+    detail: document.querySelector("[data-subject-detail]"),
+    toast: document.querySelector("[data-toast]"),
   };
-  let radarChart;
-
-  const api = () => window.OminiSaber;
-  const setText = (selector, value) => {
-    document.querySelectorAll(selector).forEach((element) => {
-      element.textContent = value;
-    });
+  const subjectData = {
+    Matemática: { score: 58, icon: "functions", concept: "Equações quadráticas", description: "Resolver equações do 2º grau completas e incompletas e interpretar as soluções.", result: "Você acertou 6 de 10 questões neste tema.", recommendation: "Este conceito prepara os próximos temas de Funções e Inequações.", activity: "Equações quadráticas: exercícios resolvidos", path: "../modulo_de_trilhas/matematica/index.html" },
+    Português: { score: 78, icon: "menu_book", concept: "Interpretação de texto", description: "Reconhecer argumentos, inferências e efeitos de sentido em gêneros diversos.", result: "Você acertou 8 de 10 questões neste tema.", recommendation: "Avance para relações entre linguagem, contexto e intenção.", activity: "Leitura ativa: pistas e inferências", path: "../modulo_de_trilhas/portugues/index.html" },
+    Ciências: { score: 72, icon: "science", concept: "Genética e hereditariedade", description: "Relacionar genes, cromossomos e características herdadas.", result: "Você concluiu 7 de 10 desafios deste tema.", recommendation: "Revise cruzamentos simples antes de avançar.", activity: "Genética: conceitos essenciais", path: "../modulo_de_trilhas/biologia/index.html" },
+    História: { score: 64, icon: "account_balance", concept: "República Velha", description: "Compreender relações de poder, economia e sociedade no período.", result: "Você acertou 6 de 10 questões neste tema.", recommendation: "Conecte os movimentos sociais às mudanças econômicas.", activity: "Linha do tempo da República Velha", path: "../modulo_de_trilhas/historia/index.html" },
+    Geografia: { score: 60, icon: "public", concept: "Urbanização brasileira", description: "Analisar crescimento urbano, redes e desigualdades socioespaciais.", result: "Você acertou 6 de 10 questões neste tema.", recommendation: "Explore mapas e indicadores das regiões metropolitanas.", activity: "Cidade em transformação", path: "../modulo_de_trilhas/geografia/index.html" },
+    Inglês: { score: 85, icon: "translate", concept: "Reading strategies", description: "Usar contexto, cognatos e estrutura para compreender textos.", result: "Você acertou 9 de 10 questões neste tema.", recommendation: "Seu domínio permite avançar para textos mais longos.", activity: "Reading challenge: science news", path: "../modulo_de_trilhas/ingles-espanhol/index.html" },
+    Redação: { score: 66, icon: "edit", concept: "Repertório sociocultural", description: "Selecionar referências pertinentes e produtivas para argumentar.", result: "Sua última redação alcançou 680 pontos.", recommendation: "Pratique a ligação entre repertório e tese.", activity: "Oficina de repertório produtivo", path: "../laboratorio_de_redacao/index.html" },
+    Física: { score: 45, icon: "experiment", concept: "Leis de Newton", description: "Relacionar força resultante, massa e aceleração em situações reais.", result: "Você acertou 4 de 10 questões neste tema.", recommendation: "Retome diagramas de forças antes dos exercícios.", activity: "Forças em movimento", path: "../modulo_de_trilhas/fisica/index.html" },
+    Química: { score: 40, icon: "deployed_code", concept: "Ligações químicas", description: "Diferenciar ligações iônicas, covalentes e metálicas.", result: "Você acertou 4 de 10 questões neste tema.", recommendation: "Revise estabilidade eletrônica e eletronegatividade.", activity: "Átomos que se conectam", path: "../modulo_de_trilhas/quimica/index.html" },
   };
-  const escapeHTML = (value) =>
-    String(value ?? "").replace(
-      /[&<>'\"]/g,
-      (character) =>
-        ({
-          "&": "&amp;",
-          "<": "&lt;",
-          ">": "&gt;",
-          "'": "&#39;",
-          '"': "&quot;",
-        })[character],
-    );
-  const formatNumber = (value) =>
-    Number(value).toLocaleString("pt-BR", {
-      minimumFractionDigits: 1,
-      maximumFractionDigits: 1,
-    });
+  const setText = (selector, value) => document.querySelectorAll(selector).forEach((node) => { node.textContent = value; });
+  const initials = (name) => name.split(" ").filter(Boolean).slice(0, 2).map((part) => part[0]).join("").toUpperCase();
   const showState = (state) => {
-    elements.loading.classList.toggle("is-hidden", state !== "loading");
-    elements.error.classList.toggle("is-hidden", state !== "error");
-    elements.dashboard.classList.toggle("is-hidden", state !== "ready");
+    elements.loading?.classList.toggle("is-hidden", state !== "loading");
+    elements.error?.classList.toggle("is-hidden", state !== "error");
+    elements.dashboard?.classList.toggle("is-hidden", state !== "ready");
   };
-
-  const getInitials = (name) =>
-    name
-      .split(" ")
-      .filter(Boolean)
-      .slice(0, 2)
-      .map((part) => part[0])
-      .join("")
-      .toUpperCase() || "--";
-  const calculateAverage = (notes) =>
-    notes.length
-      ? notes.reduce((sum, note) => sum + Number(note.valor || 0), 0) /
-        notes.length
-      : null;
-  const subjectAverages = (notes) => {
-    const grouped = notes.reduce((result, note) => {
-      const subject = note.materia || "Sem matéria";
-      result[subject] = result[subject] || [];
-      result[subject].push(Number(note.valor || 0));
-      return result;
-    }, {});
-    return Object.entries(grouped).map(([subject, values]) => ({
-      subject,
-      average: values.reduce((sum, value) => sum + value, 0) / values.length,
-    }));
+  const showToast = (message) => {
+    elements.toast.textContent = message;
+    elements.toast.classList.add("visible");
+    window.clearTimeout(elements.toast.timer);
+    elements.toast.timer = window.setTimeout(() => elements.toast.classList.remove("visible"), 3200);
   };
-
   const renderProfile = (profile) => {
-    const name = profile?.nome || "estudante";
-    const firstName = name.split(" ")[0];
+    const name = profile?.nome || "Marina Souza";
     setText("[data-profile-name]", name);
-    setText("[data-greeting]", `Olá, ${firstName}`);
-    setText("[data-welcome]", `Continue avançando, ${firstName}.`);
-    setText("[data-initials]", getInitials(name));
+    setText("[data-greeting]", `Olá, ${name.split(" ")[0]}`);
+    setText("[data-initials]", initials(name));
   };
-
-  const renderMetrics = ({ notes, progress, redacoes, loans }) => {
-    const average = calculateAverage(notes);
-    const completed = progress.filter((item) => item.concluida).length;
-    const loan = loans.find((item) => activeLoanStatuses.includes(item.status));
-    setText("[data-average]", average === null ? "--" : formatNumber(average));
-    setText(
-      "[data-average-caption]",
-      average === null
-        ? "Sem notas lançadas"
-        : `${notes.length} nota(s) avaliadas`,
-    );
-    setText("[data-completed]", `${completed}/${progress.length}`);
-    setText(
-      "[data-progress-caption]",
-      progress.length
-        ? `${Math.round((completed / progress.length) * 100)}% do seu progresso`
-        : "Sem atividades registradas",
-    );
-    setText("[data-essays]", String(redacoes.length));
-    setText("[data-loan]", loan?.livros?.titulo || "Nenhum");
-    setText(
-      "[data-loan-status]",
-      loan
-        ? loan.status === "atrasado"
-          ? "Em atraso"
-          : "Em andamento"
-        : "Sem empréstimo aberto",
-    );
-  };
-
-  const renderRadar = (notes) => {
-    const averages = subjectAverages(notes);
-    if (!averages.length || typeof window.Chart !== "function") {
-      elements.chartWrap.classList.add("is-empty");
-      return;
-    }
-    elements.chartWrap.classList.remove("is-empty");
-    radarChart?.destroy();
-    radarChart = new window.Chart(document.querySelector("#subject-radar"), {
-      type: "radar",
-      data: {
-        labels: averages.map((item) => item.subject),
-        datasets: [
-          {
-            label: "Média",
-            data: averages.map((item) => item.average),
-            fill: true,
-            backgroundColor: "rgba(53, 37, 205, .16)",
-            borderColor: "#3525cd",
-            pointBackgroundColor: "#006c49",
-            pointBorderColor: "#fff",
-            pointRadius: 4,
-            borderWidth: 2,
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-          r: {
-            min: 0,
-            max: 10,
-            ticks: {
-              stepSize: 2,
-              color: "#64748b",
-              backdropColor: "transparent",
-            },
-            grid: { color: "#d8e3fb" },
-            angleLines: { color: "#d8e3fb" },
-            pointLabels: {
-              color: "#111c2d",
-              font: { family: "Inter", size: 12, weight: "600" },
-            },
-          },
-        },
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            callbacks: { label: (context) => ` ${formatNumber(context.raw)}` },
-          },
-        },
-      },
+  const renderScores = (notes = []) => {
+    const groups = notes.reduce((all, note) => {
+      const key = note.materia;
+      if (!key) return all;
+      (all[key] ||= []).push(Number(note.valor || 0) * 10);
+      return all;
+    }, {});
+    Object.entries(groups).forEach(([subject, values]) => {
+      const score = Math.round(values.reduce((sum, value) => sum + value, 0) / values.length);
+      if (subjectData[subject]) subjectData[subject].score = score;
+      const node = document.querySelector(`[data-subject="${CSS.escape(subject)}"]`);
+      node?.querySelector("b")?.replaceChildren(`${score}%`);
     });
   };
-
-  const renderActivities = (progress) => {
-    const items = progress.slice(0, 4);
-    if (!items.length) {
-      elements.activities.innerHTML =
-        '<li class="empty-list">Nenhuma atividade registrada ainda.</li>';
-      return;
-    }
-    elements.activities.innerHTML = items
-      .map((item) => {
-        const title = item.atividades?.titulo || "Atividade";
-        const subject =
-          item.atividades?.trilhas?.materia || "Trilha de estudos";
-        const done = Boolean(item.concluida);
-        return `
-          <li class="activity-item">
-            <span class="activity-icon material-symbols-outlined">
-              ${done ? "check_circle" : "play_circle"}
-            </span>
-            <div>
-              <h3>${escapeHTML(title)}</h3>
-              <p>${escapeHTML(subject)}</p>
-            </div>
-            <span class="activity-status${done ? "" : " pending"}">
-              ${done ? "Concluída" : "Em andamento"}
-            </span>
-          </li>`;
-      })
-      .join("");
+  const selectSubject = (subject) => {
+    const data = subjectData[subject];
+    if (!data) return;
+    document.querySelectorAll("[data-subject]").forEach((node) => {
+      const selected = node.dataset.subject === subject;
+      node.classList.toggle("selected", selected);
+      node.setAttribute("aria-pressed", String(selected));
+    });
+    setText("[data-detail-subject]", subject);
+    setText("[data-detail-score]", `${data.score}%`);
+    setText("[data-detail-icon]", data.icon);
+    setText("[data-detail-concept]", data.concept);
+    setText("[data-detail-description]", data.description);
+    setText("[data-detail-result]", data.result);
+    setText("[data-detail-recommendation]", data.recommendation);
+    setText("[data-detail-activity]", data.activity);
+    document.querySelector("[data-detail-bar]").style.width = `${data.score}%`;
+    document.querySelector("[data-practice-link]").href = data.path;
   };
-
+  const bindInteractions = () => {
+    const profileShortcut = document.querySelector('.sidebar-profile a');
+    if (profileShortcut) { profileShortcut.href = '../perfil/index.html'; profileShortcut.setAttribute('aria-label', 'Abrir perfil'); profileShortcut.querySelector('.material-symbols-outlined').textContent = 'person'; }
+    document.querySelector("[data-mastery-map]")?.addEventListener("click", (event) => {
+      const node = event.target.closest("[data-subject]");
+      if (node) selectSubject(node.dataset.subject);
+    });
+    document.querySelector("[data-subject-filter]")?.addEventListener("change", (event) => {
+      const value = event.target.value;
+      document.querySelectorAll("[data-subject]").forEach((node) => { node.hidden = value !== "all" && node.dataset.subject !== value; });
+      if (value !== "all") selectSubject(value);
+    });
+    const notificationButton = document.querySelector("[data-notification-toggle]");
+    notificationButton?.addEventListener("click", () => { window.location.href = "../notificacoes/index.html"; });
+    if (notificationButton && !document.querySelector("[data-agenda-shortcut]")) {
+      const agenda = document.createElement("a");
+      agenda.className = "icon-button";
+      agenda.dataset.agendaShortcut = "true";
+      agenda.href = "../agenda/index.html";
+      agenda.setAttribute("aria-label", "Abrir agenda");
+      agenda.innerHTML = '<span class="material-symbols-outlined">calendar_month</span>';
+      notificationButton.before(agenda);
+    }
+    const dialog = document.querySelector("[data-focus-dialog]");
+    document.querySelector("[data-focus-open]")?.addEventListener("click", () => dialog.showModal());
+    document.querySelectorAll("[data-focus-minutes]").forEach((button) => button.addEventListener("click", () => {
+      document.querySelectorAll("[data-focus-minutes]").forEach((item) => item.classList.toggle("selected", item === button));
+      dialog.querySelector("h2").textContent = `${button.dataset.focusMinutes}:00`;
+    }));
+    dialog?.addEventListener("close", () => { if (dialog.returnValue === "start") showToast("Sessão de foco iniciada. Boa jornada!"); });
+    const menuButton = document.querySelector("[data-menu-toggle]");
+    menuButton?.addEventListener("click", () => {
+      document.body.classList.toggle("menu-open");
+      menuButton.setAttribute("aria-expanded", String(document.body.classList.contains("menu-open")));
+    });
+  };
   const loadDashboard = async () => {
     showState("loading");
     try {
-      if (!api()?.configured)
-        throw new Error("O Supabase não está configurado para este ambiente.");
-      const session = await api().getSession();
-      if (!session) {
-        window.location.href = "../../login/code.html";
+      if (previewMode || !api()?.configured) {
+        renderProfile({ nome: "Marina Souza" });
+        showState("ready");
         return;
       }
-      const [profile, notes, progress, redacoes, loans] = await Promise.all([
-        api().getProfile(session.user.id),
-        api().listStudentNotes(),
-        api().listStudentProgress(),
-        api().listStudentRedacoes(),
-        api().listStudentLoans(),
-      ]);
+      const session = await api().getSession();
+      if (!session) {
+        window.location.href = "../../login/index.html";
+        return;
+      }
+      const [profile, notes] = await Promise.all([api().getProfile(session.user.id), api().listStudentNotes()]);
       renderProfile(profile);
-      renderMetrics({ notes, progress, redacoes, loans });
-      renderRadar(notes);
-      renderActivities(progress);
+      renderScores(notes);
+      selectSubject("Matemática");
       showState("ready");
     } catch (error) {
-      elements.errorMessage.textContent =
-        error.message || "Tente novamente em alguns instantes.";
+      elements.errorMessage.textContent = error.message || "Tente novamente em alguns instantes.";
       showState("error");
     }
   };
-
-  document
-    .querySelector("[data-retry]")
-    ?.addEventListener("click", loadDashboard);
-  document
-    .querySelector("[data-menu-toggle]")
-    ?.addEventListener("click", () =>
-      document.body.classList.toggle("menu-open"),
-    );
-  document.addEventListener("DOMContentLoaded", loadDashboard);
+  document.querySelector("[data-retry]")?.addEventListener("click", loadDashboard);
+  bindInteractions();
+  loadDashboard();
 })();

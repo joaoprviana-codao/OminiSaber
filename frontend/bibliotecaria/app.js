@@ -1,5 +1,12 @@
 (() => {
   const api = window.OminiSaber;
+  const previewMode = new URLSearchParams(window.location.search).get("preview") === "1";
+  const previewRequests = [
+    { id: "demo-1", status: "pendente", solicitado_em: "2026-08-30", perfis: { nome: "Camila Alves", turmas: { nome: "3º C" } }, livros: { titulo: "Quarto de Despejo", autor: "Carolina Maria de Jesus" } },
+    { id: "demo-2", status: "aprovado", solicitado_em: "2026-08-30", perfis: { nome: "Pedro Lima", turmas: { nome: "1º A" } }, livros: { titulo: "O Cortiço", autor: "Aluísio Azevedo" } },
+    { id: "demo-3", status: "emprestado", solicitado_em: "2026-08-21", devolucao_prevista_em: "2026-08-26", perfis: { nome: "Júlia Mendes", turmas: { nome: "2º B" } }, livros: { titulo: "Capitães da Areia", autor: "Jorge Amado" } },
+    { id: "demo-4", status: "devolvido", solicitado_em: "2026-08-18", devolucao_prevista_em: "2026-08-28", perfis: { nome: "Rafael Nunes", turmas: { nome: "2º A" } }, livros: { titulo: "Vidas Secas", autor: "Graciliano Ramos" } },
+  ];
   const toast = (message, type = "success") => {
     let element = document.querySelector("[data-toast]");
     if (!element) {
@@ -34,6 +41,7 @@
         )
       : "--";
   const getRequests = async (status) => {
+    if (previewMode || !api?.configured) return previewRequests.filter((item) => status === "atrasado" ? item.status === "emprestado" : !status || item.status === status);
     let query = api.client
       .from("solicitacoes_emprestimo")
       .select(
@@ -46,6 +54,13 @@
     return data || [];
   };
   const loadStats = async () => {
+    if (previewMode || !api?.configured) {
+      document.querySelector("[data-total]")?.replaceChildren("320");
+      document.querySelector("[data-available]")?.replaceChildren("284");
+      document.querySelector("[data-pending]")?.replaceChildren("6");
+      document.querySelector("[data-overdue]")?.replaceChildren("3");
+      return;
+    }
     const [
       { data: books, error: bookError },
       { data: requests, error: requestError },
@@ -77,6 +92,11 @@
     ).length;
   };
   const action = async (rpc, id) => {
+    if (previewMode || !api?.configured) {
+      toast("Operação simulada com sucesso no modo de visualização.");
+      window.dispatchEvent(new CustomEvent("library:refresh"));
+      return;
+    }
     const { data: session } = await api.client.auth.getSession();
     const args =
       rpc === "biblioteca_aprovar_solicitacao"
@@ -208,6 +228,7 @@
   const setupSettings = () => {
     const form = document.querySelector("[data-library-settings]");
     if (!form) return;
+    if (previewMode || !api?.configured) return;
     api.client
       .from("configuracoes_biblioteca")
       .select("*")
@@ -232,12 +253,14 @@
       else toast("Regras da biblioteca atualizadas.");
     });
   };
-  document.addEventListener("ominisaber:ready", () => {
+  const initialize = () => {
     loadStats().catch((error) => toast(error.message, "error"));
     setupManagement();
     setupInventory();
     setupSettings();
-  });
+  };
+  document.addEventListener("ominisaber:ready", initialize);
+  if (previewMode || !api?.configured) initialize();
   document
     .querySelector("[data-signout]")
     ?.addEventListener("click", () => api.signOut());

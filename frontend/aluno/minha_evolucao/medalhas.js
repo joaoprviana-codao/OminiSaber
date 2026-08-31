@@ -229,7 +229,7 @@
       }
       const session = await api().getSession();
       if (!session) {
-        window.location.href = "../../login/code.html";
+        window.location.href = "../../login/index.html";
         return;
       }
       const [achievementsResult, unlockedResult] = await Promise.all([
