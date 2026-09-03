@@ -48,6 +48,7 @@ create index if not exists eventos_agenda_publicados_idx on public.eventos_agend
 create index if not exists notificacoes_turma_created_idx on public.notificacoes (destino_turma_id, created_at desc);
 create index if not exists notificacoes_criador_created_idx on public.notificacoes (criado_por, created_at desc);
 create index if not exists notificacoes_lidas_usuario_idx on public.notificacoes_lidas (usuario_id, lida_em desc);
+create index if not exists notificacoes_lidas_notificacao_idx on public.notificacoes_lidas (notificacao_id);
 
 alter table public.eventos_agenda enable row level security;
 alter table public.notificacoes enable row level security;
@@ -182,11 +183,23 @@ begin
 end;
 $$;
 
+revoke all on function public.sincronizar_notificacao_agenda() from public, anon, authenticated;
+
 drop trigger if exists trg_sincronizar_notificacao_agenda on public.eventos_agenda;
 create trigger trg_sincronizar_notificacao_agenda
 after insert or update of titulo, tipo, inicio, turma_id, status
 on public.eventos_agenda
 for each row execute function public.sincronizar_notificacao_agenda();
+
+drop trigger if exists set_eventos_agenda_updated_at on public.eventos_agenda;
+create trigger set_eventos_agenda_updated_at
+before update on public.eventos_agenda
+for each row execute function public.set_updated_at();
+
+drop trigger if exists set_notificacoes_updated_at on public.notificacoes;
+create trigger set_notificacoes_updated_at
+before update on public.notificacoes
+for each row execute function public.set_updated_at();
 
 do $$
 begin

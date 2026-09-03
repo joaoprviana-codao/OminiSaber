@@ -3,7 +3,14 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "seed:test-users": "node scripts/seed-test-users.js"
+    "env:sync": "node scripts/sync-client-config.js",
+    "schema:build": "node scripts/build-complete-schema.js",
+    "sql:check": "python scripts/validate-sql.py",
+    "auth:check": "node scripts/check-auth-flow.js",
+    "manager:check": "node scripts/check-manager-flow.js",
+    "library:check": "node scripts/check-library-flow.js",
+    "library:prepare": "node scripts/prepare-library-data.js",
+    "teacher:portuguese:check": "node scripts/check-portuguese-teacher-flow.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.0",

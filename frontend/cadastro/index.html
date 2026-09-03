@@ -8,8 +8,8 @@
   <link rel="stylesheet" href="../aluno/shared/responsive.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="../../backend/ominisaber-supabase-config.js"></script>
-  <script src="../../backend/ominisaber-supabase-client.js"></script>
+  <script src="../../backend/ominisaber-supabase-config.js?v=20260902-login-fix-1"></script>
+  <script src="../../backend/ominisaber-supabase-client.js?v=20260902-login-fix-1"></script>
   <style>
     body { font-family: Inter, sans-serif; background: #f7f8fc; }
     .register-shell { min-height: 100vh; display: grid; place-items: center; padding: 1.5rem; background: radial-gradient(circle at top left, #e0e7ff, transparent 42%), #f7f8fc; }
@@ -27,12 +27,14 @@
         <p class="mt-3 text-slate-500">Preencha seus dados para solicitar acesso à plataforma.</p>
       </div>
       <form id="registerForm" class="mt-8 space-y-5" novalidate>
+        <div id="registerStatus" class="hidden rounded-lg border px-4 py-3 text-sm" role="status" aria-live="polite"></div>
         <div><label for="register-name" class="mb-1 block text-sm font-semibold text-slate-700">Nome completo</label><input id="register-name" name="nome" required autocomplete="name" class="w-full rounded-lg border-slate-200 px-4 py-3" placeholder="Seu nome completo"><p data-error-for="nome" class="field-error"></p></div>
         <div><label for="register-id" class="mb-1 block text-sm font-semibold text-slate-700">Matrícula</label><input id="register-id" name="matricula" required autocomplete="username" class="w-full rounded-lg border-slate-200 px-4 py-3" placeholder="Ex.: 202600123"><p data-error-for="matricula" class="field-error"></p></div>
+        <div><label for="register-course" class="mb-1 block text-sm font-semibold text-slate-700">Curso técnico</label><select id="register-course" name="curso_tecnico" required class="w-full rounded-lg border-slate-200 px-4 py-3"><option value="">Selecione seu curso</option><option value="administracao">Técnico em Administração</option><option value="informatica">Técnico em Informática</option></select><p data-error-for="curso_tecnico" class="field-error"></p></div>
         <div><label for="register-email" class="mb-1 block text-sm font-semibold text-slate-700">E-mail</label><input id="register-email" name="email" required type="email" autocomplete="email" class="w-full rounded-lg border-slate-200 px-4 py-3" placeholder="voce@escola.com"><p data-error-for="email" class="field-error"></p></div>
         <div><label for="register-password" class="mb-1 block text-sm font-semibold text-slate-700">Senha</label><input id="register-password" name="password" required minlength="8" type="password" autocomplete="new-password" class="w-full rounded-lg border-slate-200 px-4 py-3" placeholder="Mínimo de 8 caracteres"><p data-error-for="password" class="field-error"></p></div>
         <div><label for="register-password-confirm" class="mb-1 block text-sm font-semibold text-slate-700">Confirme a senha</label><input id="register-password-confirm" name="passwordConfirm" required type="password" autocomplete="new-password" class="w-full rounded-lg border-slate-200 px-4 py-3" placeholder="Repita sua senha"><p data-error-for="passwordConfirm" class="field-error"></p></div>
-        <div class="rounded-lg bg-indigo-50 p-4 text-sm text-indigo-900"><strong>Perfil inicial:</strong> aluno. Perfis de professor, bibliotecária e gestor são criados somente pelo seed administrativo de testes.</div>
+        <div class="rounded-lg bg-indigo-50 p-4 text-sm text-indigo-900"><strong>Perfil inicial:</strong> aluno. O curso selecionado define quais componentes técnicos serão disponibilizados no painel.</div>
         <label class="flex items-start gap-3 text-sm text-slate-600"><input name="terms" required type="checkbox" class="mt-1 rounded border-slate-300 text-indigo-600"><span>Confirmo que estas informações são verdadeiras e aceito o uso da plataforma para fins educacionais.</span></label>
         <button id="registerSubmit" type="submit" class="w-full rounded-lg bg-indigo-600 px-4 py-3 font-semibold text-white transition hover:bg-indigo-700 disabled:cursor-wait disabled:opacity-60">Criar conta</button>
       </form>
@@ -46,11 +48,12 @@
       const error = (field, message = '') => { document.querySelector(`[data-error-for="${field}"]`).textContent = message; };
       form.addEventListener('submit', async (event) => {
         event.preventDefault();
-        ['nome', 'matricula', 'email', 'password', 'passwordConfirm'].forEach((field) => error(field));
+        ['nome', 'matricula', 'curso_tecnico', 'email', 'password', 'passwordConfirm'].forEach((field) => error(field));
         const data = Object.fromEntries(new FormData(form));
         let valid = true;
         if (!data.nome?.trim()) { error('nome', 'Informe seu nome.'); valid = false; }
         if (!data.matricula?.trim()) { error('matricula', 'Informe sua matrícula.'); valid = false; }
+        if (!['administracao', 'informatica'].includes(data.curso_tecnico)) { error('curso_tecnico', 'Selecione seu curso técnico.'); valid = false; }
         if (!data.email?.includes('@')) { error('email', 'Informe um e-mail válido.'); valid = false; }
         if (!data.password || data.password.length < 8) { error('password', 'Use pelo menos 8 caracteres.'); valid = false; }
         if (data.password !== data.passwordConfirm) { error('passwordConfirm', 'As senhas não conferem.'); valid = false; }
@@ -60,12 +63,29 @@
         try {
           const { data: result, error: signupError } = await window.OminiSaber.signUp(data);
           if (signupError) throw signupError;
-          if (result.session) window.location.href = '../aluno/dashboard_principal/code.html';
-          else window.OminiSaber.notify('Conta criada. Confirme seu e-mail antes de entrar.', 'success');
-          form.reset();
+          if (result.user?.identities && result.user.identities.length === 0) {
+            throw new Error('Este e-mail já possui uma conta. Entre com sua senha ou use a recuperação de senha.');
+          }
+          if (result.session && result.user) {
+            const profile = await window.OminiSaber.getProfile(result.user.id);
+            window.location.assign(window.OminiSaber.getProfileDestination(profile));
+            return;
+          }
+          const status = document.getElementById('registerStatus');
+          status.className = 'rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900';
+          status.textContent = `Conta criada para ${data.email.trim().toLowerCase()}. Confirme o e-mail enviado antes de entrar.`;
+          window.OminiSaber.notify('Conta criada. Confirme seu e-mail antes de entrar.', 'success');
+          form.querySelectorAll('input, select, button').forEach((control) => { control.disabled = true; });
+          window.setTimeout(() => { window.location.href = '../login/index.html'; }, 3500);
         } catch (signupError) {
-          window.OminiSaber.notify(signupError.message || 'Não foi possível criar a conta.', 'error');
-        } finally { submit.disabled = false; }
+          const message = signupError.message || 'Não foi possível criar a conta.';
+          const status = document.getElementById('registerStatus');
+          status.className = 'rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900';
+          status.textContent = message;
+          window.OminiSaber.notify(message, 'error');
+        } finally {
+          if (!form.querySelector('input:disabled')) submit.disabled = false;
+        }
       });
     })();
   </script>

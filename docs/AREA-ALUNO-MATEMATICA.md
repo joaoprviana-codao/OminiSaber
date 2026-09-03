@@ -41,7 +41,7 @@ Cada laboratório mantém seu próprio estado e sua lógica pedagógica. A naveg
 - Canvas 2D para gráficos e manipulação geométrica em tempo real.
 - Material Symbols para ícones consistentes e acessíveis.
 - Supabase Auth e Postgres para perfil, avaliações publicadas, questões e tentativas.
-- `localStorage` apenas para registrar a conclusão visual dos laboratórios no dispositivo.
+- `progresso_experiencias` no Supabase para registrar a conclusão dos laboratórios por aluno.
 
 ## Decisões de produto
 
@@ -74,8 +74,8 @@ Não foram adicionados dados simulados ao banco. Quando não há avaliação pub
 - As políticas RLS do banco permanecem responsáveis por restringir avaliações e tentativas à turma e ao usuário autorizados.
 - O frontend envia respostas apenas pela função centralizada `saveStudentEvaluationAttempt`.
 - Conteúdo vindo do banco é escapado antes de ser inserido no diálogo do quiz, reduzindo risco de injeção de HTML.
-- O modo `?preview=1` não consulta nem altera dados reais; ele existe somente para revisão visual local.
-- O progresso em `localStorage` não contém notas, respostas, dados pessoais ou credenciais.
+- As avaliações e o progresso das experiências são persistidos no Supabase e protegidos por RLS para o próprio aluno.
+- A interface não usa `localStorage` como fonte alternativa de progresso.
 
 ## Acessibilidade
 

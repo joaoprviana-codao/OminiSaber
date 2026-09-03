@@ -1,364 +1,63 @@
 (() => {
-  const mockBooks = [
-    {
-      id: "mock-dom-casmurro",
-      titulo: "Dom Casmurro",
-      autor: "Machado de Assis",
-      materia: "Literatura Obrigatória",
-      categoria: "Literatura Obrigatória",
-      palavras_chave: "realismo, narrador, clássico",
-      sinopse:
-        "Bentinho revisita sua história e tenta reconstruir as relações, as suspeitas e as escolhas que marcaram sua vida.",
-      paginas: 256,
-      capa_url: "",
-      pdf_url: "https://pt.wikisource.org/wiki/Dom_Casmurro",
-    },
-    {
-      id: "mock-capitaes-areia",
-      titulo: "Capitães da Areia",
-      autor: "Jorge Amado",
-      materia: "Literatura Obrigatória",
-      categoria: "Literatura Obrigatória",
-      palavras_chave: "modernismo, desigualdade, infância",
-      sinopse:
-        "A vida de um grupo de meninos nas ruas de Salvador revela vínculos, conflitos e as desigualdades do Brasil urbano.",
-      paginas: 280,
-      capa_url: "",
-      pdf_url: "",
-    },
-    {
-      id: "mock-fisica-movimento",
-      titulo: "Física em Movimento",
-      autor: "Coleção OminiSaber",
-      materia: "Física",
-      categoria: "Didáticos",
-      palavras_chave: "força, energia, velocidade",
-      sinopse:
-        "Um guia visual para compreender movimento, energia e as leis que conectam teoria e experiências cotidianas.",
-      paginas: 142,
-      capa_url: "",
-      pdf_url: "",
-    },
-    {
-      id: "mock-biologia-celula",
-      titulo: "A célula por dentro",
-      autor: "Coleção OminiSaber",
-      materia: "Biologia",
-      categoria: "Apostilas",
-      palavras_chave: "célula, genética, vida",
-      sinopse:
-        "Diagramas e explicações para investigar as estruturas celulares e os processos que sustentam a vida.",
-      paginas: 96,
-      capa_url: "",
-      pdf_url: "",
-    },
-    {
-      id: "mock-matematica-algebra",
-      titulo: "Álgebra para pensar",
-      autor: "Coleção OminiSaber",
-      materia: "Matemática",
-      categoria: "Didáticos",
-      palavras_chave: "equações, álgebra, problemas",
-      sinopse:
-        "Problemas graduais, estratégias e exemplos para transformar relações algébricas em ferramentas de raciocínio.",
-      paginas: 188,
-      capa_url: "",
-      pdf_url: "",
-    },
-    {
-      id: "mock-quadrinhos-ciencia",
-      titulo: "Ciência em quadrinhos",
-      autor: "Núcleo de Divulgação Científica",
-      materia: "Biologia",
-      categoria: "HQ/Gibi Educativo",
-      palavras_chave: "ciência, quadrinhos, curiosidade",
-      sinopse:
-        "Conceitos científicos ganham personagens e situações para tornar a investigação uma experiência divertida.",
-      paginas: 64,
-      capa_url: "",
-      pdf_url: "",
-    },
-  ];
-  const state = {
-    books: [],
-    readings: new Map(),
-    selectedBook: null,
-    filter: "todos",
-    search: "",
-    usingFallback: false,
-  };
-  const elements = {
-    search: document.querySelector("[data-search]"),
-    catalog: document.querySelector("[data-catalog]"),
-    shelf: document.querySelector("[data-shelf]"),
-    resultCount: document.querySelector("[data-result-count]"),
-    readingCount: document.querySelector("[data-reading-count]"),
-    dialog: document.querySelector("[data-dialog]"),
-    toast: document.querySelector("[data-toast]"),
-  };
-
   const api = () => window.OminiSaber;
-  const escapeHTML = (value) =>
-    String(value ?? "").replace(
-      /[&<>'"]/g,
-      (character) =>
-        ({
-          "&": "&amp;",
-          "<": "&lt;",
-          ">": "&gt;",
-          "'": "&#39;",
-          '"': "&quot;",
-        })[character],
-    );
-  const normalize = (value) =>
-    String(value ?? "")
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .toLowerCase();
-  const showToast = (message) => {
-    elements.toast.textContent = message;
-    elements.toast.classList.add("is-visible");
-    window.clearTimeout(showToast.timer);
-    showToast.timer = window.setTimeout(
-      () => elements.toast.classList.remove("is-visible"),
-      3200,
-    );
+  const state = { physical: [], digital: [], requests: [], mode: "fisico", filter: "todos", search: "", selected: null, busy: false };
+  const $ = (selector) => document.querySelector(selector);
+  const escapeHTML = (value) => String(value ?? "").replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[char]);
+  const normalize = (value) => String(value ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  const formatDate = (value) => value ? new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "short" }).format(new Date(value)) : "--";
+  const toast = (message, type = "info") => { const node = $("[data-toast]"); node.textContent = message; node.dataset.type = type; node.classList.add("is-visible"); clearTimeout(node.timer); node.timer = setTimeout(() => node.classList.remove("is-visible"), 3800); };
+  const cover = (item, kind) => `<div class="book-cover ${kind}">${item.capa_url ? `<img src="${escapeHTML(item.capa_url)}" alt="Capa de ${escapeHTML(item.titulo)}" onerror="this.remove()">` : ""}<span class="material-symbols-outlined">${kind === "digital" ? "picture_as_pdf" : "menu_book"}</span><em>${kind === "digital" ? "PDF VERIFICADO" : Number(item.quantidade_disponivel) > 0 ? "DISPONÍVEL" : "INDISPONÍVEL"}</em></div>`;
+  const activeRequest = (bookId) => state.requests.find((item) => String(item.livro_id) === String(bookId) && ["pendente", "aprovado", "emprestado"].includes(item.status));
+  const statusInfo = (status) => ({ pendente: ["Pedido enviado", "Aguardando a biblioteca separar o exemplar.", "schedule"], aprovado: ["Pronto para retirada", "Seu exemplar já está separado na biblioteca.", "inventory_2"], emprestado: ["Com você", "Consulte abaixo o prazo de devolução.", "auto_stories"], devolvido: ["Devolvido", "Empréstimo finalizado.", "task_alt"], recusado: ["Não atendido", "Consulte a observação da biblioteca.", "info"] }[status] || ["Em análise", "Acompanhe a atualização do pedido.", "schedule"]);
+  const filtered = (items) => items.filter((item) => { const haystack = normalize(`${item.titulo} ${item.autor} ${item.materia} ${item.genero} ${item.categoria} ${item.palavras_chave}`); const matchesSearch = !state.search || haystack.includes(normalize(state.search)); const matchesFilter = state.filter === "todos" || [item.materia, item.genero, item.categoria].some((value) => normalize(value) === normalize(state.filter)); return matchesSearch && matchesFilter; });
+
+  const renderPhysical = () => {
+    const items = filtered(state.physical); $("[data-result-count]").textContent = `${items.length} ${items.length === 1 ? "título" : "títulos"}`;
+    $("[data-catalog]").innerHTML = items.length ? items.map((book) => { const request = activeRequest(book.id); const available = Number(book.quantidade_disponivel || 0); return `<article class="book-card">${cover(book, "physical")}<div class="card-body"><span class="subject-tag">${escapeHTML(book.genero || book.categoria || "Acervo")}</span><h3>${escapeHTML(book.titulo)}</h3><p>${escapeHTML(book.autor || "Autor não informado")}</p><div class="availability"><span class="material-symbols-outlined">${request ? "receipt_long" : available ? "check_circle" : "hourglass_empty"}</span>${request ? escapeHTML(statusInfo(request.status)[0]) : available ? `${available} disponível(is)` : "Sem exemplar disponível"}</div><button type="button" data-item-id="${escapeHTML(book.id)}" data-kind="physical">${request ? "Acompanhar pedido" : "Ver e solicitar"}<span class="material-symbols-outlined">arrow_forward</span></button></div></article>`; }).join("") : '<div class="empty-state"><span class="material-symbols-outlined">search_off</span><strong>Nenhum livro encontrado</strong><p>Tente buscar com outros termos.</p></div>';
   };
-  const currentReading = (book) => state.readings.get(String(book.id));
-  const getBookStatus = (book) => currentReading(book)?.status || "disponivel";
-  const getStatusLabel = (book) =>
-    ({ lendo: "Em leitura", concluido: "Concluído", disponivel: "Disponível" })[
-      getBookStatus(book)
-    ] || "Disponível";
-  const getCover = (book, compact = false) => {
-    const fallback = `<span class="material-symbols-outlined">menu_book</span>`;
-    const coverClass = compact ? "shelf-cover" : "book-cover";
-    const statusClass =
-      getBookStatus(book) === "lendo"
-        ? "reading"
-        : getBookStatus(book) === "concluido"
-          ? "done"
-          : "";
-    const image = book.capa_url
-      ? `<img src="${escapeHTML(book.capa_url)}" alt="Capa de ${escapeHTML(book.titulo)}" onerror="this.remove()">`
-      : "";
-    return `
-      <div class="${coverClass}">
-        ${image}
-        ${fallback}
-        <span class="book-status ${statusClass}">${getStatusLabel(book)}</span>
-      </div>`;
+  const renderDigital = () => {
+    const items = filtered(state.digital); $("[data-result-count]").textContent = `${items.length} ${items.length === 1 ? "PDF" : "PDFs"}`;
+    $("[data-catalog]").innerHTML = items.length ? items.map((item) => `<article class="book-card">${cover(item, "digital")}<div class="card-body"><span class="subject-tag verified"><span class="material-symbols-outlined">verified</span>${escapeHTML(item.materia || item.categoria || "PDF")}</span><h3>${escapeHTML(item.titulo)}</h3><p>${escapeHTML(item.autor || "OminiSaber")}</p><div class="availability safe"><span class="material-symbols-outlined">shield_lock</span>Arquivo conferido pela biblioteca</div><button type="button" data-item-id="${escapeHTML(item.id)}" data-kind="digital">Detalhes e download<span class="material-symbols-outlined">download</span></button></div></article>`).join("") : '<div class="empty-state"><span class="material-symbols-outlined">folder_off</span><strong>Nenhum PDF publicado</strong><p>Apenas arquivos verificados aparecem para alunos.</p></div>';
   };
-  const filteredBooks = () =>
-    state.books.filter((book) => {
-      const query = normalize(state.search);
-      const matchesSearch =
-        !query ||
-        normalize(
-          `${book.titulo} ${book.autor} ${book.materia} ${book.categoria} ${book.palavras_chave}`,
-        ).includes(query);
-      const matchesFilter =
-        state.filter === "todos" ||
-        normalize(book.materia) === normalize(state.filter) ||
-        normalize(book.categoria) === normalize(state.filter);
-      return matchesSearch && matchesFilter;
-    });
-  const renderCatalog = () => {
-    const books = filteredBooks();
-    const resultLabel = books.length === 1 ? "material" : "materiais";
-    elements.resultCount.textContent = `${books.length} ${resultLabel}`;
-    elements.catalog.innerHTML = books.length
-      ? books
-          .map(
-            (book) => `
-              <article class="book-card">
-                <button class="book-cover-button" type="button" data-book-id="${escapeHTML(book.id)}">
-                  ${getCover(book)}
-                </button>
-                <h3>${escapeHTML(book.titulo)}</h3>
-                <p class="book-author">${escapeHTML(book.autor)}</p>
-                <div class="book-footer">
-                  <span class="subject-tag">${escapeHTML(book.materia || book.categoria || "Material")}</span>
-                  <button class="details-button" type="button" data-book-id="${escapeHTML(book.id)}">
-                    Ver detalhes
-                    <span class="material-symbols-outlined">arrow_forward</span>
-                  </button>
-                </div>
-              </article>`,
-          )
-          .join("")
-      : '<p class="empty">Nenhum material encontrado para esta busca.</p>';
-    bindBookButtons();
+  const renderRequests = () => {
+    const items = state.requests.filter((request) => { const info = `${request.livros?.titulo} ${request.livros?.autor} ${request.status}`; return !state.search || normalize(info).includes(normalize(state.search)); });
+    $("[data-result-count]").textContent = `${items.length} ${items.length === 1 ? "pedido" : "pedidos"}`;
+    $("[data-catalog]").innerHTML = items.length ? `<div class="request-list">${items.map((request) => { const info = statusInfo(request.status); return `<article class="request-card"><span class="request-icon material-symbols-outlined">${info[2]}</span><div><span class="request-status ${escapeHTML(request.status)}">${escapeHTML(info[0])}</span><h3>${escapeHTML(request.livros?.titulo || "Livro")}</h3><p>${escapeHTML(info[1])}</p>${request.observacao ? `<small>${escapeHTML(request.observacao)}</small>` : ""}</div><div class="request-date"><span>${request.status === "emprestado" ? "Devolver até" : "Solicitado em"}</span><strong>${formatDate(request.status === "emprestado" ? request.devolucao_prevista_em : request.solicitado_em)}</strong></div></article>`; }).join("")}</div>` : '<div class="empty-state"><span class="material-symbols-outlined">receipt_long</span><strong>Você ainda não fez pedidos</strong><p>Abra “Livros físicos” para solicitar um exemplar.</p></div>';
   };
-  const renderShelf = () => {
-    const readingBooks = state.books.filter((book) =>
-      ["lendo", "concluido"].includes(getBookStatus(book)),
-    );
-    elements.readingCount.textContent = `${readingBooks.length} ${readingBooks.length === 1 ? "leitura" : "leituras"}`;
-    elements.shelf.innerHTML = readingBooks.length
-      ? readingBooks
-          .map((book) => {
-            const reading = currentReading(book);
-            const progress = Number(reading?.progresso_pct || 0);
-            const actionLabel =
-              getBookStatus(book) === "concluido" ? "Rever" : "Continuar";
-            return `
-              <article class="shelf-card">
-                ${getCover(book, true)}
-                <div class="shelf-info">
-                  <strong>${escapeHTML(book.titulo)}</strong>
-                  <span>${progress}% concluído</span>
-                  <div class="reading-bar">
-                    <span style="width:${progress}%"></span>
-                  </div>
-                </div>
-                <button class="continue-button" type="button" data-book-id="${escapeHTML(book.id)}">
-                  ${actionLabel}
-                </button>
-              </article>`;
-          })
-          .join("")
-      : '<p class="empty">Sua estante está esperando a primeira leitura.</p>';
-    bindBookButtons();
+  const render = () => {
+    const metadata = { fisico: ["ACERVO FÍSICO", "Livros para solicitar", "A bibliotecária separa um exemplar e avisa quando estiver pronto."], digital: ["ACERVO DIGITAL", "PDFs seguros para baixar", "Somente materiais verificados e publicados pela biblioteca."], pedidos: ["ACOMPANHAMENTO", "Meus pedidos", "Veja quando o livro for separado e estiver pronto para retirada."] }[state.mode];
+    $("[data-section-eyebrow]").textContent = metadata[0]; $("[data-section-title]").textContent = metadata[1]; $("[data-section-description]").textContent = metadata[2]; $("[data-safe-note]").hidden = state.mode !== "digital"; $("[data-filters]").hidden = state.mode === "pedidos";
+    if (state.mode === "fisico") renderPhysical(); else if (state.mode === "digital") renderDigital(); else renderRequests();
+    document.querySelectorAll("[data-item-id]").forEach((button) => button.addEventListener("click", () => openItem(button.dataset.kind, button.dataset.itemId)));
   };
-  const bindBookButtons = () =>
-    document.querySelectorAll("[data-book-id]").forEach((button) => {
-      if (button.dataset.bound) return;
-      button.dataset.bound = "true";
-      button.addEventListener("click", () => openBook(button.dataset.bookId));
-    });
-  const openBook = (bookId) => {
-    const book = state.books.find((item) => String(item.id) === String(bookId));
-    if (!book) return;
-    state.selectedBook = book;
-    document.querySelector("[data-dialog-cover]").innerHTML = getCover(book);
-    document.querySelector("[data-dialog-subject]").textContent =
-      book.materia || book.categoria || "Material";
-    document.querySelector("[data-dialog-title]").textContent = book.titulo;
-    document.querySelector("[data-dialog-author]").textContent =
-      book.autor || "Autor não informado";
-    document.querySelector("[data-dialog-synopsis]").textContent =
-      book.sinopse || "Sinopse ainda não cadastrada para este material.";
-    document.querySelector("[data-dialog-pages]").textContent = book.paginas
-      ? `${book.paginas} páginas`
-      : "Não informado";
-    document.querySelector("[data-dialog-category]").textContent =
-      book.categoria || "Material de apoio";
-    const reading = currentReading(book);
-    const action = document.querySelector("[data-reading-action]");
-    action.textContent =
-      reading?.status === "lendo"
-        ? "Marcar como concluído"
-        : reading?.status === "concluido"
-          ? "Concluído"
-          : "Marcar como lendo";
-    const link = document.querySelector("[data-material-link]");
-    link.href = book.pdf_url || "#";
-    link.setAttribute("aria-disabled", String(!book.pdf_url));
-    link.classList.toggle("is-disabled", !book.pdf_url);
-    elements.dialog.showModal();
+  const openItem = (kind, id) => {
+    const item = (kind === "digital" ? state.digital : state.physical).find((entry) => String(entry.id) === String(id)); if (!item) return;
+    state.selected = { kind, item }; $("[data-dialog-cover]").innerHTML = cover(item, kind); $("[data-dialog-subject]").textContent = item.materia || item.genero || item.categoria || "Acervo"; $("[data-dialog-title]").textContent = item.titulo; $("[data-dialog-author]").textContent = item.autor || "Autor não informado"; $("[data-dialog-synopsis]").textContent = item.descricao || item.sinopse || "Descrição ainda não cadastrada."; $("[data-fact-one]").textContent = item.paginas ? `${item.paginas} páginas` : "Não informado";
+    const button = $("[data-primary-action]"); const label = $("[data-action-label]"); const icon = $("[data-action-icon]"); button.disabled = false;
+    if (kind === "digital") { $("[data-fact-two-label]").textContent = "Segurança"; $("[data-fact-two]").textContent = "PDF verificado"; $("[data-dialog-guidance]").innerHTML = '<span class="material-symbols-outlined">verified_user</span><p>O arquivo será baixado pelo armazenamento protegido do OminiSaber. Nenhuma página externa será aberta.</p>'; label.textContent = "Baixar PDF"; icon.textContent = "download"; }
+    else { const request = activeRequest(item.id); const available = Number(item.quantidade_disponivel || 0); $("[data-fact-two-label]").textContent = "Disponibilidade"; $("[data-fact-two]").textContent = `${available} exemplar(es)`; $("[data-dialog-guidance]").innerHTML = request ? `<span class="material-symbols-outlined">${statusInfo(request.status)[2]}</span><p>${escapeHTML(statusInfo(request.status)[1])}</p>` : '<span class="material-symbols-outlined">info</span><p>Solicitar não inicia uma leitura: a biblioteca receberá o pedido e separará um exemplar físico para retirada.</p>'; label.textContent = request ? statusInfo(request.status)[0] : available ? "Solicitar livro" : "Indisponível"; icon.textContent = request ? statusInfo(request.status)[2] : "bookmark_add"; button.disabled = Boolean(request) || !available; }
+    $("[data-dialog]").showModal();
   };
-  const saveReading = async () => {
-    const book = state.selectedBook;
-    if (!book || state.usingFallback) {
-      showToast("O modo catálogo não permite salvar leituras agora.");
-      return;
-    }
-    const existing = currentReading(book);
-    const nextStatus = existing?.status === "lendo" ? "concluido" : "lendo";
-    const progress =
-      nextStatus === "concluido" ? 100 : Number(existing?.progresso_pct || 0);
-    try {
+  const requestBook = async (book) => {
+    const rpc = await api().client.rpc("biblioteca_solicitar_livro", { p_livro_id: book.id });
+    if (rpc.error?.code === "PGRST202" || rpc.error?.code === "42883") {
       const session = await api().getSession();
-      if (!session) throw new Error("Sessão expirada. Entre novamente.");
-      const payload = {
-        aluno_id: session.user.id,
-        livro_id: book.id,
-        status: nextStatus,
-        progresso_pct: progress,
-        atualizado_em: new Date().toISOString(),
-      };
-      const { data, error } = await api()
-        .client.from("leituras_aluno")
-        .upsert(payload, { onConflict: "aluno_id,livro_id" })
-        .select()
-        .single();
-      if (error) throw error;
-      state.readings.set(String(book.id), data || payload);
-      renderShelf();
-      renderCatalog();
-      openBook(book.id);
-      showToast(
-        nextStatus === "lendo"
-          ? "Livro adicionado à sua estante."
-          : "Leitura concluída. Parabéns!",
-      );
-    } catch (error) {
-      showToast("Não foi possível salvar sua leitura agora.");
-    }
+      const legacy = await api().client.from("solicitacoes_emprestimo").insert({ livro_id: book.id, aluno_id: session.user.id, status: "pendente" }).select().single();
+      if (legacy.error) throw legacy.error;
+    } else if (rpc.error) throw rpc.error;
+    toast("Pedido enviado. A biblioteca já pode separar seu exemplar.", "success");
   };
+  const downloadPdf = async (material) => { const { data, error } = await api().client.storage.from(material.storage_bucket || "biblioteca-pdfs").download(material.storage_path); if (error) throw error; const url = URL.createObjectURL(data); const anchor = document.createElement("a"); anchor.href = url; anchor.download = material.nome_arquivo || `${material.titulo}.pdf`; document.body.appendChild(anchor); anchor.click(); anchor.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000); toast("Download do PDF iniciado.", "success"); };
+  const primaryAction = async () => { if (state.busy || !state.selected) return; state.busy = true; const button = $("[data-primary-action]"); button.disabled = true; try { if (state.selected.kind === "digital") await downloadPdf(state.selected.item); else await requestBook(state.selected.item); $("[data-dialog]").close(); await loadData(); } catch (error) { toast(error.message || "Não foi possível concluir agora.", "error"); } finally { state.busy = false; button.disabled = false; } };
   const loadData = async () => {
-    try {
-      if (!api()?.configured || !api().client)
-        throw new Error("Supabase indisponível");
-      const [books, session] = await Promise.all([
-        api().listLivros(),
-        api().getSession(),
-      ]);
-      state.books = books?.length
-        ? books.map((book) => ({
-            ...book,
-            categoria: book.categoria || "Didáticos",
-            palavras_chave: book.palavras_chave || "",
-          }))
-        : mockBooks;
-      if (!session) throw new Error("Sessão ausente");
-      const { data, error } = await api()
-        .client.from("leituras_aluno")
-        .select("*")
-        .eq("aluno_id", session.user.id);
-      if (error) throw error;
-      (data || []).forEach((reading) =>
-        state.readings.set(String(reading.livro_id), reading),
-      );
-    } catch (error) {
-      state.usingFallback = true;
-      state.books = mockBooks;
-      state.readings.set("mock-dom-casmurro", {
-        livro_id: "mock-dom-casmurro",
-        status: "lendo",
-        progresso_pct: 42,
-      });
-    }
-    renderShelf();
-    renderCatalog();
+    if (!api()?.configured) throw new Error("Supabase não configurado."); const session = await api().getSession(); if (!session) throw new Error("Sessão expirada.");
+    const [booksResult, digitalResult, requestsResult, profile] = await Promise.all([api().client.from("livros").select("id,titulo,autor,genero,categoria,capa_url,sinopse,paginas,palavras_chave,quantidade_total,quantidade_disponivel").order("titulo"), api().client.from("materiais_biblioteca").select("*").eq("publicado", true).eq("verificado", true).order("titulo"), api().client.from("solicitacoes_emprestimo").select("*,livros(id,titulo,autor)").eq("aluno_id", session.user.id).order("solicitado_em", { ascending: false }), api().getProfile(session.user.id)]);
+    if (booksResult.error) throw booksResult.error; if (requestsResult.error) throw requestsResult.error; state.physical = booksResult.data || []; state.digital = digitalResult.error ? [] : (digitalResult.data || []); state.requests = requestsResult.data || [];
+    $("[data-physical-count]").textContent = state.physical.length; $("[data-digital-count]").textContent = state.digital.length; $("[data-request-count]").textContent = state.requests.filter((item) => ["pendente", "aprovado", "emprestado"].includes(item.status)).length; $("[data-initials]").textContent = String(profile?.nome || "Aluno").split(/\s+/).slice(0, 2).map((part) => part[0]).join("").toUpperCase(); render();
   };
-  elements.search.addEventListener("input", (event) => {
-    state.search = event.target.value;
-    renderCatalog();
-  });
-  document.querySelectorAll("[data-filter]").forEach((button) =>
-    button.addEventListener("click", () => {
-      state.filter = button.dataset.filter;
-      document
-        .querySelectorAll("[data-filter]")
-        .forEach((item) => item.classList.toggle("is-active", item === button));
-      renderCatalog();
-    }),
-  );
-  document
-    .querySelector("[data-close-dialog]")
-    .addEventListener("click", () => elements.dialog.close());
-  document
-    .querySelector("[data-reading-action]")
-    .addEventListener("click", saveReading);
-  document
-    .querySelector("[data-material-link]")
-    .addEventListener("click", (event) => {
-      if (event.currentTarget.classList.contains("is-disabled")) {
-        event.preventDefault();
-        showToast("Este material ainda não possui um link cadastrado.");
-      }
-    });
-  document.addEventListener("DOMContentLoaded", loadData);
+  document.querySelectorAll("[data-mode]").forEach((button) => button.addEventListener("click", () => { state.mode = button.dataset.mode; document.querySelectorAll("[data-mode]").forEach((item) => item.classList.toggle("is-active", item === button)); render(); }));
+  $("[data-search]").addEventListener("input", (event) => { state.search = event.target.value; render(); }); document.querySelectorAll("[data-filter]").forEach((button) => button.addEventListener("click", () => { state.filter = button.dataset.filter; document.querySelectorAll("[data-filter]").forEach((item) => item.classList.toggle("is-active", item === button)); render(); }));
+  $("[data-close-dialog]").addEventListener("click", () => $("[data-dialog]").close()); $("[data-primary-action]").addEventListener("click", primaryAction);
+  let realtimeChannel;
+  const init = () => { loadData().catch((error) => { toast(error.message || "Não foi possível carregar a biblioteca.", "error"); $("[data-catalog]").innerHTML = '<div class="empty-state"><span class="material-symbols-outlined">cloud_off</span><strong>Acervo indisponível</strong><p>Tente atualizar a página.</p></div>'; }); if (!realtimeChannel && api()?.client) realtimeChannel = api().client.channel("biblioteca-aluno").on("postgres_changes", { event: "*", schema: "public", table: "solicitacoes_emprestimo" }, () => loadData().catch(() => {})).on("postgres_changes", { event: "*", schema: "public", table: "livros" }, () => loadData().catch(() => {})).on("postgres_changes", { event: "*", schema: "public", table: "materiais_biblioteca" }, () => loadData().catch(() => {})).subscribe(); }; document.addEventListener("ominisaber:ready", init); document.addEventListener("DOMContentLoaded", init); window.addEventListener("beforeunload", () => { if (realtimeChannel) api()?.client.removeChannel(realtimeChannel); });
 })();

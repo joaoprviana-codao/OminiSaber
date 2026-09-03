@@ -63,8 +63,8 @@ O professor entra na pasta da própria especialidade. O dashboard consulta turma
 
 ## Execução
 
-- Produção: sessão Supabase e dados reais; sem sessão, retorna ao login.
-- Visualização legada: ?preview=1 permanece apenas nas telas antigas. Os novos espaços docentes não simulam dados.
+- Todas as áreas: sessão Supabase e dados reais; sem sessão, retorna ao login.
+- Falhas de conexão e ausência de conteúdo possuem estados explícitos, sem registros simulados.
 
 ## Limites atuais
 

@@ -1,6 +1,7 @@
 begin;
 
-create schema if not exists private;
+create schema if not exists private authorization postgres;
+revoke all on schema private from public, anon, authenticated;
 
 alter table public.propostas_redacao
   add column if not exists fixada boolean not null default false,
@@ -127,12 +128,19 @@ create index if not exists propostas_redacao_catalogo_idx on public.propostas_re
 create index if not exists materiais_redacao_proposta_idx on public.materiais_redacao (proposta_id, fixado desc, ordem);
 create index if not exists repertorios_redacao_catalogo_idx on public.repertorios_redacao (publicado, turma_id, categoria);
 create index if not exists repertorios_redacao_proposta_idx on public.repertorios_redacao (proposta_id) where proposta_id is not null;
+create index if not exists repertorios_redacao_professor_idx on public.repertorios_redacao (professor_id);
+create index if not exists repertorios_redacao_turma_idx on public.repertorios_redacao (turma_id) where turma_id is not null;
 create index if not exists planejamentos_redacao_aluno_idx on public.planejamentos_redacao (aluno_id, updated_at desc);
+create index if not exists planejamentos_redacao_proposta_idx on public.planejamentos_redacao (proposta_id) where proposta_id is not null;
 create index if not exists planejamento_repertorios_repertorio_idx on public.planejamento_repertorios (repertorio_id);
 create index if not exists redacoes_aluno_status_data_idx on public.redacoes (aluno_id, status, updated_at desc);
+create index if not exists redacoes_planejamento_idx on public.redacoes (planejamento_id) where planejamento_id is not null;
 create unique index if not exists redacoes_rascunho_tema_unique on public.redacoes (aluno_id, tema_codigo) where status = 'rascunho' and tema_codigo is not null;
 create index if not exists versoes_redacao_data_idx on public.versoes_redacao (redacao_id, numero desc);
+create index if not exists versoes_redacao_autor_idx on public.versoes_redacao (autor_id) where autor_id is not null;
 create index if not exists comentarios_redacao_idx on public.comentarios_redacao (redacao_id, created_at);
+create index if not exists comentarios_redacao_professor_idx on public.comentarios_redacao (professor_id);
+create index if not exists avaliacoes_competencias_professor_idx on public.avaliacoes_competencias_redacao (professor_id);
 
 alter table public.materiais_redacao enable row level security;
 alter table public.repertorios_redacao enable row level security;
@@ -281,10 +289,79 @@ begin
   return new;
 end $$;
 
+create or replace function private.validar_atualizacao_redacao()
+returns trigger
+language plpgsql
+set search_path = ''
+as $$
+declare
+  v_papel public.perfil_role := (select public.usuario_role());
+begin
+  if new.id <> old.id or new.created_at is distinct from old.created_at then
+    raise exception 'A identidade e a data de criação da redação são imutáveis.';
+  end if;
+
+  if v_papel = 'aluno' then
+    if old.aluno_id <> (select auth.uid())
+      or new.aluno_id <> old.aluno_id
+      or new.proposta_id is distinct from old.proposta_id
+      or new.trilha_id is distinct from old.trilha_id
+      or new.tema_codigo is distinct from old.tema_codigo
+      or old.status <> 'rascunho'
+      or new.status not in ('rascunho', 'enviada')
+      or new.nota is distinct from old.nota
+      or new.feedback is distinct from old.feedback
+      or new.corrigida_por is distinct from old.corrigida_por
+      or new.corrigida_em is distinct from old.corrigida_em
+      or new.alerta_ia is distinct from old.alerta_ia then
+      raise exception 'O aluno não pode alterar autoria, avaliação ou uma redação já enviada.';
+    end if;
+    if new.status = 'enviada' and old.status = 'rascunho' then
+      new.enviada_em := coalesce(old.enviada_em, now());
+    end if;
+  elsif v_papel = 'professor' then
+    if (select public.usuario_tipo_professor()) <> 'portugues'
+      or old.status not in ('enviada', 'corrigida')
+      or new.status not in ('enviada', 'corrigida')
+      or new.aluno_id <> old.aluno_id
+      or new.proposta_id is distinct from old.proposta_id
+      or new.trilha_id is distinct from old.trilha_id
+      or new.planejamento_id is distinct from old.planejamento_id
+      or new.tema_codigo is distinct from old.tema_codigo
+      or new.titulo is distinct from old.titulo
+      or new.texto is distinct from old.texto
+      or new.enviada_em is distinct from old.enviada_em then
+      raise exception 'O professor pode corrigir a redação, mas não alterar o texto ou sua autoria.';
+    end if;
+    if new.status = 'corrigida' then
+      new.corrigida_por := (select auth.uid());
+      new.corrigida_em := coalesce(new.corrigida_em, now());
+    end if;
+  elsif v_papel <> 'gestor' then
+    raise exception 'Perfil sem permissão para atualizar redações.';
+  end if;
+  return new;
+end $$;
+
 revoke all on function private.registrar_versao_redacao() from public, anon, authenticated;
+revoke all on function private.validar_atualizacao_redacao() from public, anon, authenticated;
+drop trigger if exists trg_validar_atualizacao_redacao on public.redacoes;
+create trigger trg_validar_atualizacao_redacao
+before update on public.redacoes
+for each row execute function private.validar_atualizacao_redacao();
 drop trigger if exists trg_redacao_versao_insert on public.redacoes;
 create trigger trg_redacao_versao_insert after insert on public.redacoes for each row execute function private.registrar_versao_redacao();
 drop trigger if exists trg_redacao_versao_update on public.redacoes;
 create trigger trg_redacao_versao_update after update of titulo, texto, status on public.redacoes for each row execute function private.registrar_versao_redacao();
+
+drop trigger if exists set_repertorios_redacao_updated_at on public.repertorios_redacao;
+create trigger set_repertorios_redacao_updated_at before update on public.repertorios_redacao
+for each row execute function public.set_updated_at();
+drop trigger if exists set_planejamentos_redacao_updated_at on public.planejamentos_redacao;
+create trigger set_planejamentos_redacao_updated_at before update on public.planejamentos_redacao
+for each row execute function public.set_updated_at();
+drop trigger if exists set_avaliacoes_competencias_redacao_updated_at on public.avaliacoes_competencias_redacao;
+create trigger set_avaliacoes_competencias_redacao_updated_at before update on public.avaliacoes_competencias_redacao
+for each row execute function public.set_updated_at();
 
 commit;

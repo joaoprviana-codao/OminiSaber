@@ -1,6 +1,8 @@
 -- OminiSaber | Migracao da Etapa 1: autores, obras e exemplares
 -- Execute depois de ominisaber-schema-biblioteca.sql no SQL Editor do Supabase.
 
+begin;
+
 create table if not exists public.autores (
   id uuid primary key default gen_random_uuid(),
   nome text not null,
@@ -16,6 +18,7 @@ alter table public.livros add column if not exists autor_id uuid references publ
 alter table public.livros add column if not exists isbn text;
 alter table public.livros add column if not exists prefixo_serie varchar(4);
 alter table public.exemplares add column if not exists isbn text;
+create index if not exists livros_autor_id_idx on public.livros (autor_id) where autor_id is not null;
 
 update public.exemplares
 set isbn = isbn_individual
@@ -64,7 +67,7 @@ create or replace function public.biblioteca_cadastrar_lote_livros(
 returns jsonb
 language plpgsql
 security definer
-set search_path = public
+set search_path = ''
 as $$
 declare
   v_livro public.livros;
@@ -76,10 +79,12 @@ begin
     raise exception 'Sem permissao';
   end if;
   if length(trim(coalesce(p_titulo, ''))) = 0 then raise exception 'Titulo obrigatorio'; end if;
+  if length(trim(coalesce(p_genero, ''))) = 0 then raise exception 'Genero obrigatorio'; end if;
   if length(v_prefixo) <> 4 or v_prefixo !~ '^[0-9]{4}$' then raise exception 'Prefixo deve ter 4 digitos'; end if;
+  if v_quantidade > 9999 then raise exception 'O lote aceita no máximo 9999 exemplares'; end if;
   select * into v_autor from public.autores where id = p_autor_id;
   if v_autor.id is null then raise exception 'Autor nao encontrado'; end if;
-  if exists (select 1 from public.exemplares where numero_serie = v_prefixo || lpad(v_quantidade::text, 4, '0')) then
+  if exists (select 1 from public.exemplares where left(numero_serie, 4) = v_prefixo) then
     raise exception 'O prefixo informado ja possui uma serie cadastrada';
   end if;
 
@@ -99,4 +104,11 @@ begin
 end;
 $$;
 
+revoke all on function public.biblioteca_cadastrar_lote_livros(text, uuid, text, text, text, text[]) from public, anon, authenticated;
 grant execute on function public.biblioteca_cadastrar_lote_livros(text, uuid, text, text, text, text[]) to authenticated;
+
+drop trigger if exists set_autores_updated_at on public.autores;
+create trigger set_autores_updated_at before update on public.autores
+for each row execute function public.set_updated_at();
+
+commit;

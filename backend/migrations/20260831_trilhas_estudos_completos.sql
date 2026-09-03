@@ -1,6 +1,7 @@
 begin;
 
-create schema if not exists private;
+create schema if not exists private authorization postgres;
+revoke all on schema private from public, anon, authenticated;
 
 alter table public.trilhas
   add column if not exists area_conhecimento text,
@@ -162,11 +163,17 @@ create index if not exists trilhas_prerequisitos_requisito_idx on public.trilhas
 create index if not exists materiais_aula_atividade_idx on public.materiais_aula (atividade_id, ordem);
 create index if not exists questoes_atividade_idx on public.questoes_atividades (atividade_id, ordem);
 create index if not exists tentativas_aluno_atividade_idx on public.tentativas_atividades (aluno_id, atividade_id, created_at desc);
+create index if not exists tentativas_atividade_idx on public.tentativas_atividades (atividade_id);
 create index if not exists respostas_aluno_tentativa_idx on public.respostas_questoes (aluno_id, tentativa_id);
+create index if not exists respostas_questao_idx on public.respostas_questoes (questao_id);
 create unique index if not exists conteudos_salvos_trilha_unique on public.conteudos_salvos (aluno_id, trilha_id) where trilha_id is not null;
 create unique index if not exists conteudos_salvos_atividade_unique on public.conteudos_salvos (aluno_id, atividade_id) where atividade_id is not null;
+create index if not exists conteudos_salvos_trilha_fk_idx on public.conteudos_salvos (trilha_id) where trilha_id is not null;
+create index if not exists conteudos_salvos_atividade_fk_idx on public.conteudos_salvos (atividade_id) where atividade_id is not null;
+create index if not exists anotacoes_aula_atividade_idx on public.anotacoes_aula (atividade_id);
 create index if not exists historico_aluno_data_idx on public.historico_estudos (aluno_id, created_at desc);
 create index if not exists historico_trilha_idx on public.historico_estudos (trilha_id, created_at desc) where trilha_id is not null;
+create index if not exists historico_atividade_idx on public.historico_estudos (atividade_id, created_at desc) where atividade_id is not null;
 create index if not exists xp_movimentos_aluno_data_idx on public.xp_movimentos (aluno_id, created_at desc);
 
 alter table public.trilhas_prerequisitos enable row level security;
@@ -190,12 +197,42 @@ create policy trilhas_select on public.trilhas for select to authenticated using
   or (
     publicada = true
     and (turma_id is null or turma_id = (select p.turma_id from public.perfis p where p.id = (select auth.uid())))
+    and (select public.aluno_pode_acessar_materia(materia_codigo))
   )
 );
 
 drop policy if exists atividades_select on public.atividades;
 create policy atividades_select on public.atividades for select to authenticated using (
   exists (select 1 from public.trilhas t where t.id = trilha_id)
+);
+
+-- O aluno marca diretamente apenas aulas publicadas. Notas e conclusão de quizzes
+-- são calculadas pelas funções privadas após a resposta das questões.
+drop policy if exists progresso_aluno_manage on public.progresso_atividades;
+drop policy if exists progresso_aluno_insert on public.progresso_atividades;
+drop policy if exists progresso_aluno_update on public.progresso_atividades;
+create policy progresso_aluno_insert on public.progresso_atividades for insert to authenticated
+with check (
+  aluno_id = (select auth.uid())
+  and nota is null
+  and exists (
+    select 1 from public.atividades a
+    join public.trilhas t on t.id = a.trilha_id
+    where a.id = atividade_id and a.tipo_conteudo = 'aula'
+      and a.status = 'publicada' and t.publicada = true
+  )
+);
+create policy progresso_aluno_update on public.progresso_atividades for update to authenticated
+using (aluno_id = (select auth.uid()))
+with check (
+  aluno_id = (select auth.uid())
+  and nota is null
+  and exists (
+    select 1 from public.atividades a
+    join public.trilhas t on t.id = a.trilha_id
+    where a.id = atividade_id and a.tipo_conteudo = 'aula'
+      and a.status = 'publicada' and t.publicada = true
+  )
 );
 
 revoke all on public.trilhas_prerequisitos, public.materiais_aula, public.questoes_atividades,
@@ -324,7 +361,8 @@ begin
   select count(*), count(*) filter (where r.correta), coalesce(sum(r.pontos_obtidos),0) into v_respondidas, v_acertos, v_obtida from public.respostas_questoes r where r.tentativa_id = new.tentativa_id;
   update public.tentativas_atividades set acertos = v_acertos, pontuacao_obtida = v_obtida, pontuacao_maxima = v_maxima,
     status = case when v_total > 0 and v_respondidas >= v_total then 'concluida' else 'em_andamento' end,
-    concluida_em = case when v_total > 0 and v_respondidas >= v_total then coalesce(concluida_em,now()) else null end
+    concluida_em = case when v_total > 0 and v_respondidas >= v_total then coalesce(concluida_em,now()) else null end,
+    updated_at = now()
   where id = new.tentativa_id;
   if v_total > 0 and v_respondidas >= v_total and not v_ja_concluida then
     select a.trilha_id, a.recompensa_xp into v_trilha, v_xp from public.atividades a where a.id = v_atividade;
@@ -373,5 +411,9 @@ drop trigger if exists trg_recalcular_tentativa_atividade on public.respostas_qu
 create trigger trg_recalcular_tentativa_atividade after insert or update of resposta on public.respostas_questoes for each row execute function private.recalcular_tentativa_atividade();
 drop trigger if exists trg_registrar_conclusao_aula on public.progresso_atividades;
 create trigger trg_registrar_conclusao_aula after insert or update of concluida on public.progresso_atividades for each row execute function private.registrar_conclusao_aula();
+
+drop trigger if exists set_anotacoes_aula_updated_at on public.anotacoes_aula;
+create trigger set_anotacoes_aula_updated_at before update on public.anotacoes_aula
+for each row execute function public.set_updated_at();
 
 commit;

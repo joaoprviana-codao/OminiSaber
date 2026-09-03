@@ -10,11 +10,11 @@
       href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0,0"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="style.css" /><link rel="stylesheet" href="../../shared/sidebar.css" />
+    <link rel="stylesheet" href="style.css?v=20260902-1" /><link rel="stylesheet" href="../../shared/sidebar.css" />
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../../../backend/ominisaber-supabase-config.js"></script>
-    <script src="../../../backend/ominisaber-supabase-client.js"></script>
-    <script defer src="script.js"></script>
+    <script src="../../../backend/ominisaber-supabase-client.js?v=20260902-2"></script>
+    <script defer src="script.js?v=20260902-1"></script>
   </head>
   <body data-app-role="library">
     <div class="library-shell">
@@ -87,6 +87,24 @@
             <label class="search-field"><span class="material-symbols-outlined">search</span><input class="input" data-search placeholder="Buscar título ou gênero" /></label>
           </div>
           <div class="catalog-list" data-catalog><p class="empty">Carregando inventário...</p></div>
+        </section>
+
+        <section class="panel digital-panel" id="materiais-digitais">
+          <div class="panel-heading catalog-heading">
+            <div><p class="section-kicker">ACERVO DIGITAL</p><h2>PDFs verificados</h2><p class="muted">Envie, confira e publique materiais para o download protegido dos alunos.</p></div>
+            <button class="button" type="button" data-pdf-form-toggle><span class="material-symbols-outlined">upload_file</span>Novo PDF</button>
+          </div>
+          <div class="schema-warning" data-digital-warning hidden><span class="material-symbols-outlined">database</span><div><strong>Estrutura digital ainda não instalada</strong><p>Aplique a migração da biblioteca no Supabase configurado pelo arquivo .env.</p></div></div>
+          <form class="pdf-form" data-pdf-form hidden>
+            <label>Título<input class="input" name="titulo" required maxlength="180" placeholder="Nome do material" /></label>
+            <label>Autor ou instituição<input class="input" name="autor" maxlength="160" placeholder="Ex.: Equipe OminiSaber" /></label>
+            <label>Matéria<select class="input" name="materia" required><option value="Português">Português</option><option value="Matemática">Matemática</option><option value="Física">Física</option><option value="Redação">Redação</option><option value="Administração">Administração</option><option value="Informática">Informática</option></select></label>
+            <label>Categoria<input class="input" name="categoria" maxlength="100" value="Material de apoio" /></label>
+            <label class="full">Descrição<textarea class="input" name="descricao" rows="3" maxlength="800" placeholder="Explique o conteúdo e para quem ele é indicado."></textarea></label>
+            <label class="file-field full"><span class="material-symbols-outlined">picture_as_pdf</span><span><strong>Escolher PDF</strong><small>Somente PDF real, até 50 MB</small></span><input name="arquivo" type="file" accept="application/pdf,.pdf" required /></label>
+            <div class="pdf-form-actions full"><button class="button secondary" type="button" data-pdf-form-cancel>Cancelar</button><button class="button" type="submit"><span class="material-symbols-outlined">verified</span>Verificar e publicar</button></div>
+          </form>
+          <div class="digital-list" data-digital-list><p class="empty">Carregando materiais digitais...</p></div>
         </section>
       </main>
     </div>

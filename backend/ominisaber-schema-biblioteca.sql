@@ -1,5 +1,7 @@
 -- OminiSaber | Biblioteca digital e leituras do aluno
--- Execute no SQL Editor do Supabase.
+-- Execute depois de backend/ominisaber-schema.sql.
+
+begin;
 
 create table if not exists public.livros (
   id uuid primary key default gen_random_uuid(),
@@ -36,6 +38,8 @@ update public.livros set genero = 'Didático' where genero is null or trim(gener
 alter table public.livros alter column genero set not null;
 alter table public.livros alter column genero set default 'Didático';
 alter table public.livros add column if not exists categoria text default 'Didáticos';
+update public.livros set categoria = 'Didáticos' where categoria is null or btrim(categoria) = '';
+alter table public.livros alter column categoria set not null;
 alter table public.livros add column if not exists capa_url text;
 alter table public.livros add column if not exists pdf_url text;
 alter table public.livros add column if not exists sinopse text;
@@ -110,6 +114,7 @@ create table if not exists public.leituras_aluno (
 create index if not exists idx_livros_genero on public.livros (genero);
 create index if not exists idx_livros_categoria on public.livros (categoria);
 create index if not exists idx_leituras_aluno on public.leituras_aluno (aluno_id, atualizado_em desc);
+create index if not exists idx_leituras_livro on public.leituras_aluno (livro_id);
 
 alter table public.livros enable row level security;
 alter table public.leituras_aluno enable row level security;
@@ -145,25 +150,6 @@ create policy leituras_aluno_own_update
   to authenticated
   using (auth.uid() = aluno_id)
   with check (auth.uid() = aluno_id);
-
-insert into public.livros (
-  titulo,
-  autor,
-  genero,
-  categoria,
-  sinopse,
-  paginas,
-  palavras_chave
-)
-select * from (values
-  ('Dom Casmurro', 'Machado de Assis', 'Romance', 'Literatura Obrigatória', 'Bentinho revisita sua história e tenta reconstruir as relações, as suspeitas e as escolhas que marcaram sua vida.', 256, 'realismo, narrador, clássico'),
-  ('Física em Movimento', 'Coleção OminiSaber', 'Científico / Técnico', 'Didáticos', 'Um guia visual para compreender movimento, energia e as leis que conectam teoria e experiências cotidianas.', 142, 'força, energia, velocidade'),
-  ('A célula por dentro', 'Coleção OminiSaber', 'Científico / Técnico', 'Apostilas', 'Diagramas e explicações para investigar as estruturas celulares e os processos que sustentam a vida.', 96, 'célula, genética, vida'),
-  ('Álgebra para pensar', 'Coleção OminiSaber', 'Didático', 'Didáticos', 'Problemas graduais, estratégias e exemplos para transformar relações algébricas em ferramentas de raciocínio.', 188, 'equações, álgebra, problemas')
-) as seed(titulo, autor, genero, categoria, sinopse, paginas, palavras_chave)
-where not exists (
-  select 1 from public.livros existing where existing.titulo = seed.titulo
-);
 
 revoke insert, update, delete on table public.livros from anon, authenticated;
 
@@ -204,21 +190,23 @@ create index if not exists idx_solicitacoes_status on public.solicitacoes_empres
 create index if not exists idx_solicitacoes_aluno on public.solicitacoes_emprestimo(aluno_id);
 create index if not exists idx_solicitacoes_livro on public.solicitacoes_emprestimo(livro_id);
 create index if not exists idx_solicitacoes_exemplar on public.solicitacoes_emprestimo(exemplar_id);
-
-create or replace function public.atualizar_biblioteca_updated_at()
-returns trigger language plpgsql as $$ begin new.updated_at = now(); return new; end; $$;
+create index if not exists idx_solicitacoes_aprovado_por on public.solicitacoes_emprestimo(aprovado_por) where aprovado_por is not null;
 
 drop trigger if exists solicitacoes_updated_at on public.solicitacoes_emprestimo;
 create trigger solicitacoes_updated_at before update on public.solicitacoes_emprestimo
-for each row execute procedure public.atualizar_biblioteca_updated_at();
+for each row execute function public.set_updated_at();
 drop trigger if exists configuracoes_biblioteca_updated_at on public.configuracoes_biblioteca;
 create trigger configuracoes_biblioteca_updated_at before update on public.configuracoes_biblioteca
-for each row execute procedure public.atualizar_biblioteca_updated_at();
+for each row execute function public.set_updated_at();
+drop function if exists public.atualizar_biblioteca_updated_at();
 
 create or replace function public.biblioteca_pode_solicitar(p_aluno_id uuid)
-returns boolean language plpgsql stable security definer set search_path = public as $$
+returns boolean language plpgsql stable security definer set search_path = '' as $$
 declare limite integer; quantidade integer;
 begin
+  if p_aluno_id <> (select auth.uid()) and public.usuario_role() not in ('bibliotecaria', 'gestor') then
+    return false;
+  end if;
   select limite_livros into limite from public.configuracoes_biblioteca where id = true;
   select count(*) into quantidade from public.solicitacoes_emprestimo
   where aluno_id = p_aluno_id and status in ('pendente', 'aprovado', 'emprestado');
@@ -229,18 +217,19 @@ begin
 end; $$;
 
 create or replace function public.biblioteca_aprovar_solicitacao(p_solicitacao_id uuid, p_aprovado_por uuid)
-returns public.solicitacoes_emprestimo language plpgsql security definer set search_path = public as $$
+returns public.solicitacoes_emprestimo language plpgsql security definer set search_path = '' as $$
 declare resultado public.solicitacoes_emprestimo;
 begin
   if public.usuario_role() not in ('bibliotecaria', 'gestor') then raise exception 'Sem permissao'; end if;
-  update public.solicitacoes_emprestimo set status = 'aprovado', aprovado_em = now(), aprovado_por = p_aprovado_por
+  if p_aprovado_por is distinct from (select auth.uid()) then raise exception 'Responsável inválido'; end if;
+  update public.solicitacoes_emprestimo set status = 'aprovado', aprovado_em = now(), aprovado_por = (select auth.uid())
   where id = p_solicitacao_id and status = 'pendente' returning * into resultado;
   if resultado.id is null then raise exception 'Solicitacao indisponivel'; end if;
   return resultado;
 end; $$;
 
 create or replace function public.biblioteca_confirmar_entrega(p_solicitacao_id uuid)
-returns public.solicitacoes_emprestimo language plpgsql security definer set search_path = public as $$
+returns public.solicitacoes_emprestimo language plpgsql security definer set search_path = '' as $$
 declare resultado public.solicitacoes_emprestimo; prazo integer; exemplar uuid;
 begin
   if public.usuario_role() not in ('bibliotecaria', 'gestor') then raise exception 'Sem permissao'; end if;
@@ -269,7 +258,7 @@ begin
 end; $$;
 
 create or replace function public.biblioteca_registrar_devolucao(p_solicitacao_id uuid)
-returns public.solicitacoes_emprestimo language plpgsql security definer set search_path = public as $$
+returns public.solicitacoes_emprestimo language plpgsql security definer set search_path = '' as $$
 declare resultado public.solicitacoes_emprestimo;
 begin
   if public.usuario_role() not in ('bibliotecaria', 'gestor') then raise exception 'Sem permissao'; end if;
@@ -289,6 +278,10 @@ alter table public.configuracoes_biblioteca enable row level security;
 grant select, insert, update, delete on table public.livros to authenticated;
 grant select, insert on table public.solicitacoes_emprestimo to authenticated;
 grant select, update on table public.configuracoes_biblioteca to authenticated;
+revoke all on function public.biblioteca_pode_solicitar(uuid) from public, anon, authenticated;
+revoke all on function public.biblioteca_aprovar_solicitacao(uuid, uuid) from public, anon, authenticated;
+revoke all on function public.biblioteca_confirmar_entrega(uuid) from public, anon, authenticated;
+revoke all on function public.biblioteca_registrar_devolucao(uuid) from public, anon, authenticated;
 grant execute on function public.biblioteca_pode_solicitar(uuid) to authenticated;
 grant execute on function public.biblioteca_aprovar_solicitacao(uuid, uuid) to authenticated;
 grant execute on function public.biblioteca_confirmar_entrega(uuid) to authenticated;
@@ -299,9 +292,23 @@ create policy solicitacoes_select on public.solicitacoes_emprestimo for select t
 using (aluno_id = auth.uid() or public.usuario_role() in ('bibliotecaria', 'gestor'));
 drop policy if exists solicitacoes_insert on public.solicitacoes_emprestimo;
 create policy solicitacoes_insert on public.solicitacoes_emprestimo for insert to authenticated
-with check (aluno_id = auth.uid() and public.usuario_role() = 'aluno' and public.biblioteca_pode_solicitar(auth.uid()));
+with check (
+  aluno_id = (select auth.uid()) and public.usuario_role() = 'aluno'
+  and status = 'pendente' and exemplar_id is null and aprovado_por is null
+  and aprovado_em is null and retirada_em is null and devolucao_prevista_em is null and devolvido_em is null
+  and public.biblioteca_pode_solicitar((select auth.uid()))
+);
 drop policy if exists configuracoes_biblioteca_select on public.configuracoes_biblioteca;
 create policy configuracoes_biblioteca_select on public.configuracoes_biblioteca for select to authenticated using (true);
 drop policy if exists configuracoes_biblioteca_update on public.configuracoes_biblioteca;
 create policy configuracoes_biblioteca_update on public.configuracoes_biblioteca for update to authenticated
 using (public.usuario_role() in ('bibliotecaria', 'gestor')) with check (public.usuario_role() in ('bibliotecaria', 'gestor'));
+
+drop trigger if exists set_secoes_biblioteca_updated_at on public.secoes_biblioteca;
+create trigger set_secoes_biblioteca_updated_at before update on public.secoes_biblioteca
+for each row execute function public.set_updated_at();
+drop trigger if exists set_exemplares_updated_at on public.exemplares;
+create trigger set_exemplares_updated_at before update on public.exemplares
+for each row execute function public.set_updated_at();
+
+commit;

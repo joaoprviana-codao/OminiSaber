@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Redefinir senha | OminiSaber</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../../backend/ominisaber-supabase-config.js?v=20260902-login-fix-1"></script>
+  <script src="../../backend/ominisaber-supabase-client.js?v=20260902-login-fix-1"></script>
+  <style>
+    *{box-sizing:border-box} body{margin:0;min-width:320px;min-height:100vh;display:grid;place-items:center;padding:1rem;background:radial-gradient(circle at 15% 0,#4f46e5 0,transparent 38%),#1a1259;font-family:Inter,sans-serif;color:#111827}.card{width:min(100%,28rem);padding:clamp(1.5rem,5vw,2.5rem);border-radius:1.25rem;background:#fff;box-shadow:0 30px 80px #08051f80}.brand{margin:0 0 .5rem;color:#4338ca;font-weight:700}.card h1{margin:.25rem 0 .5rem;font-family:Poppins,sans-serif;font-size:1.65rem}.hint{margin:0 0 1.5rem;color:#64748b;line-height:1.55}label{display:block;margin:.9rem 0 .4rem;font-size:.85rem;font-weight:700}input{width:100%;min-height:3rem;padding:.75rem 1rem;border:1px solid #cbd5e1;border-radius:.65rem;font:inherit}input:focus{outline:3px solid #c7d2fe;border-color:#4f46e5}button{width:100%;min-height:3rem;margin-top:1.25rem;border:0;border-radius:.65rem;background:#4338ca;color:#fff;font:inherit;font-weight:700;cursor:pointer}button:disabled{opacity:.65;cursor:wait}.status{margin:0 0 1rem;padding:.8rem 1rem;border-radius:.65rem;background:#fef2f2;color:#991b1b;font-size:.875rem}.status.success{background:#f0fdfa;color:#115e59}.status[hidden]{display:none}a{display:block;margin-top:1.25rem;text-align:center;color:#4338ca;font-weight:700;text-decoration:none}
+  </style>
+</head>
+<body>
+  <main class="card">
+    <p class="brand">OminiSaber</p>
+    <h1>Crie uma nova senha</h1>
+    <p class="hint">Use pelo menos 8 caracteres. Depois da alteração, você poderá entrar normalmente.</p>
+    <div id="status" class="status" role="alert" aria-live="polite" hidden></div>
+    <form id="resetForm" novalidate>
+      <label for="newPassword">Nova senha</label>
+      <input id="newPassword" type="password" minlength="8" autocomplete="new-password" required>
+      <label for="confirmPassword">Confirme a nova senha</label>
+      <input id="confirmPassword" type="password" minlength="8" autocomplete="new-password" required>
+      <button id="submit" type="submit">Salvar nova senha</button>
+    </form>
+    <a href="../login/index.html">Voltar para o login</a>
+  </main>
+  <script>
+    (() => {
+      const form = document.getElementById('resetForm');
+      const status = document.getElementById('status');
+      const submit = document.getElementById('submit');
+      const show = (message, success = false) => { status.textContent = message; status.classList.toggle('success', success); status.hidden = false; };
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const password = document.getElementById('newPassword').value;
+        const confirmation = document.getElementById('confirmPassword').value;
+        if (password.length < 8) return show('Use pelo menos 8 caracteres.');
+        if (password !== confirmation) return show('As senhas não conferem.');
+        submit.disabled = true;
+        submit.textContent = 'Salvando...';
+        try {
+          const { error } = await window.OminiSaber.client.auth.updateUser({ password });
+          if (error) throw error;
+          show('Senha alterada com sucesso. Redirecionando para o login...', true);
+          await window.OminiSaber.clearSession();
+          window.setTimeout(() => { window.location.href = '../login/index.html'; }, 1200);
+        } catch (error) {
+          show(error.message || 'O link expirou ou é inválido. Solicite uma nova recuperação.');
+          submit.disabled = false;
+          submit.textContent = 'Salvar nova senha';
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,5 +1,49 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Perfil do aluno no OminiSaber."><title>Meu perfil | OminiSaber</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@700;800&family=Material+Symbols+Outlined:FILL@0..1" rel="stylesheet"><link rel="stylesheet" href="../shared/account-shell.css"><link rel="stylesheet" href="style.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="../../../backend/ominisaber-supabase-config.js"></script><script src="../../../backend/ominisaber-supabase-client.js"></script><script defer src="../shared/account-shell.js"></script><script defer src="script.js"></script></head>
-<body data-required-role="aluno"><aside class="app-sidebar" aria-label="Navegação principal"><a class="app-brand" href="../dashboard_principal/index.html"><span class="brand-symbol material-symbols-outlined">school</span><span>OminiSaber<small>Área do aluno</small></span></a><p class="nav-label">Aprender</p><nav class="app-nav"><a href="../dashboard_principal/index.html"><span class="material-symbols-outlined">space_dashboard</span>Visão geral</a><a href="../notificacoes/index.html"><span class="material-symbols-outlined">notifications</span>Notificações</a><a href="../agenda/index.html"><span class="material-symbols-outlined">calendar_month</span>Minha agenda</a></nav><p class="nav-label">Minha conta</p><nav class="app-nav"><a class="active" href="index.html" aria-current="page"><span class="material-symbols-outlined">person</span>Perfil</a><a href="../configuracoes/index.html"><span class="material-symbols-outlined">settings</span>Configurações</a><a href="../ajuda-suporte/index.html"><span class="material-symbols-outlined">help</span>Ajuda e suporte</a></nav><div class="sidebar-person"><span class="person-avatar" data-shell-avatar>AL</span><div><strong data-shell-name>Aluno</strong><span data-shell-class>Ensino Médio</span></div></div></aside>
-<main class="app-main"><header class="app-topbar"><button class="icon-button menu-button" type="button" data-menu-toggle aria-label="Abrir menu" aria-expanded="false"><span class="material-symbols-outlined">menu</span></button><div class="topbar-title"><strong>Minha conta</strong><span>Identidade e informações escolares</span></div><div class="topbar-actions"><a class="icon-button" href="../notificacoes/index.html" aria-label="Notificações"><span class="material-symbols-outlined">notifications</span></a><a class="icon-button" href="../configuracoes/index.html" aria-label="Configurações"><span class="material-symbols-outlined">settings</span></a></div></header>
-<div class="page"><header class="page-heading"><div><p class="eyebrow">MINHA IDENTIDADE</p><h1>Perfil</h1><p>Confira seus dados escolares e os atalhos mais importantes da sua conta.</p></div><a class="button primary" href="../configuracoes/index.html"><span class="material-symbols-outlined">edit</span>Editar dados</a></header><section class="profile-hero panel"><div class="large-avatar" data-profile-avatar>AL</div><div><p class="eyebrow">ALUNO OMINISABER</p><h2 data-profile-name>Carregando...</h2><p data-profile-email></p><div class="identity-tags"><span><span class="material-symbols-outlined">school</span><b data-profile-grade>Ensino Médio</b></span><span><span class="material-symbols-outlined">badge</span><b data-profile-registration>Matrícula</b></span></div></div></section>
-<div class="profile-grid"><section class="panel info-panel"><div class="panel-header"><div><h2>Informações escolares</h2><p>Dados vinculados pela escola</p></div><span class="material-symbols-outlined">verified_user</span></div><dl><div><dt>Turma</dt><dd data-profile-class>Não informada</dd></div><div><dt>Ano escolar</dt><dd data-profile-year>Não informado</dd></div><div><dt>Curso técnico</dt><dd data-profile-course>Não informado</dd></div><div><dt>Tipo de acesso</dt><dd>Aluno</dd></div></dl></section><section class="quick-links"><a class="panel" href="../agenda/index.html"><span class="quick-icon purple material-symbols-outlined">calendar_month</span><div><strong>Minha agenda</strong><p>Veja provas e atividades</p></div><span class="material-symbols-outlined">arrow_forward</span></a><a class="panel" href="../configuracoes/index.html"><span class="quick-icon green material-symbols-outlined">shield_lock</span><div><strong>Segurança e preferências</strong><p>Senha, tema e dados pessoais</p></div><span class="material-symbols-outlined">arrow_forward</span></a><a class="panel" href="../ajuda-suporte/index.html"><span class="quick-icon amber material-symbols-outlined">support_agent</span><div><strong>Ajuda e suporte</strong><p>Respostas e orientações</p></div><span class="material-symbols-outlined">arrow_forward</span></a></section></div></div></main><nav class="mobile-nav" aria-label="Atalhos"><a href="../dashboard_principal/index.html"><span class="material-symbols-outlined">home</span>Início</a><a href="../agenda/index.html"><span class="material-symbols-outlined">calendar_month</span>Agenda</a><a href="../notificacoes/index.html"><span class="material-symbols-outlined">notifications</span>Avisos</a><a class="active" href="index.html"><span class="material-symbols-outlined">person</span>Perfil</a></nav><div class="toast" data-toast role="status" aria-live="polite"></div></body></html>
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Perfil do aluno no OminiSaber.">
+  <title>Meu perfil | OminiSaber</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@700;800&family=Material+Symbols+Outlined:FILL@0..1" rel="stylesheet">
+  <link rel="stylesheet" href="../shared/account-shell.css">
+  <link rel="stylesheet" href="style.css?v=20260903-1">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../../../backend/ominisaber-supabase-config.js"></script>
+  <script src="../../../backend/ominisaber-supabase-client.js?v=20260903-1"></script>
+  <script defer src="../shared/account-shell.js"></script>
+  <script defer src="script.js?v=20260903-1"></script>
+</head>
+<body data-app-role="student" data-required-role="aluno">
+  <aside class="app-sidebar" aria-label="Navegação principal"></aside>
+  <main class="app-main">
+    <header class="app-topbar">
+      <button class="icon-button menu-button" type="button" data-menu-toggle aria-label="Abrir menu" aria-expanded="false"><span class="material-symbols-outlined">menu</span></button>
+      <div class="topbar-title"><strong>Minha conta</strong><span>Identidade e informações escolares</span></div>
+      <div class="topbar-actions"><a class="icon-button" href="../notificacoes/index.html" aria-label="Notificações"><span class="material-symbols-outlined">notifications</span></a></div>
+    </header>
+    <div class="page">
+      <header class="page-heading"><div><p class="eyebrow">MINHA IDENTIDADE</p><h1>Perfil</h1><p>Confira seus dados escolares e os atalhos mais importantes da sua conta.</p></div></header>
+      <section class="profile-hero panel">
+        <div class="large-avatar" data-profile-avatar>AL</div>
+        <div><p class="eyebrow">ALUNO OMINISABER</p><h2 data-profile-name>Carregando...</h2><p data-profile-email></p><div class="identity-tags"><span><span class="material-symbols-outlined">school</span><b data-profile-grade>Ensino Médio</b></span><span><span class="material-symbols-outlined">badge</span><b data-profile-registration>Matrícula</b></span></div></div>
+      </section>
+      <div class="profile-grid">
+        <section class="panel info-panel">
+          <div class="panel-header"><div><h2>Informações escolares</h2><p>Dados vinculados pela escola</p></div><span class="material-symbols-outlined">verified_user</span></div>
+          <dl><div><dt>Turma</dt><dd data-profile-class>Não informada</dd></div><div><dt>Ano escolar</dt><dd data-profile-year>Não informado</dd></div><div><dt>Curso técnico</dt><dd data-profile-course>Não informado</dd></div><div><dt>Tipo de acesso</dt><dd>Aluno</dd></div></dl>
+        </section>
+        <section class="quick-links">
+          <a class="panel" href="../agenda/index.html"><span class="quick-icon purple material-symbols-outlined">calendar_month</span><div><strong>Minha agenda</strong><p>Veja provas e atividades</p></div><span class="material-symbols-outlined">arrow_forward</span></a>
+          <a class="panel" href="../notificacoes/index.html"><span class="quick-icon green material-symbols-outlined">notifications</span><div><strong>Notificações</strong><p>Acompanhe avisos e prazos</p></div><span class="material-symbols-outlined">arrow_forward</span></a>
+          <a class="panel" href="../ajuda-suporte/index.html"><span class="quick-icon amber material-symbols-outlined">support_agent</span><div><strong>Ajuda e suporte</strong><p>Respostas e orientações</p></div><span class="material-symbols-outlined">arrow_forward</span></a>
+        </section>
+      </div>
+    </div>
+  </main>
+  <nav class="mobile-nav" aria-label="Atalhos"><a href="../dashboard_principal/index.html"><span class="material-symbols-outlined">home</span>Início</a><a href="../agenda/index.html"><span class="material-symbols-outlined">calendar_month</span>Agenda</a><a href="../notificacoes/index.html"><span class="material-symbols-outlined">notifications</span>Avisos</a><a class="active" href="index.html"><span class="material-symbols-outlined">person</span>Perfil</a></nav>
+  <div class="toast" data-toast role="status" aria-live="polite"></div>
+</body>
+</html>

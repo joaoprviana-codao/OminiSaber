@@ -1,83 +1,57 @@
-# Design QA — Matemática do aluno
+# Design QA — Login OminiSaber (opção 3)
 
-## Comparison Target
-
-- Source visual truth:
-  - `docs/referencias-design/matematica/01-1o-ano-maquina-de-padroes.png`
-  - `docs/referencias-design/matematica/02-2o-ano-estudio-de-areas.png`
-  - `docs/referencias-design/matematica/03-3o-ano-reta-em-movimento.png`
-- Implementation screenshots:
-  - `docs/auditoria-visual/matematica-maquina-padroes-implementacao.png`
-  - `docs/auditoria-visual/matematica-estudio-areas-implementacao.png`
-  - `docs/auditoria-visual/matematica-reta-movimento-implementacao.png`
-  - `docs/auditoria-visual/matematica-reta-movimento-mobile.png`
-- Side-by-side comparison evidence:
-  - `docs/auditoria-visual/qa-matematica-maquina-padroes.png`
-  - `docs/auditoria-visual/qa-matematica-estudio-areas.png`
-  - `docs/auditoria-visual/qa-matematica-reta-movimento.png`
-- State: `?preview=1`, initial state, without fabricated Supabase data.
-
-## Viewport and normalization
-
-- Desktop browser viewport: 1440 × 1024 CSS px, density 1.
-- Desktop implementation capture: 1425 × 1013 px after the in-app browser reserved its scrollbar area.
-- Source visual: 1487 × 1058 px.
-- Normalization: implementation captures were resampled to 1487 × 1058 and placed beside the source without cropping.
-- Mobile browser viewport: 390 × 844 CSS px, density 1.
-- Mobile implementation capture: 375 × 811 px after browser UI and scrollbar reservation.
-- Mobile overflow check: `scrollWidth === clientWidth` on all three routes.
+- Source visual truth: `docs/auditoria-visual/login-opcao-3-referencia.png`
+- Implementation screenshot: `docs/auditoria-visual/login-opcao-3-desktop.png`
+- Mobile screenshot: `docs/auditoria-visual/login-opcao-3-mobile.png`
+- Side-by-side evidence: `docs/auditoria-visual/login-opcao-3-comparacao.png`
+- Desktop viewport / CSS size: 1440 × 1024 px, device density 1
+- Source pixels: 1488 × 1058 px
+- Implementation pixels: 1440 × 1024 px
+- Comparison normalization: both images scaled to 720 × 512 px, preserving the shared 1.406 aspect ratio
+- State: login inicial, sem mensagens de erro e sem credenciais preenchidas
 
 ## Full-view comparison evidence
 
-The three combined QA images place the approved reference on the left and the implementation on the right. They show consistent OminiSaber navigation, information hierarchy, curriculum tags, workbench proportions, graph/geometry focus, progress and teacher-quiz regions.
+The implementation preserves the selected composition: navy brand bar, asymmetric 53/47 split, large editorial headline, yellow divider, dedicated institutional form, blue primary action, trust indicators, and the white/navy/blue/yellow 3D learning landscape. The form was kept free of public registration and role selection because accounts and permissions are provisioned institutionally.
 
-Focused crops were not required after normalization because every critical control, label, graph and curriculum tag remains legible at the native 1487 × 1058 comparison size. The mobile capture was reviewed separately to verify the navigation and single-column reflow.
+## Required fidelity surfaces
 
-## Required Fidelity Surfaces
+- Fonts and typography: Inter is used throughout with close weight, line-height, and tracking. The headline hierarchy and highlighted `Saber` match the reference. No clipping or unintended wrapping was found.
+- Spacing and layout rhythm: desktop proportions, form spacing, control height, and illustration balance match the reference. The mobile layout stacks without horizontal overflow and keeps the primary button in the first viewport.
+- Colors and visual tokens: navy `#061d36`, blue `#155be8`, yellow `#ffbd09`, warm white surfaces, and green security state map closely to the source.
+- Image quality and asset fidelity: the generated 3D illustration is a real raster asset at `frontend/login/assets/jornada-ominisaber-3d.png`; it is sharp, correctly cropped, and uses the selected art direction. No CSS illustration, placeholder, emoji, or improvised SVG replaced it.
+- Copy and content: the screen uses institutional access language, matrícula/e-mail, password recovery, remembered device, school-provided access, and protected-environment assurance. Public sign-up was removed.
 
-- Fonts and typography: Inter and Poppins match the approved OminiSaber language; heading size was reduced in the second pass to restore the reference hierarchy and prevent excess wrapping.
-- Spacing and layout rhythm: sidebar, topbar, heading, workbench and footer retain the same order and rhythm. The area workbench was widened in the second pass so the canvas remains the dominant region.
-- Colors and tokens: dark indigo navigation, warm off-white canvas, blue primary controls, teal geometry/intercept and amber measurements match the selected references. No gradients or glass effects were introduced.
-- Image quality and asset fidelity: the catalog uses the approved generated references at full quality. Core learning diagrams are functional Canvas 2D visualizations rather than raster placeholders. Material Symbols supplies the icon system.
-- Copy and content: final headings follow the approved concepts. Habilities and descriptors are exact. The 2º-year area calculation was corrected to `3 × 8 + 6 × 2 = 36 m²`, matching its visible geometry.
+## Focused interaction evidence
+
+A separate crop was not required because controls and copy are legible in the 1440 × 1024 full-resolution capture. Browser checks confirmed:
+
+- password visibility toggle updates its icon, label, and `aria-pressed` state;
+- empty submit shows the inline required-fields message;
+- password recovery without an e-mail shows local guidance and does not transmit data;
+- no console errors or warnings after the fixes;
+- desktop has no horizontal overflow;
+- mobile at 390 × 844 has no horizontal overflow and keeps the submit button visible before the first fold.
 
 ## Comparison history
 
-### Iteration 1
+1. Initial implementation: P1 functional mismatch in the password icon selector caused an error after toggling visibility. Fixed by targeting the installed Material Symbols Rounded icon.
+2. Initial mobile capture: P2 usability issue placed the primary button below the first viewport. Fixed by converting the welcome area into a compact 238 px hero and repositioning the 3D asset.
+3. First desktop comparison: P2 hierarchy drift added a large secondary welcome heading on the form side. Fixed by visually hiding that heading on desktop while retaining it on mobile and for accessible structure.
+4. Final comparison: no actionable P0, P1, or P2 findings remain.
 
-- [P2] Page titles were larger than the references and pushed the workbench downward.
-- [P2] The Estúdio de Áreas canvas had insufficient dominance and the B rectangle used a smaller 3 × 2 measure.
-- [P2] The inherited mobile sidebar had zero width while off-canvas, allowing its contents to leak behind the page.
-- [P2] Hidden quiz buttons could become visible because an author display rule overrode the native `hidden` behavior.
+## Follow-up polish
 
-Fixes:
+- P3: the source uses a curved segment in the central yellow divider; the implementation uses a straight divider to avoid recreating a decorative asset with CSS drawing.
 
-- Reduced page-heading scale and aligned the page titles/copy with the approved references.
-- Adjusted the two-column geometry proportions and corrected B to 6 × 2, total 36 m².
-- Gave the mobile sidebar an explicit off-canvas width and transform.
-- Added a global `[hidden] { display: none !important; }` rule and a safe preview-state branch.
+## Implementation checklist
 
-### Iteration 2
-
-Post-fix comparison evidence is recorded in the three `qa-matematica-*.png` files. No actionable P0/P1/P2 mismatch remains.
-
-## Primary interactions tested
-
-- Máquina de Padrões: coefficient stepper changed `a` from 2 to 3; confirmation returned the correct synchronized equation.
-- Estúdio de Áreas: piece A was dragged on the grid; validation returned `24 m² + 12 m² = 36 m²`.
-- Reta em Movimento: mobile menu opened and closed; the correct prediction was selected and confirmed after increasing `m`.
-- Catalog: the 2º-year filter displayed exactly one laboratory.
-- Preview state: quiz actions stay hidden and no Supabase write is attempted.
-- Console: no warning or error was recorded during the tested core interactions.
-
-## Findings
-
-- P0: none.
-- P1: none.
-- P2: none.
-
-## Follow-up Polish
-
-- [P3] A future iteration may add the reference mockups' decorative connector curves and graph-centering controls, provided they remain accessible and functional.
+- [x] Match selected desktop composition
+- [x] Use a production raster illustration asset
+- [x] Preserve Supabase authentication behavior
+- [x] Remove public account creation
+- [x] Validate focus, password visibility, local errors, and recovery guidance
+- [x] Validate 1440 × 1024 and 390 × 844 layouts
+- [x] Check console errors and horizontal overflow
 
 final result: passed

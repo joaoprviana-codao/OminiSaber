@@ -6,6 +6,6 @@ Esta pasta contém o catálogo e os três primeiros laboratórios interativos de
 - `estudio-de-areas/`: composição de áreas, EM13MAT307 e D058_M.
 - `reta-em-movimento/`: coeficientes da reta, EM13MAT510 e D085_M.
 
-Abra `index.html?preview=1` para uma revisão visual sem autenticação e sem consultas ao banco. O uso normal deve ocorrer sem o parâmetro de preview e com uma sessão de aluno ativa.
+Abra `index.html` com uma sessão de aluno ativa. Avaliações e conclusões são consultadas e gravadas no Supabase.
 
 Documentação técnica completa: `docs/AREA-ALUNO-MATEMATICA.md`.

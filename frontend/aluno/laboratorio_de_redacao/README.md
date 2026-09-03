@@ -17,7 +17,7 @@ Depois da terceira etapa, o aluno passa pela revisão estrutural antes de enviar
 
 ## Persistência
 
-Supabase é a fonte oficial de propostas, materiais, repertórios, planejamentos, redações, versões e correções. O `localStorage` mantém somente um buffer de emergência para evitar perda durante uma falha de conexão; ele não substitui o registro do servidor.
+Supabase é a fonte única de propostas, materiais, repertórios, planejamentos, redações, versões e correções. Falhas de salvamento são exibidas ao aluno e nunca são substituídas por dados locais.
 
 O editor cria um novo parágrafo com `Tab` no início de uma linha ou `Shift + Enter`. Esse comportamento é explicado na etapa 2 e repetido na barra do editor.
 

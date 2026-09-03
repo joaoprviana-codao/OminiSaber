@@ -2,6 +2,8 @@
 -- Execute este arquivo no SQL Editor do Supabase.
 -- A autenticação continua sendo administrada pelo auth.users nativo.
 
+begin;
+
 create extension if not exists pgcrypto;
 
 -- ============================================================
@@ -16,6 +18,19 @@ end $$;
 do $$ begin
   create type public.tipo_professor as enum (
     'matematica', 'portugues', 'tecnico_administracao', 'tecnico_informatica'
+  );
+exception when duplicate_object then null;
+end $$;
+
+do $$ begin
+  create type public.curso_tecnico as enum ('administracao', 'informatica');
+exception when duplicate_object then null;
+end $$;
+
+do $$ begin
+  create type public.materia_aluno as enum (
+    'matematica', 'fisica', 'portugues', 'redacao',
+    'tecnico_administracao', 'tecnico_informatica'
   );
 exception when duplicate_object then null;
 end $$;
@@ -57,6 +72,7 @@ create table if not exists public.perfis (
   nome text not null,
   matricula text unique,
   role public.perfil_role not null default 'aluno',
+  curso_tecnico public.curso_tecnico,
   turma_id uuid references public.turmas(id) on delete set null,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
@@ -64,9 +80,13 @@ create table if not exists public.perfis (
 
 create index if not exists idx_perfis_turma_id on public.perfis (turma_id);
 create index if not exists idx_perfis_role on public.perfis (role);
+create index if not exists idx_perfis_curso_tecnico on public.perfis (curso_tecnico) where curso_tecnico is not null;
 
 alter table public.perfis
   add column if not exists tipo_professor public.tipo_professor;
+
+alter table public.perfis
+  add column if not exists curso_tecnico public.curso_tecnico;
 
 update public.perfis
 set tipo_professor = 'portugues'
@@ -77,6 +97,14 @@ do $$ begin
     (role = 'professor' and tipo_professor is not null)
     or (role <> 'professor' and tipo_professor is null)
   );
+exception when duplicate_object then null;
+end $$;
+
+do $$ begin
+  alter table public.perfis add constraint perfis_curso_tecnico_check check (
+    (role = 'aluno' and curso_tecnico is not null)
+    or (role <> 'aluno' and curso_tecnico is null)
+  ) not valid;
 exception when duplicate_object then null;
 end $$;
 
@@ -97,12 +125,12 @@ create or replace function public.email_por_matricula(matricula_input text)
 returns text
 language sql
 stable
-security definer set search_path = public, auth
+security definer set search_path = ''
 as $$
   select u.email
   from auth.users u
   join public.perfis p on p.id = u.id
-  where p.matricula = matricula_input
+  where p.matricula = nullif(pg_catalog.btrim(matricula_input), '')
   limit 1;
 $$;
 
@@ -113,15 +141,20 @@ grant execute on function public.email_por_matricula(text) to anon, authenticate
 create or replace function public.handle_new_user()
 returns trigger
 language plpgsql
-security definer set search_path = public
+security definer set search_path = ''
 as $$
 begin
-  insert into public.perfis (id, nome, matricula, role)
+  insert into public.perfis (id, nome, matricula, role, curso_tecnico)
   values (
     new.id,
     coalesce(new.raw_user_meta_data ->> 'nome', new.email, 'Novo usuário'),
     new.raw_user_meta_data ->> 'matricula',
-    'aluno'
+    'aluno',
+    case new.raw_user_meta_data ->> 'curso_tecnico'
+      when 'administracao' then 'administracao'::public.curso_tecnico
+      when 'informatica' then 'informatica'::public.curso_tecnico
+      else null
+    end
   )
   on conflict (id) do nothing;
   return new;
@@ -131,7 +164,7 @@ $$;
 drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created
 after insert on auth.users
-for each row execute procedure public.handle_new_user();
+for each row execute function public.handle_new_user();
 
 -- ============================================================
 -- 2. TABELAS DO PEDAGÓGICO
@@ -142,6 +175,7 @@ create table if not exists public.trilhas (
   titulo text not null,
   descricao text,
   materia text not null,
+  materia_codigo public.materia_aluno not null,
   descritor_sedu text,
   tipo public.tipo_trilha not null default 'aprendizagem',
   interacao_tipo text not null default 'lista',
@@ -178,9 +212,11 @@ exception when duplicate_object then null;
 end $$;
 
 create index if not exists idx_trilhas_materia on public.trilhas (materia);
+create index if not exists idx_trilhas_materia_codigo on public.trilhas (materia_codigo, publicada, turma_id);
 create index if not exists idx_trilhas_interacao_tipo on public.trilhas (interacao_tipo);
 create index if not exists idx_trilhas_descritor on public.trilhas (descritor_sedu);
 create index if not exists idx_trilhas_turma on public.trilhas (turma_id);
+create index if not exists idx_trilhas_professor on public.trilhas (professor_id) where professor_id is not null;
 create index if not exists idx_trilhas_tipo_prazo on public.trilhas (tipo, prazo);
 
 create table if not exists public.atividades (
@@ -210,11 +246,25 @@ create table if not exists public.progresso_atividades (
 
 create index if not exists idx_progresso_aluno on public.progresso_atividades (aluno_id);
 
+create table if not exists public.progresso_experiencias (
+  aluno_id uuid not null references public.perfis(id) on delete cascade,
+  materia_codigo public.materia_aluno not null,
+  experiencia_codigo text not null check (experiencia_codigo ~ '^[a-z0-9]+(?:-[a-z0-9]+)*$'),
+  concluida boolean not null default false,
+  concluida_em timestamptz,
+  updated_at timestamptz not null default now(),
+  primary key (aluno_id, materia_codigo, experiencia_codigo)
+);
+
+create index if not exists idx_progresso_experiencias_aluno
+  on public.progresso_experiencias (aluno_id, materia_codigo, concluida);
+
 create table if not exists public.notas (
   id uuid primary key default gen_random_uuid(),
   aluno_id uuid not null references public.perfis(id) on delete cascade,
   atividade_id uuid references public.atividades(id) on delete set null,
   materia text not null,
+  materia_codigo public.materia_aluno,
   valor numeric(5,2) not null check (valor between 0 and 10),
   bimestre smallint check (bimestre between 1 and 4),
   professor_id uuid references public.perfis(id) on delete set null,
@@ -224,6 +274,8 @@ create table if not exists public.notas (
 
 create index if not exists idx_notas_aluno on public.notas (aluno_id);
 create index if not exists idx_notas_professor on public.notas (professor_id);
+create index if not exists idx_notas_materia_codigo on public.notas (aluno_id, materia_codigo, created_at desc);
+create index if not exists idx_notas_atividade on public.notas (atividade_id) where atividade_id is not null;
 
 create table if not exists public.propostas_redacao (
   id uuid primary key default gen_random_uuid(),
@@ -266,6 +318,9 @@ alter table public.redacoes
 
 create index if not exists idx_redacoes_aluno on public.redacoes (aluno_id);
 create index if not exists idx_redacoes_status on public.redacoes (status);
+create index if not exists idx_redacoes_trilha on public.redacoes (trilha_id) where trilha_id is not null;
+create index if not exists idx_redacoes_proposta on public.redacoes (proposta_id) where proposta_id is not null;
+create index if not exists idx_redacoes_corrigida_por on public.redacoes (corrigida_por) where corrigida_por is not null;
 create index if not exists idx_redacoes_alerta_ia on public.redacoes (alerta_ia) where alerta_ia = true;
 
 -- ============================================================
@@ -318,34 +373,34 @@ create or replace function public.usuario_role()
 returns public.perfil_role
 language sql
 stable
-security definer set search_path = public
+security definer set search_path = ''
 as $$
-  select role from public.perfis where id = auth.uid();
+  select role from public.perfis where id = (select auth.uid());
 $$;
 
 create or replace function public.usuario_turma_id()
 returns uuid
 language sql
 stable
-security definer set search_path = public
+security definer set search_path = ''
 as $$
-  select turma_id from public.perfis where id = auth.uid();
+  select turma_id from public.perfis where id = (select auth.uid());
 $$;
 
 create or replace function public.usuario_tipo_professor()
 returns public.tipo_professor
 language sql
 stable
-security definer set search_path = public
+security definer set search_path = ''
 as $$
-  select tipo_professor from public.perfis where id = auth.uid();
+  select tipo_professor from public.perfis where id = (select auth.uid());
 $$;
 
 create or replace function public.professor_pode_gerenciar_materia(materia_input text)
 returns boolean
 language sql
 stable
-security definer set search_path = public
+security definer set search_path = ''
 as $$
   select case public.usuario_tipo_professor()
     when 'matematica' then lower(materia_input) like any (array['%matem%', '%geometr%', '%estatíst%', '%estatist%'])
@@ -360,9 +415,28 @@ create or replace function public.eh_gestor_ou_professor()
 returns boolean
 language sql
 stable
-security definer set search_path = public
+security definer set search_path = ''
 as $$
   select public.usuario_role() in ('gestor', 'professor');
+$$;
+
+create or replace function public.aluno_pode_acessar_materia(materia_input public.materia_aluno)
+returns boolean
+language sql
+stable
+security definer set search_path = ''
+as $$
+  select exists (
+    select 1
+    from public.perfis p
+    where p.id = (select auth.uid())
+      and p.role = 'aluno'
+      and (
+        materia_input in ('matematica', 'fisica', 'portugues', 'redacao')
+        or (materia_input = 'tecnico_administracao' and p.curso_tecnico = 'administracao')
+        or (materia_input = 'tecnico_informatica' and p.curso_tecnico = 'informatica')
+      )
+  );
 $$;
 
 -- RLS habilitado em todas as tabelas de domínio.
@@ -372,6 +446,7 @@ alter table public.professor_turmas enable row level security;
 alter table public.trilhas enable row level security;
 alter table public.atividades enable row level security;
 alter table public.progresso_atividades enable row level security;
+alter table public.progresso_experiencias enable row level security;
 alter table public.notas enable row level security;
 alter table public.propostas_redacao enable row level security;
 alter table public.redacoes enable row level security;
@@ -422,13 +497,25 @@ using (
   or exists (select 1 from public.professor_turmas pt where pt.professor_id = auth.uid() and pt.turma_id = id)
 );
 
+drop policy if exists turmas_manage on public.turmas;
+create policy turmas_manage on public.turmas for all to authenticated
+using (public.usuario_role() = 'gestor')
+with check (public.usuario_role() = 'gestor');
+
 drop policy if exists trilhas_select on public.trilhas;
 create policy trilhas_select on public.trilhas for select to authenticated
 using (
-  publicada = true
-  or public.usuario_role() = 'gestor'
+  public.usuario_role() = 'gestor'
   or professor_id = auth.uid()
-  or (public.usuario_role() = 'professor' and turma_id = public.usuario_turma_id())
+  or (public.usuario_role() = 'professor' and exists (
+    select 1 from public.professor_turmas pt
+    where pt.professor_id = auth.uid() and pt.turma_id = trilhas.turma_id
+  ))
+  or (
+    publicada = true
+    and (turma_id is null or turma_id = public.usuario_turma_id())
+    and public.aluno_pode_acessar_materia(materia_codigo)
+  )
 );
 
 drop policy if exists trilhas_manage on public.trilhas;
@@ -546,7 +633,12 @@ using (
 with check (
   aluno_id = auth.uid()
   or public.usuario_role() = 'gestor'
-  or (public.usuario_role() = 'professor' and public.usuario_tipo_professor() = 'portugues')
+  or (public.usuario_role() = 'professor' and public.usuario_tipo_professor() = 'portugues' and exists (
+    select 1
+    from public.perfis p
+    join public.professor_turmas pt on pt.turma_id = p.turma_id
+    where p.id = aluno_id and pt.professor_id = auth.uid()
+  ))
 );
 
 -- Progresso: aluno administra apenas seu próprio progresso; equipe pedagógica
@@ -564,9 +656,32 @@ using (
 );
 
 drop policy if exists progresso_aluno_manage on public.progresso_atividades;
-create policy progresso_aluno_manage on public.progresso_atividades for all to authenticated
+drop policy if exists progresso_aluno_insert on public.progresso_atividades;
+drop policy if exists progresso_aluno_update on public.progresso_atividades;
+create policy progresso_aluno_insert on public.progresso_atividades for insert to authenticated
+with check (aluno_id = auth.uid() and nota is null);
+create policy progresso_aluno_update on public.progresso_atividades for update to authenticated
 using (aluno_id = auth.uid())
-with check (aluno_id = auth.uid());
+with check (aluno_id = auth.uid() and nota is null);
+
+drop policy if exists progresso_experiencias_select on public.progresso_experiencias;
+create policy progresso_experiencias_select on public.progresso_experiencias for select to authenticated
+using (aluno_id = (select auth.uid()));
+
+drop policy if exists progresso_experiencias_insert on public.progresso_experiencias;
+create policy progresso_experiencias_insert on public.progresso_experiencias for insert to authenticated
+with check (
+  aluno_id = (select auth.uid())
+  and (select public.aluno_pode_acessar_materia(materia_codigo))
+);
+
+drop policy if exists progresso_experiencias_update on public.progresso_experiencias;
+create policy progresso_experiencias_update on public.progresso_experiencias for update to authenticated
+using (aluno_id = (select auth.uid()))
+with check (
+  aluno_id = (select auth.uid())
+  and (select public.aluno_pode_acessar_materia(materia_codigo))
+);
 
 -- Biblioteca: livros são globais para a bibliotecária e gestores; alunos consultam
 -- o acervo publicado. Empréstimos ficam restritos ao aluno e à equipe da biblioteca.
@@ -619,25 +734,52 @@ drop trigger if exists set_turmas_updated_at on public.turmas;
 drop trigger if exists set_perfis_updated_at on public.perfis;
 drop trigger if exists set_trilhas_updated_at on public.trilhas;
 drop trigger if exists set_progresso_updated_at on public.progresso_atividades;
+drop trigger if exists set_progresso_experiencias_updated_at on public.progresso_experiencias;
 drop trigger if exists set_redacoes_updated_at on public.redacoes;
 drop trigger if exists set_propostas_redacao_updated_at on public.propostas_redacao;
 drop trigger if exists set_livros_updated_at on public.livros;
 drop trigger if exists set_emprestimos_updated_at on public.emprestimos;
 
 -- turmas não possui updated_at; o trigger abaixo só é criado nas tabelas compatíveis.
-create trigger set_perfis_updated_at before update on public.perfis for each row execute procedure public.set_updated_at();
-create trigger set_trilhas_updated_at before update on public.trilhas for each row execute procedure public.set_updated_at();
-create trigger set_progresso_updated_at before update on public.progresso_atividades for each row execute procedure public.set_updated_at();
-create trigger set_redacoes_updated_at before update on public.redacoes for each row execute procedure public.set_updated_at();
-create trigger set_propostas_redacao_updated_at before update on public.propostas_redacao for each row execute procedure public.set_updated_at();
-create trigger set_livros_updated_at before update on public.livros for each row execute procedure public.set_updated_at();
-create trigger set_emprestimos_updated_at before update on public.emprestimos for each row execute procedure public.set_updated_at();
+create trigger set_perfis_updated_at before update on public.perfis for each row execute function public.set_updated_at();
+create trigger set_trilhas_updated_at before update on public.trilhas for each row execute function public.set_updated_at();
+create trigger set_progresso_updated_at before update on public.progresso_atividades for each row execute function public.set_updated_at();
+create trigger set_progresso_experiencias_updated_at before update on public.progresso_experiencias for each row execute function public.set_updated_at();
+create trigger set_redacoes_updated_at before update on public.redacoes for each row execute function public.set_updated_at();
+create trigger set_propostas_redacao_updated_at before update on public.propostas_redacao for each row execute function public.set_updated_at();
+create trigger set_livros_updated_at before update on public.livros for each row execute function public.set_updated_at();
+create trigger set_emprestimos_updated_at before update on public.emprestimos for each row execute function public.set_updated_at();
 
 -- Privilégios mínimos para o cliente autenticado usar as tabelas via Supabase.
+-- As políticas RLS continuam sendo a barreira de autorização por registro.
 grant usage on schema public to authenticated;
-grant select, insert, update, delete on all tables in schema public to authenticated;
-grant execute on all functions in schema public to authenticated;
+grant select on public.turmas, public.perfis, public.professor_turmas,
+  public.trilhas, public.atividades, public.progresso_atividades, public.progresso_experiencias, public.notas,
+  public.propostas_redacao, public.redacoes, public.livros, public.emprestimos
+  to authenticated;
+grant insert, update, delete on public.turmas, public.professor_turmas, public.trilhas,
+  public.atividades, public.notas, public.propostas_redacao, public.livros
+  to authenticated;
+grant insert, update on public.perfis, public.progresso_atividades, public.progresso_experiencias,
+  public.redacoes, public.emprestimos to authenticated;
+
+revoke all on function public.handle_new_user() from public, anon, authenticated;
+revoke all on function public.set_updated_at() from public, anon, authenticated;
+revoke all on function public.usuario_role() from public, anon, authenticated;
+revoke all on function public.usuario_turma_id() from public, anon, authenticated;
+revoke all on function public.usuario_tipo_professor() from public, anon, authenticated;
+revoke all on function public.professor_pode_gerenciar_materia(text) from public, anon, authenticated;
+revoke all on function public.eh_gestor_ou_professor() from public, anon, authenticated;
+revoke all on function public.aluno_pode_acessar_materia(public.materia_aluno) from public, anon, authenticated;
+grant execute on function public.usuario_role() to authenticated;
+grant execute on function public.usuario_turma_id() to authenticated;
+grant execute on function public.usuario_tipo_professor() to authenticated;
+grant execute on function public.professor_pode_gerenciar_materia(text) to authenticated;
+grant execute on function public.eh_gestor_ou_professor() to authenticated;
+grant execute on function public.aluno_pode_acessar_materia(public.materia_aluno) to authenticated;
 
 -- A instalação funcional dos quatro espaços docentes continua em:
 -- backend/ominisaber-schema-espacos-docentes.sql
 -- O arquivo separado permite atualizar bases existentes sem recriar o schema principal.
+
+commit;

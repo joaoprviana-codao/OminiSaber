@@ -30,10 +30,15 @@ O navegador salva automaticamente após uma pausa de edição. Um buffer local �
 
 - `comentarios_redacao` guarda comentário geral ou ancorado por offsets do texto.
 - `avaliacoes_competencias_redacao` guarda C1 a C5 em passos de 40 pontos.
+- `rascunhos_correcao_redacao` guarda uma devolutiva ainda não publicada, restrita ao professor de Português vinculado à turma e ao gestor.
 - A tela corrigida mostra o texto enviado, permite alternar versões, apresenta feedback geral, comentários por trecho e barras por competência.
+
+Na tela docente, a fila, os nomes, as turmas, os textos, os estados e todos os indicadores são consultados do Supabase. A ação **Salvar rascunho** não altera a redação entregue. A ação **Devolver ao aluno** atualiza `redacoes`, grava C1–C5 e remove o rascunho correspondente.
+
+A publicação da devolutiva usa a função `corrigir_redacao`, executada com `SECURITY INVOKER`: atualização da redação, competências, comentários e remoção do rascunho fazem parte da mesma transação e continuam submetidas às políticas RLS.
 
 ## Segurança
 
 Todas as novas tabelas públicas têm RLS e permissões explícitas. Planejamento e redação pertencem ao aluno autenticado. Professores de Português só acessam alunos de turmas vinculadas em `professor_turmas`; gestores mantêm acesso administrativo. Funções com privilégios ficam no schema `private`, sem execução concedida ao navegador.
 
-Migração: `backend/migrations/20260831_redacao_jornada_completa.sql`.
+Migrações: `backend/migrations/20260831_redacao_jornada_completa.sql` e `backend/migrations/20260903_redacoes_avaliacoes_portugues.sql`.

@@ -1,0 +1,2 @@
+[functions.gestor-contas]
+verify_jwt = true

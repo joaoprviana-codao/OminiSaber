@@ -10,13 +10,13 @@ Interface de descoberta e acompanhamento de livros, apostilas e materiais de apo
 - Catálogo responsivo com status `Disponível`, `Em leitura` e `Concluído`.
 - Modal nativo de detalhes com sinopse, páginas, categoria e link do material.
 - Fallback visual para capas ausentes ou imagens que falham.
-- Catálogo mock local com clássicos, livros didáticos e apostilas quando a rede, as tabelas ou a sessão estiverem indisponíveis.
+- Estado vazio ou erro explícito quando o catálogo real não puder ser consultado.
 
 ## Integração Supabase
 
 O catálogo tenta usar `window.OminiSaber.listLivros()`, que consulta `livros` através do gateway existente. O estado de leitura usa o cliente já inicializado em `window.OminiSaber.client` para consultar e atualizar `leituras_aluno` apenas para o aluno autenticado.
 
-A ação de leitura usa `upsert` com conflito em `aluno_id,livro_id`. O primeiro clique marca como `lendo`; o próximo conclui a leitura com `progresso_pct = 100`. Em modo fallback, a estante mock é exibida, mas nenhuma gravação é tentada.
+A ação de leitura usa `upsert` com conflito em `aluno_id,livro_id`. O primeiro clique marca como `lendo`; o próximo conclui a leitura com `progresso_pct = 100`. A estante é formada exclusivamente pelos registros permitidos ao aluno no Supabase.
 
 ## Modelo recomendado
 

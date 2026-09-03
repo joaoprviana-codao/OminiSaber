@@ -4,11 +4,14 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Regras | Biblioteca | OminiSaber</title>
-    <link rel="stylesheet" href="../library.css" /><link rel="stylesheet" href="../../shared/sidebar.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&family=Material+Symbols+Outlined:FILL@0..1" rel="stylesheet" />
+    <link rel="stylesheet" href="../library.css?v=20260902-2" /><link rel="stylesheet" href="rules.css?v=20260902-1" /><link rel="stylesheet" href="../../shared/sidebar.css" />
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../../../backend/ominisaber-supabase-config.js"></script>
-    <script src="../../../backend/ominisaber-supabase-client.js"></script>
-    <script defer src="../app.js"></script>
+    <script src="../../../backend/ominisaber-supabase-client.js?v=20260902-2"></script>
+    <script defer src="../app.js?v=20260902-2"></script>
   </head>
   <body data-app-role="library">
     <div class="library-shell">
@@ -46,7 +49,8 @@
             </p>
           </div>
         </header>
-        <section class="card" style="max-width: 650px">
+        <div class="rules-layout">
+        <section class="card">
           <div class="card-heading">
             <div>
               <h2>Parâmetros atuais</h2>
@@ -74,12 +78,22 @@
               </select></label
             >
             <div class="form-actions">
-              <button class="button" type="submit">
+              <button class="button" type="submit" data-settings-save>
                 <span class="material-symbols-outlined">save</span>Salvar regras
               </button>
             </div>
           </form>
         </section>
+        <aside class="card rules-preview" aria-live="polite">
+          <p class="eyebrow">COMO FICA PARA O ALUNO</p>
+          <span class="material-symbols-outlined rules-preview-icon">event_available</span>
+          <h2>Empréstimo simples e previsível</h2>
+          <p>Depois da retirada, o aluno terá <strong data-rules-days>15 dias</strong> para devolver o exemplar.</p>
+          <div class="rule-chip"><span class="material-symbols-outlined">library_books</span><span>Até <strong data-rules-limit>1 livro</strong> ativo por aluno</span></div>
+          <div class="rule-chip"><span class="material-symbols-outlined">block</span><span>Atrasos bloqueiam novas solicitações</span></div>
+          <small>Pedidos já entregues preservam a data de devolução original.</small>
+        </aside>
+        </div>
       </main>
     </div>
     <div class="toast" data-toast></div>

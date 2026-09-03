@@ -13,6 +13,9 @@ O módulo de estudos do aluno é um fluxo único, responsivo e orientado a dados
 | Resultado | `frontend/aluno/modulo_de_trilhas/resultado/index.html?id=UUID` | tentativas e respostas avaliadas pelo banco |
 | Salvos | `frontend/aluno/modulo_de_trilhas/salvos/index.html` | `conteudos_salvos` |
 | Histórico | `frontend/aluno/modulo_de_trilhas/historico/index.html` | `historico_estudos`, `xp_movimentos` |
+| Mapa de dificuldades | `frontend/aluno/mapa_dificuldades/index.html?materia=CODIGO` | `trilhas`, `atividades`, `progresso_atividades` |
+
+O mapa é aberto pelo clique duplo, toque duplo ou tecla Enter nas bolhas de matéria do painel. O nó central “Geral” usa uma proporção ponderada (`etapas concluídas / etapas publicadas`) e cada descritor mantém acesso direto à trilha correspondente. Sem etapas publicadas, a interface informa “sem evidência” em vez de assumir zero como desempenho medido.
 
 Todas as rotas usam o mesmo shell visual, menu lateral no computador e navegação móvel. Os filtros do catálogo são derivados dos registros retornados, e o progresso é calculado pela relação entre etapas publicadas e etapas concluídas.
 

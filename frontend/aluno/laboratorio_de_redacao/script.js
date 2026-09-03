@@ -1,60 +1,7 @@
 (() => {
   const params = new URLSearchParams(location.search);
-  const preview = params.get('preview') === '1';
   const api = () => window.OminiSaber;
-  const fixedThemes = [
-    {
-      id: 'fixed:saude-mental-juventude', title: 'Caminhos para promover a saúde mental entre jovens brasileiros', category: 'saude', categoryLabel: 'Saúde', axis: 'Juventude e bem-estar', difficulty: 'intermediaria', estimatedMinutes: 90,
-      summary: 'Analise como escola, família, poder público e plataformas digitais podem construir redes de cuidado acessíveis.',
-      command: 'Escreva um texto dissertativo-argumentativo sobre os desafios para promover a saúde mental entre jovens no Brasil, apresentando proposta de intervenção que respeite os direitos humanos.',
-      keywords: ['saúde mental', 'juventude', 'escola', 'cuidado'],
-      motivators: [{ title: 'Ponto de partida', text: 'O sofrimento psíquico juvenil não pode ser reduzido a uma fragilidade individual: ele envolve relações sociais, acesso a serviços e ambientes de convivência.' }, { title: 'Questão para observar', text: 'Como criar acolhimento sem transformar toda dificuldade cotidiana em diagnóstico e sem silenciar situações que precisam de atenção profissional?' }],
-      details: { recorte: 'Redes de prevenção, acolhimento e acesso a atendimento qualificado.', perguntas: ['Quais barreiras impedem o pedido de ajuda?', 'Que papel cabe à escola sem substituir profissionais da saúde?'] },
-      repertoires: [{ id: 'fixed:sm:cultural', category: 'cultural', title: 'Divertida Mente 2', reference: 'A animação representa ansiedade, pertencimento e mudanças emocionais na adolescência.', application: 'Use para discutir alfabetização emocional e a necessidade de espaços seguros de escuta.' }, { id: 'fixed:sm:legal', category: 'legal', title: 'Lei nº 14.819/2024', reference: 'Institui a Política Nacional de Atenção Psicossocial nas Comunidades Escolares.', application: 'Relacione a lei à implementação concreta de prevenção e cuidado no ambiente escolar.' }]
-    },
-    {
-      id: 'fixed:desinformacao-digital', title: 'Os impactos da desinformação na participação cidadã brasileira', category: 'tecnologia', categoryLabel: 'Tecnologia', axis: 'Informação e democracia', difficulty: 'avancada', estimatedMinutes: 100,
-      summary: 'Discuta formação crítica, responsabilidade das plataformas e acesso a informação confiável.',
-      command: 'Produza uma redação sobre os impactos da desinformação digital na participação cidadã brasileira e proponha medidas de enfrentamento.', keywords: ['desinformação', 'cidadania', 'plataformas', 'educação midiática'],
-      motivators: [{ title: 'Ponto de partida', text: 'Conteúdos falsos circulam em ambientes moldados por recomendação algorítmica, confiança entre pares e respostas emocionais.' }, { title: 'Tensão central', text: 'O combate à desinformação precisa proteger o debate público sem legitimar censura arbitrária.' }],
-      details: { recorte: 'Educação midiática, transparência e responsabilização proporcional.', perguntas: ['Por que conteúdos enganosos convencem?', 'Como fortalecer a verificação sem restringir a liberdade de expressão?'] },
-      repertoires: [{ id: 'fixed:desinfo:cientifico', category: 'cientifico', title: 'Viés de confirmação', reference: 'Pessoas tendem a valorizar informações coerentes com crenças já existentes.', application: 'Explique por que apenas disponibilizar fatos pode não desfazer uma narrativa falsa.' }, { id: 'fixed:desinfo:cultural', category: 'cultural', title: 'O Dilema das Redes', reference: 'O documentário discute modelos de negócio baseados em atenção e recomendação.', application: 'Relacione arquitetura de plataformas à amplificação de conteúdo polarizador.' }]
-    },
-    {
-      id: 'fixed:memoria-indigena', title: 'A valorização da memória e dos saberes dos povos indígenas no Brasil', category: 'educacao', categoryLabel: 'Educação', axis: 'Memória e diversidade', difficulty: 'intermediaria', estimatedMinutes: 90,
-      summary: 'Reflita sobre currículo, patrimônio, autoria indígena e combate a representações estereotipadas.',
-      command: 'Discuta desafios para valorizar a memória e os saberes dos povos indígenas no Brasil, com proposta de intervenção socialmente responsável.', keywords: ['povos indígenas', 'memória', 'currículo', 'patrimônio'],
-      motivators: [{ title: 'Ponto de partida', text: 'Os povos indígenas são diversos e contemporâneos; tratá-los apenas no passado apaga suas vozes e seus projetos de futuro.' }, { title: 'Questão para observar', text: 'Valorizar saberes exige reconhecer autoria, território e contexto, evitando apropriação cultural.' }],
-      details: { recorte: 'Educação, produção cultural e políticas de memória.', perguntas: ['Quem narra essas histórias?', 'Como superar abordagens folclorizadas?'] },
-      repertoires: [{ id: 'fixed:indigena:literario', category: 'literario', title: 'Ailton Krenak', reference: 'Em Ideias para adiar o fim do mundo, o autor questiona a separação entre humanidade e natureza.', application: 'Use para discutir como saberes indígenas ampliam concepções de sociedade e ambiente.' }, { id: 'fixed:indigena:legal', category: 'legal', title: 'Lei nº 11.645/2008', reference: 'Torna obrigatório o estudo da história e cultura afro-brasileira e indígena.', application: 'Contraste a previsão legal com dificuldades de formação docente e material didático.' }]
-    },
-    {
-      id: 'fixed:mobilidade-urbana', title: 'Desafios para garantir mobilidade urbana inclusiva nas cidades brasileiras', category: 'sociedade', categoryLabel: 'Sociedade', axis: 'Cidade e direito', difficulty: 'intermediaria', estimatedMinutes: 90,
-      summary: 'Analise tempo de deslocamento, acessibilidade, transporte coletivo e desigualdade territorial.',
-      command: 'Escreva sobre os desafios da mobilidade urbana inclusiva no Brasil e apresente uma proposta de intervenção detalhada.', keywords: ['mobilidade', 'acessibilidade', 'transporte público', 'cidade'],
-      motivators: [{ title: 'Ponto de partida', text: 'O acesso à cidade depende de deslocamentos seguros, acessíveis e compatíveis com a rotina de estudo, trabalho e cuidado.' }, { title: 'Tensão central', text: 'A prioridade ao automóvel particular disputa espaço e investimento com transporte coletivo e mobilidade ativa.' }],
-      details: { recorte: 'Transporte coletivo, acessibilidade universal e planejamento urbano.', perguntas: ['Quem perde mais tempo no deslocamento?', 'Como integrar diferentes meios de transporte?'] },
-      repertoires: [{ id: 'fixed:mobi:legal', category: 'legal', title: 'Estatuto da Cidade', reference: 'A Lei nº 10.257/2001 estabelece diretrizes para a função social da cidade.', application: 'Relacione planejamento urbano ao acesso equitativo a serviços e oportunidades.' }, { id: 'fixed:mobi:cultural', category: 'cultural', title: 'Tempos Modernos', reference: 'O filme de Chaplin representa rotinas humanas subordinadas à organização produtiva.', application: 'Faça uma analogia cuidadosa com o tempo cotidiano consumido por deslocamentos precários.' }]
-    },
-    {
-      id: 'fixed:residuos-eletronicos', title: 'Responsabilidade compartilhada diante do descarte de resíduos eletrônicos', category: 'meio-ambiente', categoryLabel: 'Meio ambiente', axis: 'Consumo e sustentabilidade', difficulty: 'avancada', estimatedMinutes: 100,
-      summary: 'Investigue consumo acelerado, logística reversa, reparabilidade e inclusão de trabalhadores da reciclagem.',
-      command: 'Produza um texto sobre a responsabilidade compartilhada no descarte de resíduos eletrônicos no Brasil.', keywords: ['lixo eletrônico', 'logística reversa', 'consumo', 'reciclagem'],
-      motivators: [{ title: 'Ponto de partida', text: 'A renovação frequente de dispositivos gera resíduos com materiais valiosos e componentes potencialmente tóxicos.' }, { title: 'Questão para observar', text: 'Fabricantes, comércio, consumidores e governo ocupam posições diferentes na cadeia de responsabilidade.' }],
-      details: { recorte: 'Ciclo de vida dos produtos e implementação da logística reversa.', perguntas: ['Quem arca com o custo do descarte?', 'Como ampliar reparo, coleta e rastreabilidade?'] },
-      repertoires: [{ id: 'fixed:residuo:legal', category: 'legal', title: 'Política Nacional de Resíduos Sólidos', reference: 'A Lei nº 12.305/2010 prevê responsabilidade compartilhada pelo ciclo de vida dos produtos.', application: 'Use como parâmetro para avaliar a distância entre norma, infraestrutura de coleta e informação ao consumidor.' }, { id: 'fixed:residuo:cultural', category: 'cultural', title: 'Obsolescência programada', reference: 'O conceito descreve estratégias que reduzem intencionalmente a vida útil percebida ou funcional de produtos.', application: 'Relacione design, reparabilidade e pressão por consumo à geração de resíduos eletrônicos.' }]
-    },
-    {
-      id: 'fixed:envelhecimento-populacional', title: 'Caminhos para uma sociedade preparada para o envelhecimento da população', category: 'sociedade', categoryLabel: 'Sociedade', axis: 'Demografia e cuidado', difficulty: 'intermediaria', estimatedMinutes: 90,
-      summary: 'Debata cuidado, autonomia, trabalho, acessibilidade e combate ao etarismo.',
-      command: 'Discuta como o Brasil pode se preparar para o envelhecimento populacional, garantindo autonomia e dignidade.', keywords: ['envelhecimento', 'etarismo', 'cuidado', 'acessibilidade'],
-      motivators: [{ title: 'Ponto de partida', text: 'O envelhecimento populacional transforma demandas de saúde, previdência, moradia, mobilidade e redes familiares de cuidado.' }, { title: 'Tensão central', text: 'A longevidade é uma conquista social, mas seus benefícios não são distribuídos igualmente.' }],
-      details: { recorte: 'Políticas de cuidado e participação social das pessoas idosas.', perguntas: ['Como preservar autonomia?', 'Quem realiza o trabalho de cuidado e em quais condições?'] },
-      repertoires: [{ id: 'fixed:idoso:legal', category: 'legal', title: 'Estatuto da Pessoa Idosa', reference: 'A Lei nº 10.741/2003 assegura direitos e prioridade à população idosa.', application: 'Use para avaliar obstáculos concretos à autonomia, proteção e participação social.' }, { id: 'fixed:idoso:historico', category: 'historico', title: 'Transição demográfica brasileira', reference: 'Queda da fecundidade e aumento da expectativa de vida alteraram rapidamente a estrutura etária.', application: 'Contextualize por que políticas de cuidado e infraestrutura precisam se antecipar à mudança demográfica.' }]
-    }
-  ];
-
-  const state = { step: 1, themes: [...fixedThemes], selected: null, planning: null, essayId: params.get('redacao'), repertoires: [], selectedRepertoires: new Set(), themeFilter: 'todos', repertoireFilter: 'todos', savingPlan: false, savingDraft: false };
+  const state = { step: 1, themes: [], selected: null, planning: null, essayId: params.get('redacao'), repertoires: [], selectedRepertoires: new Set(), themeFilter: 'todos', repertoireFilter: 'todos', savingPlan: false, savingDraft: false };
   const $ = (selector) => document.querySelector(selector);
   const $$ = (selector) => [...document.querySelectorAll(selector)];
   const el = { panels: $$('[data-step]'), steps: $$('[data-step-target]'), pinned: $('[data-pinned-grid]'), grid: $('[data-theme-grid]'), total: $('[data-theme-total]'), search: $('[data-theme-search]'), selected: $('[data-selected-theme]'), notes: $('[data-planning-notes]'), thesis: $('[data-planning-thesis]'), arguments: $$('[data-argument]'), interventions: $$('[data-intervention]'), planStatus: $('[data-planning-status]'), repertoireGrid: $('[data-repertoire-grid]'), repertoireCount: $('[data-repertoire-count]'), title: $('[data-official-title]'), text: $('[data-official-text]'), draftStatus: $('[data-draft-status]'), notesContent: $('[data-notes-content]'), writingTheme: $('[data-writing-theme]'), feedback: $('[data-feedback]'), dialog: $('[data-theme-dialog]'), dialogContent: $('[data-theme-dialog-content]') };
@@ -66,10 +13,10 @@
   const repertoireLabels = { cultural: 'Cultural', estatistico: 'Estatístico', historico: 'Histórico', cientifico: 'Científico', legal: 'Legal', literario: 'Literário' };
   const notify = (message, type = '') => { el.feedback.textContent = message; el.feedback.className = `feedback${type ? ` is-${type}` : ''}`; };
   const setPill = (node, message, mode = '') => { node.className = `save-pill${mode ? ` is-${mode}` : ''}`; node.innerHTML = `<span class="material-symbols-outlined" aria-hidden="true">${mode === 'saving' ? 'sync' : mode === 'error' ? 'cloud_off' : 'cloud_done'}</span>${escapeHTML(message)}`; };
-  const fixedThemeFromDb = (prompt) => ({
+  const themeFromDb = (prompt) => ({
     id: `db:${prompt.id}`, proposalId: prompt.id, title: prompt.titulo, category: slug(prompt.categoria || 'sociedade'), categoryLabel: prompt.categoria || 'Sociedade', axis: prompt.eixo_tematico || prompt.categoria || 'Tema contemporâneo', difficulty: prompt.dificuldade || 'intermediaria', estimatedMinutes: prompt.tempo_estimado_min || 90, summary: prompt.resumo || prompt.comando, command: prompt.comando, keywords: prompt.palavras_chave || [], motivators: (prompt.textos_motivadores || []).map((item, index) => typeof item === 'string' ? { title: `Texto ${index + 1}`, text: item } : { title: item.titulo || `Texto ${index + 1}`, text: item.texto || item.conteudo || '' }), materials: prompt.materiais_redacao || [], details: prompt.detalhes || {}, pinned: prompt.fixada, deadline: prompt.prazo, source: 'supabase', repertoires: []
   });
-  const renderThemeCard = (theme) => `<article class="theme-card" data-theme-card="${escapeHTML(theme.id)}" data-category="${escapeHTML(theme.category)}"><div class="theme-card-top ${categoryClass[theme.category] || 'theme-society'}"><span class="theme-badge">${escapeHTML(theme.categoryLabel)}</span><span class="material-symbols-outlined" aria-hidden="true">${categoryIcon[theme.category] || 'edit_note'}</span></div><div class="theme-card-body"><span class="source-label"><span class="material-symbols-outlined" aria-hidden="true">${theme.source === 'supabase' ? 'database' : 'verified'}</span>${theme.source === 'supabase' ? 'Professora' : 'Acervo OminiSaber'}</span><h3>${escapeHTML(theme.title)}</h3><p>${escapeHTML(theme.summary)}</p><div class="theme-meta"><span><span class="material-symbols-outlined" aria-hidden="true">schedule</span>${Number(theme.estimatedMinutes)} min</span><span><span class="material-symbols-outlined" aria-hidden="true">signal_cellular_alt</span>${escapeHTML(theme.difficulty)}</span><span><span class="material-symbols-outlined" aria-hidden="true">article</span>${(theme.motivators || []).length + (theme.materials || []).length} materiais</span></div><div class="theme-card-actions"><button class="button button-primary" type="button" data-select-theme="${escapeHTML(theme.id)}">Escolher tema<span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span></button><button class="details-button" type="button" data-open-theme="${escapeHTML(theme.id)}" aria-label="Ver detalhes de ${escapeHTML(theme.title)}"><span class="material-symbols-outlined" aria-hidden="true">info</span></button></div></div></article>`;
+  const renderThemeCard = (theme) => `<article class="theme-card" data-theme-card="${escapeHTML(theme.id)}" data-category="${escapeHTML(theme.category)}"><div class="theme-card-top ${categoryClass[theme.category] || 'theme-society'}"><span class="theme-badge">${escapeHTML(theme.categoryLabel)}</span><span class="material-symbols-outlined" aria-hidden="true">${categoryIcon[theme.category] || 'edit_note'}</span></div><div class="theme-card-body"><span class="source-label"><span class="material-symbols-outlined" aria-hidden="true">database</span>Professora</span><h3>${escapeHTML(theme.title)}</h3><p>${escapeHTML(theme.summary)}</p><div class="theme-meta"><span><span class="material-symbols-outlined" aria-hidden="true">schedule</span>${Number(theme.estimatedMinutes)} min</span><span><span class="material-symbols-outlined" aria-hidden="true">signal_cellular_alt</span>${escapeHTML(theme.difficulty)}</span><span><span class="material-symbols-outlined" aria-hidden="true">article</span>${(theme.motivators || []).length + (theme.materials || []).length} materiais</span></div><div class="theme-card-actions"><button class="button button-primary" type="button" data-select-theme="${escapeHTML(theme.id)}">Escolher tema<span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span></button><button class="details-button" type="button" data-open-theme="${escapeHTML(theme.id)}" aria-label="Ver detalhes de ${escapeHTML(theme.title)}"><span class="material-symbols-outlined" aria-hidden="true">info</span></button></div></div></article>`;
   const renderThemes = () => {
     const query = el.search.value.trim().toLowerCase();
     const filtered = state.themes.filter((theme) => (state.themeFilter === 'todos' || theme.category === state.themeFilter) && (!query || `${theme.title} ${theme.summary} ${theme.axis} ${(theme.keywords || []).join(' ')}`.toLowerCase().includes(query)));
@@ -77,7 +24,7 @@
     el.total.textContent = `${filtered.length} ${filtered.length === 1 ? 'tema' : 'temas'}`;
   };
   const renderPinned = () => {
-    const pinnedThemes = state.themes.filter((theme) => theme.source === 'supabase' && theme.pinned);
+    const pinnedThemes = state.themes.filter((theme) => theme.pinned);
     const pinnedMaterials = state.themes.flatMap((theme) => (theme.materials || []).filter((item) => item.fixado).map((item) => ({ theme, item })));
     const cards = [
       ...pinnedThemes.map((theme) => `<article class="pinned-card"><span class="material-symbols-outlined" aria-hidden="true">assignment</span><div><h4>${escapeHTML(theme.title)}</h4><p>Proposta fixada · ${escapeHTML(theme.categoryLabel)}</p></div><button type="button" data-open-theme="${escapeHTML(theme.id)}" aria-label="Abrir proposta fixada"><span class="material-symbols-outlined">arrow_forward</span></button></article>`),
@@ -87,18 +34,17 @@
   };
   const openDetails = (theme) => {
     const materials = [...(theme.motivators || []).map((item) => ({ titulo: item.title, conteudo: item.text })), ...(theme.materials || [])];
-    el.dialogContent.innerHTML = `<header class="dialog-hero"><p class="eyebrow">${escapeHTML(theme.categoryLabel)} · ${escapeHTML(theme.axis)}</p><h2 id="theme-dialog-title">${escapeHTML(theme.title)}</h2><p>${escapeHTML(theme.summary)}</p></header><div class="dialog-body"><div class="dialog-facts"><div><span>Dificuldade</span><strong>${escapeHTML(theme.difficulty)}</strong></div><div><span>Tempo sugerido</span><strong>${Number(theme.estimatedMinutes)} min</strong></div><div><span>Materiais</span><strong>${materials.length}</strong></div><div><span>Origem</span><strong>${theme.source === 'supabase' ? 'Professora' : 'OminiSaber'}</strong></div></div><section class="dialog-command"><h3>Comando da proposta</h3><p>${escapeHTML(theme.command)}</p></section><section class="dialog-materials"><h3>Textos e materiais</h3>${materials.length ? materials.map((item) => { const url = safeUrl(item.url); return `<article class="dialog-material"><strong>${escapeHTML(item.titulo || 'Material')}</strong>${item.autoria || item.fonte ? `<small>${escapeHTML([item.autoria, item.fonte].filter(Boolean).join(' · '))}</small>` : ''}<p>${escapeHTML(item.conteudo || '')}</p>${url ? `<a href="${escapeHTML(url)}" target="_blank" rel="noopener noreferrer">Abrir fonte</a>` : ''}</article>`; }).join('') : '<p class="empty-inline">A professora ainda não adicionou materiais complementares.</p>'}</section><div class="dialog-actions"><button class="button button-primary" type="button" data-select-theme="${escapeHTML(theme.id)}">Usar esta proposta<span class="material-symbols-outlined">arrow_forward</span></button></div></div>`;
+    el.dialogContent.innerHTML = `<header class="dialog-hero"><p class="eyebrow">${escapeHTML(theme.categoryLabel)} · ${escapeHTML(theme.axis)}</p><h2 id="theme-dialog-title">${escapeHTML(theme.title)}</h2><p>${escapeHTML(theme.summary)}</p></header><div class="dialog-body"><div class="dialog-facts"><div><span>Dificuldade</span><strong>${escapeHTML(theme.difficulty)}</strong></div><div><span>Tempo sugerido</span><strong>${Number(theme.estimatedMinutes)} min</strong></div><div><span>Materiais</span><strong>${materials.length}</strong></div><div><span>Origem</span><strong>Professora</strong></div></div><section class="dialog-command"><h3>Comando da proposta</h3><p>${escapeHTML(theme.command)}</p></section><section class="dialog-materials"><h3>Textos e materiais</h3>${materials.length ? materials.map((item) => { const url = safeUrl(item.url); return `<article class="dialog-material"><strong>${escapeHTML(item.titulo || 'Material')}</strong>${item.autoria || item.fonte ? `<small>${escapeHTML([item.autoria, item.fonte].filter(Boolean).join(' · '))}</small>` : ''}<p>${escapeHTML(item.conteudo || '')}</p>${url ? `<a href="${escapeHTML(url)}" target="_blank" rel="noopener noreferrer">Abrir fonte</a>` : ''}</article>`; }).join('') : '<p class="empty-inline">A professora ainda não adicionou materiais complementares.</p>'}</section><div class="dialog-actions"><button class="button button-primary" type="button" data-select-theme="${escapeHTML(theme.id)}">Usar esta proposta<span class="material-symbols-outlined">arrow_forward</span></button></div></div>`;
     el.dialog.showModal();
   };
-  const currentPlanningPayload = () => ({ themeCode: state.selected.id, proposalId: state.selected.proposalId || null, notes: el.notes.value, thesis: el.thesis.value, arguments: el.arguments.map((field) => field.value), intervention: Object.fromEntries(el.interventions.map((field) => [field.dataset.intervention, field.value])), repertoireIds: [...state.selectedRepertoires].filter((id) => !id.startsWith('fixed:')), contextualRepertoires: state.repertoires.filter((item) => state.selectedRepertoires.has(item.id) && item.id.startsWith('fixed:')).map((item) => ({ codigo: item.id, categoria: item.category, titulo: item.title, referencia: item.reference, aplicacao: item.application })) });
+  const currentPlanningPayload = () => ({ themeCode: state.selected.id, proposalId: state.selected.proposalId || null, notes: el.notes.value, thesis: el.thesis.value, arguments: el.arguments.map((field) => field.value), intervention: Object.fromEntries(el.interventions.map((field) => [field.dataset.intervention, field.value])), repertoireIds: [...state.selectedRepertoires], contextualRepertoires: [] });
   const savePlanning = async ({ quiet = false } = {}) => {
     if (!state.selected || state.savingPlan) return state.planning;
     state.savingPlan = true; setPill(el.planStatus, 'Salvando planejamento...', 'saving');
     const payload = currentPlanningPayload();
     try {
-      localStorage.setItem('ominisaber:redacao:buffer-planejamento', JSON.stringify({ ...payload, savedAt: new Date().toISOString() }));
-      if (!preview && api()?.configured) state.planning = await api().saveEssayPlanning(payload);
-      else state.planning = { id: 'preview-planning', ...payload };
+      if (!api()?.configured) throw new Error('O Supabase não está configurado.');
+      state.planning = await api().saveEssayPlanning(payload);
       setPill(el.planStatus, 'Planejamento salvo');
       if (!quiet) notify('Seu planejamento foi salvo.', 'success');
       return state.planning;
@@ -113,9 +59,8 @@
   };
   const loadPlanning = async () => {
     let planning = null; let dbRepertoires = [];
-    if (!preview && api()?.configured) {
-      [planning, dbRepertoires] = await Promise.all([api().getEssayPlanning(state.selected.id), api().listWritingRepertoires({ proposalId: state.selected.proposalId || null })]);
-    }
+    if (!api()?.configured) throw new Error('O Supabase não está configurado.');
+    [planning, dbRepertoires] = await Promise.all([api().getEssayPlanning(state.selected.id), api().listWritingRepertoires({ proposalId: state.selected.proposalId || null })]);
     state.planning = planning;
     state.repertoires = [...(state.selected.repertoires || []), ...dbRepertoires.map((item) => ({ id: item.id, category: item.categoria, title: item.titulo, reference: item.referencia, application: item.aplicacao, sourceUrl: item.fonte_url }))];
     state.selectedRepertoires = new Set([...(planning?.planejamento_repertorios || []).map((item) => item.repertorio_id), ...(planning?.repertorios_contextuais || []).map((item) => item.codigo)]);
@@ -141,25 +86,24 @@
   };
   const loadDraft = async () => {
     let draft = null;
-    if (state.essayId && !preview && api()?.configured) draft = await api().getStudentEssay(state.essayId);
-    else if (!preview && api()?.configured) draft = await api().getEssayDraft(state.selected.id);
-    if (!draft) { try { const buffer = JSON.parse(localStorage.getItem(`ominisaber:redacao:buffer:${state.selected.id}`) || 'null'); if (buffer) draft = buffer; } catch {} }
-    if (draft) { state.essayId = draft.id && !String(draft.id).startsWith('preview') ? draft.id : state.essayId; el.title.value = draft.titulo || ''; el.text.value = draft.texto || ''; }
+    if (!api()?.configured) throw new Error('O Supabase não está configurado.');
+    if (state.essayId) draft = await api().getStudentEssay(state.essayId);
+    else draft = await api().getEssayDraft(state.selected.id);
+    if (draft) { state.essayId = draft.id; el.title.value = draft.titulo || ''; el.text.value = draft.texto || ''; }
     else { el.title.value = ''; el.text.value = ''; }
     updateWritingStats();
   };
   const saveDraft = async ({ quiet = true } = {}) => {
     if (!state.selected || state.savingDraft) return;
     state.savingDraft = true; setPill(el.draftStatus, 'Salvando rascunho...', 'saving');
-    const payload = { essayId: state.essayId, titulo: el.title.value.trim() || 'Redação sem título', texto: el.text.value, themeCode: state.selected.id, proposalId: state.selected.proposalId || null, planningId: state.planning?.id && state.planning.id !== 'preview-planning' ? state.planning.id : null };
+    const payload = { essayId: state.essayId, titulo: el.title.value.trim() || 'Redação sem título', texto: el.text.value, themeCode: state.selected.id, proposalId: state.selected.proposalId || null, planningId: state.planning?.id || null };
     try {
-      localStorage.setItem(`ominisaber:redacao:buffer:${state.selected.id}`, JSON.stringify({ id: 'preview-draft', ...payload, savedAt: new Date().toISOString() }));
-      if (!preview && api()?.configured) { const draft = await api().saveEssayDraft(payload); state.essayId = draft.id; }
-      else state.essayId = 'preview-draft';
+      if (!api()?.configured) throw new Error('O Supabase não está configurado.');
+      const draft = await api().saveEssayDraft(payload); state.essayId = draft.id;
       const time = new Intl.DateTimeFormat('pt-BR', { hour: '2-digit', minute: '2-digit' }).format(new Date());
       setPill(el.draftStatus, `Salvo às ${time}`); $('[data-last-saved]').textContent = `Último salvamento: ${time}`;
       if (!quiet) notify('Rascunho salvo na sua conta.', 'success');
-    } catch (error) { setPill(el.draftStatus, 'Buffer local preservado', 'error'); notify('O Supabase não respondeu. Mantivemos um buffer temporário neste dispositivo.', 'error'); throw error; }
+    } catch (error) { setPill(el.draftStatus, 'Falha ao salvar', 'error'); notify('O Supabase não respondeu. O texto ainda não foi salvo; tente novamente.', 'error'); throw error; }
     finally { state.savingDraft = false; }
   };
   const debounceDraft = () => { clearTimeout(debounceDraft.timer); setPill(el.draftStatus, 'Alterações pendentes', 'saving'); debounceDraft.timer = setTimeout(() => saveDraft().catch(() => {}), 1000); };
@@ -184,7 +128,7 @@
   };
   const openReview = async () => {
     if (!el.text.value.trim() || el.text.value.trim().split(/\s+/).length < 20) return notify('Escreva pelo menos 20 palavras antes de abrir a revisão.', 'error');
-    try { await saveDraft({ quiet: false }); const query = new URLSearchParams({ redacao: state.essayId || 'preview-draft' }); if (preview) query.set('preview', '1'); location.href = `revisao/index.html?${query}`; } catch {}
+    try { await saveDraft({ quiet: false }); const query = new URLSearchParams({ redacao: state.essayId }); location.href = `revisao/index.html?${query}`; } catch {}
   };
   const bindEvents = () => {
     el.search.addEventListener('input', renderThemes);
@@ -199,17 +143,16 @@
     [el.title, el.text].forEach((field) => field.addEventListener('input', () => { updateWritingStats(); debounceDraft(); })); el.text.addEventListener('keydown', handleParagraphShortcut); $('[data-open-review]').addEventListener('click', openReview);
   };
   const restoreFromEssay = async () => {
-    if (!state.essayId || preview || !api()?.configured) return false;
+    if (!state.essayId || !api()?.configured) return false;
     const essay = await api().getStudentEssay(state.essayId); if (!essay) return false;
-    const theme = state.themes.find((item) => item.id === essay.tema_codigo) || (essay.propostas_redacao ? fixedThemeFromDb({ ...essay.propostas_redacao, materiais_redacao: [] }) : null); if (!theme) return false;
+    const theme = state.themes.find((item) => item.id === essay.tema_codigo) || (essay.propostas_redacao ? themeFromDb({ ...essay.propostas_redacao, materiais_redacao: [] }) : null); if (!theme) return false;
     state.selected = theme; state.planning = essay.planejamentos_redacao; el.title.value = essay.titulo; el.text.value = essay.texto; await chooseTheme(theme.id); await setStep(Number(params.get('step') || 3)); return true;
   };
   const init = async () => {
     bindEvents(); renderThemes(); renderPinned();
-    if (!preview && api()?.configured) {
-      try { const prompts = await api().listWritingPrompts(); state.themes = [...prompts.map(fixedThemeFromDb), ...fixedThemes]; renderPinned(); renderThemes(); } catch (error) { notify(`Os temas da professora não puderam ser carregados: ${error.message}`, 'error'); }
-      try { const profile = await api().getProfile(); const initials = (profile?.nome || 'Aluno').split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase(); $$('[data-initials]').forEach((node) => { node.textContent = initials; }); } catch {}
-    }
+    if (!api()?.configured) return notify('O Supabase não está configurado.', 'error');
+    try { const prompts = await api().listWritingPrompts(); state.themes = prompts.map(themeFromDb); renderPinned(); renderThemes(); } catch (error) { notify(`Os temas da professora não puderam ser carregados: ${error.message}`, 'error'); }
+    try { const profile = await api().getProfile(); const initials = (profile?.nome || 'Aluno').split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase(); $$('[data-initials]').forEach((node) => { node.textContent = initials; }); } catch {}
     if (await restoreFromEssay().catch(() => false)) return;
     const requestedTheme = params.get('tema'); if (requestedTheme && state.themes.some((item) => item.id === requestedTheme)) await chooseTheme(requestedTheme);
   };

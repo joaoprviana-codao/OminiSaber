@@ -1,11 +1,14 @@
 (() => {
   const body = document.body;
-  const storageKey = 'ominisaber-portugues-progress';
+  let progressCache = {};
   const escapeHTML = (value = '') => String(value).replace(/[&<>'"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' })[char]);
-  const getProgress = () => {
-    try { return JSON.parse(localStorage.getItem(storageKey) || '{}'); } catch { return {}; }
+  const getProgress = () => progressCache;
+  const loadProgress = async () => {
+    if (!window.OminiSaber?.configured) throw new Error('O Supabase não está configurado.');
+    const rows = await window.OminiSaber.listExperienceProgress({ subject: 'portugues' });
+    progressCache = Object.fromEntries(rows.map((item) => [item.experiencia_codigo, { completed: item.concluida, completedAt: item.concluida_em }]));
+    return progressCache;
   };
-  const saveProgress = (value) => localStorage.setItem(storageKey, JSON.stringify(value));
   const toast = (message) => {
     document.querySelector('[data-toast]')?.remove();
     const node = document.createElement('div');
@@ -137,12 +140,13 @@
     }
   };
 
-  const complete = (id, message) => {
-    const progress = getProgress();
-    progress[id] = { completed: true, completedAt: new Date().toISOString() };
-    saveProgress(progress);
-    document.querySelectorAll('[data-completion-state]').forEach((node) => { node.textContent = 'Atividade concluída'; });
-    toast(message || 'Atividade concluída. Seu progresso foi salvo neste dispositivo.');
+  const complete = async (id, message) => {
+    try {
+      const row = await window.OminiSaber.completeExperience({ subject: 'portugues', code: id });
+      progressCache[id] = { completed: true, completedAt: row.concluida_em };
+      document.querySelectorAll('[data-completion-state]').forEach((node) => { node.textContent = 'Atividade concluída'; });
+      toast(message || 'Atividade concluída e salva na sua conta.');
+    } catch (error) { toast(error.message || 'Não foi possível salvar o progresso.'); }
   };
 
   const setupCompletionState = () => {
@@ -151,10 +155,9 @@
     document.querySelectorAll('[data-completion-state]').forEach((node) => { node.textContent = 'Atividade concluída'; });
   };
 
-  window.OminiPortuguese = { complete, getProgress, toast, loadTeacherQuiz };
+  window.OminiPortuguese = { complete, getProgress, loadProgress, toast, loadTeacherQuiz };
   setupMenu();
-  setupCompletionState();
-  document.addEventListener('ominisaber:ready', () => { setProfile(); loadTeacherQuiz(); });
+  document.addEventListener('ominisaber:ready', () => { setProfile(); loadProgress().then(setupCompletionState).catch((error) => toast(error.message)); loadTeacherQuiz(); });
   document.addEventListener('DOMContentLoaded', () => {
     if (!window.OminiSaber?.configured) loadTeacherQuiz();
   });

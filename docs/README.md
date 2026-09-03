@@ -1,5 +1,7 @@
 # Documentação técnica do OminiSaber
 
+- [Área do gestor](area-do-gestor.md)
+
 Esta pasta reúne a referência técnica e de produto do projeto.
 
 ## Leitura recomendada

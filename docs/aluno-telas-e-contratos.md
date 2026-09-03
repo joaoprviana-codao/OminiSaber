@@ -47,6 +47,9 @@ frontend/aluno/dashboard_principal/
 Implementação atual:
 
 - Saudação e perfil.
+- Clique simples nas bolhas para consultar a matéria e clique duplo, Enter ou toque duplo para abrir o mapa de dificuldades.
+- Mapa de dificuldades por matéria em `frontend/aluno/mapa_dificuldades/`, com nó central “Geral”, conexões visuais e prioridades por descritor/trilha.
+- O percentual geral é ponderado pelas etapas: total de atividades concluídas dividido pelo total de atividades publicadas. Trilhas sem etapas aparecem como “sem evidência” e não produzem porcentagem fictícia.
 - Média calculada a partir de `notas`.
 - Atividades concluídas a partir de `progresso_atividades`.
 - Total de redações em `redacoes`.
@@ -113,7 +116,7 @@ Implementação atual:
 - Revisão anterior ao envio com checklist automático e consciente.
 - Redação corrigida com versões, comentários e cinco competências.
 - Histórico com rascunhos, envios, correções e evolução de versões.
-- Supabase como fonte oficial; `localStorage` é somente buffer temporário de recuperação.
+- Supabase como fonte única de propostas, planejamentos, rascunhos, versões e correções.
 
 Serviços: `listWritingPrompts`, `getWritingPrompt`, `listWritingRepertoires`, `getEssayPlanning`, `saveEssayPlanning`, `getEssayDraft`, `saveEssayDraft`, `submitEssayDraft`, `getStudentEssay` e `listStudentEssayHistory`.
 
@@ -152,21 +155,23 @@ Layout necessário:
 
 Serviços: `listLivros`, `listStudentLoans`, `requestLoan`.
 
-## Tela 8: Configurações
+## Tela 8: Perfil
 
 ```text
-frontend/aluno/configuracoes/
-`-- code.html
+frontend/aluno/perfil/
+|-- index.html
+|-- style.css
+`-- script.js
 ```
 
 Layout necessário:
 
-- Nome e e-mail do perfil autenticado.
-- Atualização segura sem alteração de `role` ou `turma_id`.
-- Tema claro, escuro e sistema.
-- Preferências de notificação: o schema ainda não possui tabela para persistência.
+- Nome e e-mail do aluno autenticado.
+- Turma, ano, curso técnico, matrícula e tipo de acesso vindos do perfil escolar.
+- Atalhos para agenda, notificações e ajuda.
+- A área de configurações separada foi removida para evitar duplicidade de navegação e responsabilidades.
 
-Serviços: `getProfile`, `updateProfile`, `auth.updateUser`.
+Serviços: `getProfile`.
 
 ## Recursos compartilhados
 
@@ -177,7 +182,9 @@ frontend/aluno/shared/
 `-- student-data.js
 ```
 
-- `navigation.js`: rotas, tema, sidebar e redirecionamento.
+- `navigation.js`: rotas auxiliares e tema.
+- `student-sidebar.css`: apresentação única e responsiva da sidebar do aluno.
+- `ominisaber-supabase-client.js`: montagem centralizada da navegação do aluno e identificação da rota ativa.
 - `responsive.css`: responsividade, tema escuro e toasts.
 - `student-data.js`: renderização, estados e ações das telas integradas. Não é carregado pelo laboratório independente.
 

@@ -1,6 +1,8 @@
 -- OminiSaber | Espaços funcionais por especialidade docente
 -- Migração idempotente para bancos existentes. Não remove tabelas ou dados.
 
+begin;
+
 do $$ begin
   create type public.status_conteudo_docente as enum ('rascunho', 'publicado', 'encerrado');
 exception when duplicate_object then null;
@@ -116,6 +118,7 @@ drop policy if exists laboratorios_insert on public.laboratorios_docentes;
 create policy laboratorios_insert on public.laboratorios_docentes for insert to authenticated with check (
   professor_id = (select auth.uid()) and (select public.usuario_role()) = 'professor' and
   tipo_professor = (select public.usuario_tipo_professor()) and
+  status = 'rascunho' and publicado_em is null and
   (turma_id is null or exists (select 1 from public.professor_turmas pt where pt.professor_id = (select auth.uid()) and pt.turma_id = laboratorios_docentes.turma_id))
 );
 drop policy if exists laboratorios_update on public.laboratorios_docentes;
@@ -138,6 +141,7 @@ drop policy if exists avaliacoes_insert on public.avaliacoes_docentes;
 create policy avaliacoes_insert on public.avaliacoes_docentes for insert to authenticated with check (
   professor_id = (select auth.uid()) and (select public.usuario_role()) = 'professor' and
   tipo_professor = (select public.usuario_tipo_professor()) and
+  status = 'rascunho' and publicado_em is null and
   (turma_id is null or exists (select 1 from public.professor_turmas pt where pt.professor_id = (select auth.uid()) and pt.turma_id = avaliacoes_docentes.turma_id))
 );
 drop policy if exists avaliacoes_update on public.avaliacoes_docentes;
@@ -185,7 +189,9 @@ create policy entregas_select on public.entregas_laboratorio for select to authe
 );
 drop policy if exists entregas_insert on public.entregas_laboratorio;
 create policy entregas_insert on public.entregas_laboratorio for insert to authenticated with check (
-  aluno_id = (select auth.uid()) and exists (
+  aluno_id = (select auth.uid()) and status = 'rascunho'
+  and nota is null and feedback is null and enviada_em is null and avaliada_em is null
+  and exists (
     select 1 from public.laboratorios_docentes l where l.id = laboratorio_id and l.status = 'publicado' and l.turma_id = (select public.usuario_turma_id())
   )
 );
@@ -201,7 +207,9 @@ create policy tentativas_select on public.tentativas_avaliacao for select to aut
 );
 drop policy if exists tentativas_insert on public.tentativas_avaliacao;
 create policy tentativas_insert on public.tentativas_avaliacao for insert to authenticated with check (
-  aluno_id = (select auth.uid()) and exists (
+  aluno_id = (select auth.uid()) and status = 'em_andamento'
+  and nota is null and feedback is null and enviada_em is null and corrigida_em is null
+  and exists (
     select 1 from public.avaliacoes_docentes a where a.id = avaliacao_id and a.status = 'publicado' and a.turma_id = (select public.usuario_turma_id())
   )
 );
@@ -218,6 +226,9 @@ language plpgsql
 set search_path = public
 as $$
 begin
+  if new.id <> old.id or new.created_at is distinct from old.created_at then
+    raise exception 'A identidade e a data de criação do laboratório são imutáveis.';
+  end if;
   if (select public.usuario_role()) = 'professor' then
     if new.professor_id <> old.professor_id or new.tipo_professor <> old.tipo_professor then
       raise exception 'A autoria e a especialidade do laboratório são imutáveis.';
@@ -234,6 +245,9 @@ begin
     ) then
       raise exception 'Um laboratório publicado só pode ser encerrado.';
     end if;
+    if old.status = 'rascunho' and new.status = 'publicado' then
+      new.publicado_em := coalesce(new.publicado_em, now());
+    end if;
   end if;
   return new;
 end;
@@ -245,6 +259,9 @@ language plpgsql
 set search_path = public
 as $$
 begin
+  if new.id <> old.id or new.created_at is distinct from old.created_at then
+    raise exception 'A identidade e a data de criação da avaliação são imutáveis.';
+  end if;
   if (select public.usuario_role()) = 'professor' then
     if new.professor_id <> old.professor_id or new.tipo_professor <> old.tipo_professor then
       raise exception 'A autoria e a especialidade da avaliação são imutáveis.';
@@ -268,6 +285,9 @@ begin
     ) then
       raise exception 'Uma avaliação publicada só pode ser encerrada.';
     end if;
+    if old.status = 'rascunho' and new.status = 'publicado' then
+      new.publicado_em := coalesce(new.publicado_em, now());
+    end if;
   end if;
   return new;
 end;
@@ -283,6 +303,9 @@ as $$
 declare
   papel public.perfil_role := (select public.usuario_role());
 begin
+  if new.id <> old.id or new.created_at is distinct from old.created_at then
+    raise exception 'A identidade e a data de criação da entrega são imutáveis.';
+  end if;
   if papel = 'aluno' then
     if old.aluno_id <> (select auth.uid())
       or new.aluno_id <> old.aluno_id
@@ -319,6 +342,9 @@ as $$
 declare
   papel public.perfil_role := (select public.usuario_role());
 begin
+  if new.id <> old.id then
+    raise exception 'A identidade da tentativa é imutável.';
+  end if;
   if papel = 'aluno' then
     if old.aluno_id <> (select auth.uid())
       or new.aluno_id <> old.aluno_id
@@ -361,16 +387,18 @@ drop trigger if exists validar_entrega_docente on public.entregas_laboratorio;
 drop trigger if exists validar_tentativa_docente on public.tentativas_avaliacao;
 drop trigger if exists validar_ciclo_laboratorio_docente on public.laboratorios_docentes;
 drop trigger if exists validar_ciclo_avaliacao_docente on public.avaliacoes_docentes;
-create trigger set_laboratorios_updated_at before update on public.laboratorios_docentes for each row execute procedure public.set_updated_at();
-create trigger set_avaliacoes_updated_at before update on public.avaliacoes_docentes for each row execute procedure public.set_updated_at();
-create trigger validar_ciclo_laboratorio_docente before update on public.laboratorios_docentes for each row execute procedure public.validar_ciclo_laboratorio_docente();
-create trigger validar_ciclo_avaliacao_docente before update on public.avaliacoes_docentes for each row execute procedure public.validar_ciclo_avaliacao_docente();
-create trigger validar_entrega_docente before update on public.entregas_laboratorio for each row execute procedure public.validar_atualizacao_entrega_docente();
-create trigger validar_tentativa_docente before update on public.tentativas_avaliacao for each row execute procedure public.validar_atualizacao_tentativa_docente();
-create trigger set_entregas_updated_at before update on public.entregas_laboratorio for each row execute procedure public.set_updated_at();
-create trigger set_tentativas_updated_at before update on public.tentativas_avaliacao for each row execute procedure public.set_updated_at();
+create trigger set_laboratorios_updated_at before update on public.laboratorios_docentes for each row execute function public.set_updated_at();
+create trigger set_avaliacoes_updated_at before update on public.avaliacoes_docentes for each row execute function public.set_updated_at();
+create trigger validar_ciclo_laboratorio_docente before update on public.laboratorios_docentes for each row execute function public.validar_ciclo_laboratorio_docente();
+create trigger validar_ciclo_avaliacao_docente before update on public.avaliacoes_docentes for each row execute function public.validar_ciclo_avaliacao_docente();
+create trigger validar_entrega_docente before update on public.entregas_laboratorio for each row execute function public.validar_atualizacao_entrega_docente();
+create trigger validar_tentativa_docente before update on public.tentativas_avaliacao for each row execute function public.validar_atualizacao_tentativa_docente();
+create trigger set_entregas_updated_at before update on public.entregas_laboratorio for each row execute function public.set_updated_at();
+create trigger set_tentativas_updated_at before update on public.tentativas_avaliacao for each row execute function public.set_updated_at();
 drop trigger if exists set_gabaritos_updated_at on public.gabaritos_avaliacao;
-create trigger set_gabaritos_updated_at before update on public.gabaritos_avaliacao for each row execute procedure public.set_updated_at();
+create trigger set_gabaritos_updated_at before update on public.gabaritos_avaliacao for each row execute function public.set_updated_at();
 
 revoke all on public.laboratorios_docentes, public.avaliacoes_docentes, public.questoes_avaliacao, public.gabaritos_avaliacao, public.entregas_laboratorio, public.tentativas_avaliacao from anon;
 grant select, insert, update, delete on public.laboratorios_docentes, public.avaliacoes_docentes, public.questoes_avaliacao, public.gabaritos_avaliacao, public.entregas_laboratorio, public.tentativas_avaliacao to authenticated;
+
+commit;

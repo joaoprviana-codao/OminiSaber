@@ -2,7 +2,6 @@
   const api = () => window.OminiSaber;
   const page = document.body.dataset.studyPage || 'catalogo';
   const params = new URLSearchParams(location.search);
-  const preview = params.get('preview') === '1';
   const frontendIndex = location.pathname.indexOf('/frontend/');
   const frontendRoot = frontendIndex >= 0 ? location.pathname.slice(0, frontendIndex) + '/frontend/' : '/frontend/';
   const moduleRoot = `${frontendRoot}aluno/modulo_de_trilhas/`;
@@ -127,7 +126,7 @@
   };
 
   const renderers = { catalogo: renderCatalog, trilha: renderTrail, aula: renderLesson, atividade: renderActivity, resultado: renderResult, salvos: renderSaved, historico: renderHistory };
-  const load = async () => { loading(); try { if (preview || !api()?.configured) { const messages = { catalogo: ['Catálogo de trilhas', 'Nenhuma trilha carregada', 'Entre com uma conta de aluno e publique trilhas no Supabase para preencher o catálogo.'], trilha: ['Detalhes da trilha', 'Trilha não carregada', 'O detalhe é preenchido com etapas, progresso e pré-requisitos do Supabase.'], aula: ['Aula e conteúdo', 'Aula não carregada', 'Texto, vídeo, materiais e anotações são carregados do Supabase.'], atividade: ['Atividade interativa', 'Atividade não carregada', 'Questões e feedback são carregados e corrigidos pelo Supabase.'], resultado: ['Resultado da atividade', 'Resultado não carregado', 'Os resultados aparecem após uma tentativa registrada.'], salvos: ['Favoritos e conteúdos salvos', 'Nenhum conteúdo salvo', 'Os favoritos do aluno aparecerão aqui.'], historico: ['Histórico de estudos', 'Nenhum histórico carregado', 'A linha do tempo será criada a partir dos registros de estudo.'] }; const message = messages[page]; content().innerHTML = `<header class="page-heading"><div><p class="eyebrow">TRILHAS E ESTUDOS</p><h1>${message[0]}</h1></div></header>${empty(message[1], message[2], 'database')}`; return; } await renderers[page](); } catch (err) { content().innerHTML = error(err.message || 'Tente novamente.'); document.querySelector('[data-study-retry]')?.addEventListener('click', load); } };
+  const load = async () => { loading(); try { if (!api()?.configured) throw new Error('O Supabase não está configurado.'); await renderers[page](); } catch (err) { content().innerHTML = error(err.message || 'Tente novamente.'); document.querySelector('[data-study-retry]')?.addEventListener('click', load); } };
   const hydrateProfile = async (event) => { if (!event.detail?.session) return; try { const profile = await api().getProfile(event.detail.session.user.id); const name = profile?.nome || event.detail.session.user.email || 'Aluno'; document.querySelector('[data-study-name]').textContent = name; document.querySelector('[data-study-avatar]').textContent = initials(name); document.querySelector('[data-study-class]').textContent = profile?.turmas?.serie ? `${profile.turmas.serie}º ano` : 'Ensino Médio'; } catch { /* O conteúdo principal possui estado de erro próprio. */ } };
   shell();
   document.addEventListener('ominisaber:ready', async (event) => { await hydrateProfile(event); load(); }, { once: true });

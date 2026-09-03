@@ -1,5 +1,7 @@
 -- OminiSaber | Catálogo e progresso de conquistas
--- Execute no SQL Editor do Supabase.
+-- Execute depois de backend/ominisaber-schema.sql.
+
+begin;
 
 create table if not exists public.conquistas (
   id uuid primary key default gen_random_uuid(),
@@ -31,7 +33,7 @@ alter table public.conquistas enable row level security;
 alter table public.conquistas_aluno enable row level security;
 
 grant select on table public.conquistas to anon, authenticated;
-grant select on table public.conquistas_aluno to anon, authenticated;
+grant select on table public.conquistas_aluno to authenticated;
 
 drop policy if exists conquistas_public_select on public.conquistas;
 create policy conquistas_public_select
@@ -45,7 +47,7 @@ create policy conquistas_aluno_own_select
   on public.conquistas_aluno
   for select
   to authenticated
-  using (auth.uid() = aluno_id);
+  using ((select auth.uid()) = aluno_id);
 
 insert into public.conquistas (id, nome, descricao, requisito, categoria, xp, icone)
 values
@@ -65,3 +67,5 @@ on conflict (id) do update set
 -- ou por um processo administrativo. O aluno só pode consultar as próprias.
 revoke insert, update, delete on table public.conquistas from anon, authenticated;
 revoke insert, update, delete on table public.conquistas_aluno from anon, authenticated;
+
+commit;

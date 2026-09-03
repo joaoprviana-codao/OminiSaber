@@ -18,18 +18,18 @@ O perfil vem de `perfis.tipo_professor`. A interface não concede permissão: el
 ## Rotas principais
 
 - `frontend/professor/professor_matematica/`: dashboard, laboratório matemático e avaliações por habilidade.
-- `frontend/professor/professor_portugues/`: dashboard de Linguagens, oficina e avaliações interpretativas.
+- `frontend/professor/professor_portugues/`: dashboard de Linguagens, oficina, avaliações interpretativas e correção de redações.
 - `frontend/professor/professor_tecnico_administracao/`: dashboard em pipeline, estúdio de projetos e avaliações aplicadas.
 - `frontend/professor/professor_tecnico_informatica/`: dashboard técnico, laboratórios e avaliações com questões de código.
 - `frontend/professor/dashboard/index.html`: rota legada; usuários autenticados são encaminhados ao espaço da especialidade.
-- `frontend/professor/redacoes/index.html`: entregas, propostas, evolução das competências e correção guiada.
+- `frontend/professor/professor_portugues/redacoes/index.html`: rota oficial de entregas, propostas, evolução das competências e correção guiada. A antiga `frontend/professor/redacoes/index.html` apenas redireciona para preservar links salvos.
 - `frontend/aluno/laboratorio_de_redacao/index.html`: escolha da proposta, planejamento, escrita e envio do aluno.
 
 O login encaminha cada professor com base em `tipo_professor`. A tentativa de abrir outra especialidade é bloqueada no frontend para orientação e novamente no banco por RLS.
 
 ## Laboratórios e avaliações
 
-Cada especialidade possui três rotas: `dashboard`, `laboratorio` e `avaliacoes`. O laboratório cria rascunhos ou publicações vinculadas a uma turma. O construtor de avaliações compõe questões localmente e persiste a avaliação e as questões no Supabase ao salvar.
+Cada especialidade possui as rotas `dashboard`, `laboratorio` e `avaliacoes`; Português também possui `redacoes`. O laboratório cria rascunhos ou publicações vinculadas a uma turma. O construtor de avaliações compõe questões na tela e persiste avaliação, questões e gabaritos no Supabase ao salvar ou publicar.
 
 - Matemática: gráficos, fórmulas, simulação, cálculo e demonstração.
 - Português: leitura orientada, produção textual, debate e análise de texto.
@@ -47,13 +47,16 @@ As consultas mais frequentes e os campos usados nas policies possuem índices co
 3. O aluno autenticado consulta propostas publicadas para sua turma, planeja o texto e escreve no laboratório.
 4. Planejamento e rascunho são salvos no Supabase; um buffer local existe somente para recuperação de falha de conexão.
 5. A redação é persistida em `redacoes`, associada ao planejamento, ao aluno e opcionalmente à proposta; `versoes_redacao` preserva os estados anteriores.
-6. O professor de Português vinculado à turma corrige pelas cinco competências, registra feedback e comentários por trecho e devolve o texto.
+6. O professor de Português vinculado à turma corrige pelas cinco competências, registra feedback e devolve o texto.
+7. Enquanto prepara a devolutiva, pode salvar um rascunho privado em `rascunhos_correcao_redacao`. Ao devolver a correção, a nota e o feedback são gravados em `redacoes`, as competências em `avaliacoes_competencias_redacao` e o rascunho é removido.
+
+Nenhuma métrica dessa página é preenchida no código. Pendências, média, tempo de devolutiva, cumprimento de prazo, propostas e evolução por competência são calculados exclusivamente a partir dos registros que a sessão pode consultar no Supabase. Quando não existem registros, a interface mostra estado vazio ou `—`.
 
 ## Modelo de dados
 
-`perfis.tipo_professor` usa o enum `tipo_professor` e é obrigatório quando `role = 'professor'`. `professor_turmas` representa o vínculo muitos-para-muitos entre docentes e turmas. `propostas_redacao` contém autoria, turma, textos motivadores, detalhes e estado de publicação. `planejamentos_redacao`, `repertorios_redacao`, `versoes_redacao`, `comentarios_redacao` e `avaliacoes_competencias_redacao` completam a jornada. As notas permanecem entre 0 e 1000.
+`perfis.tipo_professor` usa o enum `tipo_professor` e é obrigatório quando `role = 'professor'`. `professor_turmas` representa o vínculo muitos-para-muitos entre docentes e turmas. `propostas_redacao` contém autoria, turma, textos motivadores, detalhes e estado de publicação. `planejamentos_redacao`, `repertorios_redacao`, `versoes_redacao`, `comentarios_redacao`, `avaliacoes_competencias_redacao` e `rascunhos_correcao_redacao` completam a jornada. As notas permanecem entre 0 e 1000.
 
-Para bancos existentes, execute os schemas docentes e depois `backend/migrations/20260831_redacao_jornada_completa.sql`. A migração é incremental e não apaga redações existentes.
+Para bancos existentes, execute `backend/migrations/20260903_redacoes_avaliacoes_portugues.sql` depois do schema atual. Para uma instalação limpa, use `backend/ominisaber-schema-completo.sql`. As migrações são incrementais e não apagam redações existentes.
 
 ## Responsividade e acessibilidade
 
@@ -75,4 +78,4 @@ Para bancos existentes, execute os schemas docentes e depois `backend/migrations
 - O professor autenticado é registrado como autor da proposta e responsável pela correção.
 - O frontend nunca utiliza `service_role`.
 - Rascunhos do aluno não são colocados em armazenamento persistente compartilhado.
-- `?preview=1` não é autorização e deve ser removido ou desabilitado em builds públicos de produção.
+- Não existe modo de visualização que dispense autenticação ou substitua dados do Supabase.

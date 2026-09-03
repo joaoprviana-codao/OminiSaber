@@ -1,137 +1,241 @@
 (() => {
-  const previewMode = new URLSearchParams(window.location.search).get("preview") === "1";
   const api = () => window.OminiSaber;
   const elements = {
     loading: document.querySelector('[data-state="loading"]'),
     error: document.querySelector('[data-state="error"]'),
-    errorMessage: document.querySelector("[data-error-message]"),
-    dashboard: document.querySelector("[data-dashboard]"),
-    detail: document.querySelector("[data-subject-detail]"),
-    toast: document.querySelector("[data-toast]"),
+    errorMessage: document.querySelector('[data-error-message]'),
+    dashboard: document.querySelector('[data-dashboard]'),
+    nextStep: document.querySelector('[data-next-step]'),
+    map: document.querySelector('[data-mastery-map]'),
+    detail: document.querySelector('[data-subject-detail]'),
+    filter: document.querySelector('[data-subject-filter]'),
+    weeklyDays: document.querySelector('[data-weekly-days]'),
+    weeklyTotal: document.querySelector('[data-weekly-total]'),
+    toast: document.querySelector('[data-toast]'),
+    transition: document.querySelector('[data-difficulty-transition]')
   };
-  const subjectData = {
-    Matemática: { score: 58, icon: "functions", concept: "Equações quadráticas", description: "Resolver equações do 2º grau completas e incompletas e interpretar as soluções.", result: "Você acertou 6 de 10 questões neste tema.", recommendation: "Este conceito prepara os próximos temas de Funções e Inequações.", activity: "Equações quadráticas: exercícios resolvidos", path: "../modulo_de_trilhas/matematica/index.html" },
-    Português: { score: 78, icon: "menu_book", concept: "Interpretação de texto", description: "Reconhecer argumentos, inferências e efeitos de sentido em gêneros diversos.", result: "Você acertou 8 de 10 questões neste tema.", recommendation: "Avance para relações entre linguagem, contexto e intenção.", activity: "Leitura ativa: pistas e inferências", path: "../modulo_de_trilhas/portugues/index.html" },
-    Ciências: { score: 72, icon: "science", concept: "Genética e hereditariedade", description: "Relacionar genes, cromossomos e características herdadas.", result: "Você concluiu 7 de 10 desafios deste tema.", recommendation: "Revise cruzamentos simples antes de avançar.", activity: "Genética: conceitos essenciais", path: "../modulo_de_trilhas/biologia/index.html" },
-    História: { score: 64, icon: "account_balance", concept: "República Velha", description: "Compreender relações de poder, economia e sociedade no período.", result: "Você acertou 6 de 10 questões neste tema.", recommendation: "Conecte os movimentos sociais às mudanças econômicas.", activity: "Linha do tempo da República Velha", path: "../modulo_de_trilhas/historia/index.html" },
-    Geografia: { score: 60, icon: "public", concept: "Urbanização brasileira", description: "Analisar crescimento urbano, redes e desigualdades socioespaciais.", result: "Você acertou 6 de 10 questões neste tema.", recommendation: "Explore mapas e indicadores das regiões metropolitanas.", activity: "Cidade em transformação", path: "../modulo_de_trilhas/geografia/index.html" },
-    Inglês: { score: 85, icon: "translate", concept: "Reading strategies", description: "Usar contexto, cognatos e estrutura para compreender textos.", result: "Você acertou 9 de 10 questões neste tema.", recommendation: "Seu domínio permite avançar para textos mais longos.", activity: "Reading challenge: science news", path: "../modulo_de_trilhas/ingles-espanhol/index.html" },
-    Redação: { score: 66, icon: "edit", concept: "Repertório sociocultural", description: "Selecionar referências pertinentes e produtivas para argumentar.", result: "Sua última redação alcançou 680 pontos.", recommendation: "Pratique a ligação entre repertório e tese.", activity: "Oficina de repertório produtivo", path: "../laboratorio_de_redacao/index.html" },
-    Física: { score: 45, icon: "experiment", concept: "Leis de Newton", description: "Relacionar força resultante, massa e aceleração em situações reais.", result: "Você acertou 4 de 10 questões neste tema.", recommendation: "Retome diagramas de forças antes dos exercícios.", activity: "Forças em movimento", path: "../modulo_de_trilhas/fisica/index.html" },
-    Química: { score: 40, icon: "deployed_code", concept: "Ligações químicas", description: "Diferenciar ligações iônicas, covalentes e metálicas.", result: "Você acertou 4 de 10 questões neste tema.", recommendation: "Revise estabilidade eletrônica e eletronegatividade.", activity: "Átomos que se conectam", path: "../modulo_de_trilhas/quimica/index.html" },
+
+  const subjectMeta = {
+    matematica: { label: 'Matemática', icon: 'functions', experienceTotal: 3, route: '../modulo_de_trilhas/matematica/index.html' },
+    fisica: { label: 'Física', icon: 'experiment' },
+    portugues: { label: 'Português e Literatura', icon: 'menu_book', experienceTotal: 3, route: '../modulo_de_trilhas/portugues/index.html' },
+    redacao: { label: 'Redação', icon: 'edit_note' },
+    tecnico_administracao: { label: 'Matérias Administrativas', icon: 'business_center' },
+    tecnico_informatica: { label: 'Matérias de Informática', icon: 'terminal' }
   };
-  const setText = (selector, value) => document.querySelectorAll(selector).forEach((node) => { node.textContent = value; });
-  const initials = (name) => name.split(" ").filter(Boolean).slice(0, 2).map((part) => part[0]).join("").toUpperCase();
+  const baseSubjects = ['matematica', 'fisica', 'portugues', 'redacao'];
+  const positions = [
+    ['50%', '12%'], ['19%', '40%'], ['81%', '40%'], ['31%', '79%'], ['69%', '79%']
+  ];
+  let dashboardData;
+  let subjects = [];
+  let selectedCode = '';
+  let openingDifficultyMap = false;
+
+  const escapeHTML = (value = '') => String(value).replace(/[&<>'"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[char]));
+  const initials = (name = '') => name.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]).join('').toUpperCase() || 'AL';
+  const average = (values) => values.length ? Math.round(values.reduce((sum, value) => sum + value, 0) / values.length) : null;
   const showState = (state) => {
-    elements.loading?.classList.toggle("is-hidden", state !== "loading");
-    elements.error?.classList.toggle("is-hidden", state !== "error");
-    elements.dashboard?.classList.toggle("is-hidden", state !== "ready");
+    elements.loading?.classList.toggle('is-hidden', state !== 'loading');
+    elements.error?.classList.toggle('is-hidden', state !== 'error');
+    elements.dashboard?.classList.toggle('is-hidden', state !== 'ready');
   };
-  const showToast = (message) => {
+  const notify = (message) => {
+    if (!elements.toast) return;
     elements.toast.textContent = message;
-    elements.toast.classList.add("visible");
+    elements.toast.classList.add('visible');
     window.clearTimeout(elements.toast.timer);
-    elements.toast.timer = window.setTimeout(() => elements.toast.classList.remove("visible"), 3200);
+    elements.toast.timer = window.setTimeout(() => elements.toast.classList.remove('visible'), 3200);
   };
+  const normalizeSubject = (item = {}) => {
+    if (item.materia_codigo && subjectMeta[item.materia_codigo]) return item.materia_codigo;
+    const value = String(item.materia || '').toLocaleLowerCase('pt-BR');
+    if (/redaç|redac/.test(value)) return 'redacao';
+    if (/portugu|literat|linguag/.test(value)) return 'portugues';
+    if (/físic|fisic/.test(value)) return 'fisica';
+    if (/matem|álgebr|algebr|geometr|estat/.test(value)) return 'matematica';
+    if (/admin|gest|empreend|marketing|finan/.test(value)) return 'tecnico_administracao';
+    if (/inform|program|tecnolog|banco de dados|redes/.test(value)) return 'tecnico_informatica';
+    return '';
+  };
+  const statusFor = (score) => {
+    if (score === null) return { label: 'Sem registros', className: '' };
+    if (score >= 80) return { label: 'Domínio forte', className: '' };
+    if (score >= 60) return { label: 'Em evolução', className: 'attention' };
+    return { label: 'Precisa de atenção', className: 'danger' };
+  };
+  const subjectAccess = (profile) => [
+    ...baseSubjects,
+    profile.curso_tecnico === 'administracao' ? 'tecnico_administracao' : 'tecnico_informatica'
+  ];
+
+  const buildSubjects = (data) => subjectAccess(data.profile).map((code) => {
+    const trails = data.trails.filter((trail) => normalizeSubject(trail) === code);
+    const activities = trails.flatMap((trail) => trail.atividades || []);
+    const experiences = (data.experiences || []).filter((item) => item.materia_codigo === code && item.concluida);
+    const completedActivities = activities.filter((activity) => activity.progresso?.concluida).length;
+    const completed = completedActivities + experiences.length;
+    const notes = data.notes.filter((note) => normalizeSubject(note) === code).map((note) => Number(note.valor) * 10);
+    const essayScores = code === 'redacao'
+      ? data.essays.filter((essay) => essay.status === 'corrigida' && essay.nota !== null).map((essay) => Number(essay.nota) / 10)
+      : [];
+    const experienceTotal = Number(subjectMeta[code].experienceTotal || 0);
+    const score = average(essayScores.length ? essayScores : notes.length ? notes : activities.length ? [(completedActivities / activities.length) * 100] : experienceTotal ? [(experiences.length / experienceTotal) * 100] : []);
+    const nextTrail = trails.find((trail) => trail.atividades.some((activity) => !activity.progresso?.concluida)) || trails[0] || null;
+    const nextActivity = nextTrail?.atividades.find((activity) => !activity.progresso?.concluida) || nextTrail?.atividades[0] || null;
+    return { code, ...subjectMeta[code], trails, activities, experiences, completed, score, nextTrail, nextActivity };
+  });
+
   const renderProfile = (profile) => {
-    const name = profile?.nome || "Marina Souza";
-    setText("[data-profile-name]", name);
-    setText("[data-greeting]", `Olá, ${name.split(" ")[0]}`);
-    setText("[data-initials]", initials(name));
+    const name = profile.nome;
+    const course = profile.curso_tecnico === 'administracao' ? 'Técnico em Administração' : 'Técnico em Informática';
+    document.querySelector('[data-profile-name]').textContent = name;
+    document.querySelector('[data-greeting]').textContent = `Olá, ${name.split(/\s+/)[0]}`;
+    document.querySelector('[data-initials]').textContent = initials(name);
+    document.querySelector('[data-profile-context]').textContent = [profile.turmas?.serie ? `${profile.turmas.serie}º ano` : null, course].filter(Boolean).join(' · ');
+    document.querySelector('[data-current-date]').textContent = new Intl.DateTimeFormat('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' }).format(new Date());
   };
-  const renderScores = (notes = []) => {
-    const groups = notes.reduce((all, note) => {
-      const key = note.materia;
-      if (!key) return all;
-      (all[key] ||= []).push(Number(note.valor || 0) * 10);
-      return all;
-    }, {});
-    Object.entries(groups).forEach(([subject, values]) => {
-      const score = Math.round(values.reduce((sum, value) => sum + value, 0) / values.length);
-      if (subjectData[subject]) subjectData[subject].score = score;
-      const node = document.querySelector(`[data-subject="${CSS.escape(subject)}"]`);
-      node?.querySelector("b")?.replaceChildren(`${score}%`);
+
+  const renderNextStep = () => {
+    const options = subjects.flatMap((subject) => subject.trails.map((trail) => ({ subject, trail, activity: trail.atividades.find((item) => !item.progresso?.concluida) }))).filter((item) => item.activity);
+    const next = options[0];
+    if (!next) {
+      elements.nextStep.innerHTML = '<div class="lesson-summary"><p class="section-kicker">Seu próximo passo</p><h2 id="next-step-title">Nenhuma atividade pendente</h2><p>Quando um professor publicar uma etapa para sua turma, ela aparecerá aqui.</p></div>';
+      return;
+    }
+    const done = next.trail.atividades.filter((item) => item.progresso?.concluida).length;
+    const total = next.trail.atividades.length;
+    const progress = total ? Math.round((done / total) * 100) : 0;
+    elements.nextStep.innerHTML = `<div class="lesson-summary"><p class="section-kicker">Seu próximo passo</p><div class="lesson-title-row"><span class="subject-icon material-symbols-outlined">${next.subject.icon}</span><div><h2 id="next-step-title">${escapeHTML(next.activity.titulo)}</h2><p>${escapeHTML(next.trail.titulo)} · etapa ${Number(next.activity.ordem || done + 1)} de ${total}</p></div></div><div class="lesson-progress"><div class="progress-track" role="progressbar" aria-label="Progresso da trilha" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${progress}"><span style="width:${progress}%"></span></div><strong>${progress}% concluído</strong></div></div><div class="lesson-meta"><span><span class="material-symbols-outlined">schedule</span>${Number(next.activity.duracao_minutos || 0)} min</span><span><span class="material-symbols-outlined">school</span>${escapeHTML(next.subject.label)}</span><a class="button lesson-action" href="../modulo_de_trilhas/${['atividade', 'quiz', 'projeto'].includes(next.activity.tipo_conteudo) ? 'atividade' : 'aula'}/index.html?atividade=${encodeURIComponent(next.activity.id)}">Continuar aprendendo<span class="material-symbols-outlined">arrow_forward</span></a></div>`;
+  };
+
+  const renderSubjectDetail = (code) => {
+    const subject = subjects.find((item) => item.code === code);
+    if (!subject) return;
+    selectedCode = code;
+    elements.map.querySelectorAll('[data-subject]').forEach((node) => {
+      const selected = node.dataset.subject === code;
+      node.classList.toggle('selected', selected);
+      node.setAttribute('aria-pressed', String(selected));
     });
+    const status = statusFor(subject.score);
+    const link = code === 'redacao'
+      ? '../laboratorio_de_redacao/index.html'
+      : subject.nextTrail
+        ? `../modulo_de_trilhas/trilha/index.html?trilha=${encodeURIComponent(subject.nextTrail.id)}`
+        : subject.route || '../modulo_de_trilhas/index.html';
+    elements.detail.innerHTML = `<header><span class="detail-icon material-symbols-outlined">${subject.icon}</span><div><h3>${escapeHTML(subject.label)}</h3><p>Desempenho: <strong>${subject.score === null ? 'sem registros' : `${subject.score}%`}</strong></p></div></header><div class="detail-section"><p class="detail-label"><span class="material-symbols-outlined">route</span>Conteúdo disponível</p><h4>${subject.trails.length} trilha(s) publicada(s)</h4><p>${subject.activities.length} etapa(s) e ${subject.experiences.length} experiência(s) interativa(s) concluída(s).</p></div><div class="detail-section"><p class="detail-label"><span class="material-symbols-outlined">monitoring</span>Estado atual</p><p>${escapeHTML(status.label)}</p><div class="mini-progress"><span style="width:${subject.score || 0}%"></span></div></div><div class="recommendation"><p><span class="material-symbols-outlined">target</span>Próximo conteúdo real</p><span>${escapeHTML(subject.nextActivity?.titulo || (subject.route ? 'Continuar nas experiências da matéria.' : 'Nenhuma atividade pendente publicada.'))}</span></div><div class="suggested-activity"><p class="detail-label"><span class="material-symbols-outlined">assignment</span>Trilha</p><h4>${escapeHTML(subject.nextTrail?.titulo || (subject.route ? 'Laboratórios interativos' : 'Aguardando publicação'))}</h4><small>${subject.nextActivity ? `${Number(subject.nextActivity.duracao_minutos || 0)} min · ${Number(subject.nextActivity.recompensa_xp || 0)} XP` : 'Sem estimativa disponível'}</small><a class="button primary" href="${link}">${subject.nextTrail || code === 'redacao' || subject.route ? 'Abrir' : 'Ver catálogo'}<span class="material-symbols-outlined">arrow_forward</span></a></div>`;
   };
-  const selectSubject = (subject) => {
-    const data = subjectData[subject];
-    if (!data) return;
-    document.querySelectorAll("[data-subject]").forEach((node) => {
-      const selected = node.dataset.subject === subject;
-      node.classList.toggle("selected", selected);
-      node.setAttribute("aria-pressed", String(selected));
+
+  const renderSubjects = () => {
+    elements.filter.innerHTML = '<option value="all">Todas as matérias</option>' + subjects.map((subject) => `<option value="${subject.code}">${escapeHTML(subject.label)}</option>`).join('');
+    elements.map.innerHTML = subjects.map((subject, index) => {
+      const status = statusFor(subject.score);
+      const [x, y] = positions[index];
+      return `<button class="subject-node ${index === 0 ? 'center selected' : ''} ${status.className}" style="--x:${x};--y:${y}" data-subject="${subject.code}" aria-pressed="${index === 0}" aria-label="${escapeHTML(subject.label)}. ${subject.score === null ? 'Sem registros' : `${subject.score}% de desempenho`}. Clique duas vezes ou pressione Enter para abrir o mapa de dificuldades."><span class="node-icon material-symbols-outlined">${subject.icon}</span><strong>${escapeHTML(subject.label)}</strong><b>${subject.score === null ? '—' : `${subject.score}%`}</b><small>${escapeHTML(status.label)}</small><span class="double-click-cue" aria-hidden="true">2×</span></button>`;
+    }).join('');
+    renderSubjectDetail(subjects[0].code);
+  };
+
+  const openDifficultyMap = (code) => {
+    if (openingDifficultyMap) return;
+    const subject = subjects.find((item) => item.code === code);
+    if (!subject) return;
+    openingDifficultyMap = true;
+    elements.transition.querySelector('[data-transition-icon]').textContent = subject.icon;
+    elements.transition.querySelector('[data-transition-subject]').textContent = subject.label;
+    elements.transition.hidden = false;
+    requestAnimationFrame(() => elements.transition.classList.add('visible'));
+    window.setTimeout(() => {
+      window.location.href = `../mapa_dificuldades/index.html?materia=${encodeURIComponent(code)}`;
+    }, window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 80 : 850);
+  };
+
+  const renderWeek = () => {
+    const days = Array.from({ length: 7 }, (_, offset) => {
+      const date = new Date();
+      date.setHours(0, 0, 0, 0);
+      date.setDate(date.getDate() - (6 - offset));
+      const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+      const count = dashboardData.history.filter((item) => {
+        const itemDate = new Date(item.created_at);
+        const itemKey = `${itemDate.getFullYear()}-${String(itemDate.getMonth() + 1).padStart(2, '0')}-${String(itemDate.getDate()).padStart(2, '0')}`;
+        return itemKey === key;
+      }).length;
+      return { date, count, today: offset === 6 };
     });
-    setText("[data-detail-subject]", subject);
-    setText("[data-detail-score]", `${data.score}%`);
-    setText("[data-detail-icon]", data.icon);
-    setText("[data-detail-concept]", data.concept);
-    setText("[data-detail-description]", data.description);
-    setText("[data-detail-result]", data.result);
-    setText("[data-detail-recommendation]", data.recommendation);
-    setText("[data-detail-activity]", data.activity);
-    document.querySelector("[data-detail-bar]").style.width = `${data.score}%`;
-    document.querySelector("[data-practice-link]").href = data.path;
+    const total = days.reduce((sum, day) => sum + day.count, 0);
+    elements.weeklyDays.innerHTML = days.map((day) => `<li class="${day.count ? 'done' : ''} ${day.today ? 'today' : ''}"><span>${new Intl.DateTimeFormat('pt-BR', { weekday: 'short' }).format(day.date).replace('.', '')}</span><b>${day.count}</b></li>`).join('');
+    elements.weeklyTotal.innerHTML = `<span class="ring-progress">${total}<small>registros</small></span><p><strong>${dashboardData.xp} XP acumulados</strong><span>Calculados pelo Supabase</span></p>`;
   };
+
   const bindInteractions = () => {
-    const profileShortcut = document.querySelector('.sidebar-profile a');
-    if (profileShortcut) { profileShortcut.href = '../perfil/index.html'; profileShortcut.setAttribute('aria-label', 'Abrir perfil'); profileShortcut.querySelector('.material-symbols-outlined').textContent = 'person'; }
-    document.querySelector("[data-mastery-map]")?.addEventListener("click", (event) => {
-      const node = event.target.closest("[data-subject]");
-      if (node) selectSubject(node.dataset.subject);
+    elements.map.addEventListener('click', (event) => {
+      const node = event.target.closest('[data-subject]');
+      if (!node) return;
+      renderSubjectDetail(node.dataset.subject);
+      if (event.detail >= 2) openDifficultyMap(node.dataset.subject);
     });
-    document.querySelector("[data-subject-filter]")?.addEventListener("change", (event) => {
-      const value = event.target.value;
-      document.querySelectorAll("[data-subject]").forEach((node) => { node.hidden = value !== "all" && node.dataset.subject !== value; });
-      if (value !== "all") selectSubject(value);
+    elements.map.addEventListener('dblclick', (event) => {
+      const node = event.target.closest('[data-subject]');
+      if (node) openDifficultyMap(node.dataset.subject);
     });
-    const notificationButton = document.querySelector("[data-notification-toggle]");
-    notificationButton?.addEventListener("click", () => { window.location.href = "../notificacoes/index.html"; });
-    if (notificationButton && !document.querySelector("[data-agenda-shortcut]")) {
-      const agenda = document.createElement("a");
-      agenda.className = "icon-button";
-      agenda.dataset.agendaShortcut = "true";
-      agenda.href = "../agenda/index.html";
-      agenda.setAttribute("aria-label", "Abrir agenda");
+    elements.map.addEventListener('keydown', (event) => {
+      const node = event.target.closest('[data-subject]');
+      if (node && event.key === 'Enter') {
+        event.preventDefault();
+        openDifficultyMap(node.dataset.subject);
+      }
+    });
+    elements.filter.addEventListener('change', (event) => {
+      const code = event.target.value;
+      elements.map.querySelectorAll('[data-subject]').forEach((node) => { node.hidden = code !== 'all' && node.dataset.subject !== code; });
+      if (code !== 'all') renderSubjectDetail(code);
+      else renderSubjectDetail(selectedCode || subjects[0].code);
+    });
+    document.querySelector('[data-notification-toggle]')?.addEventListener('click', () => { window.location.href = '../notificacoes/index.html'; });
+    const notificationButton = document.querySelector('[data-notification-toggle]');
+    if (notificationButton && !document.querySelector('[data-agenda-shortcut]')) {
+      const agenda = document.createElement('a');
+      agenda.className = 'icon-button';
+      agenda.dataset.agendaShortcut = 'true';
+      agenda.href = '../agenda/index.html';
+      agenda.setAttribute('aria-label', 'Abrir agenda');
       agenda.innerHTML = '<span class="material-symbols-outlined">calendar_month</span>';
       notificationButton.before(agenda);
     }
-    const dialog = document.querySelector("[data-focus-dialog]");
-    document.querySelector("[data-focus-open]")?.addEventListener("click", () => dialog.showModal());
-    document.querySelectorAll("[data-focus-minutes]").forEach((button) => button.addEventListener("click", () => {
-      document.querySelectorAll("[data-focus-minutes]").forEach((item) => item.classList.toggle("selected", item === button));
-      dialog.querySelector("h2").textContent = `${button.dataset.focusMinutes}:00`;
+    const dialog = document.querySelector('[data-focus-dialog]');
+    document.querySelector('[data-focus-open]')?.addEventListener('click', () => dialog.showModal());
+    document.querySelectorAll('[data-focus-minutes]').forEach((button) => button.addEventListener('click', () => {
+      document.querySelectorAll('[data-focus-minutes]').forEach((item) => item.classList.toggle('selected', item === button));
+      dialog.querySelector('h2').textContent = `${button.dataset.focusMinutes}:00`;
     }));
-    dialog?.addEventListener("close", () => { if (dialog.returnValue === "start") showToast("Sessão de foco iniciada. Boa jornada!"); });
-    const menuButton = document.querySelector("[data-menu-toggle]");
-    menuButton?.addEventListener("click", () => {
-      document.body.classList.toggle("menu-open");
-      menuButton.setAttribute("aria-expanded", String(document.body.classList.contains("menu-open")));
+    dialog?.addEventListener('close', () => { if (dialog.returnValue === 'start') notify('Sessão de foco iniciada.'); });
+    const menuButton = document.querySelector('[data-menu-toggle]');
+    menuButton?.addEventListener('click', () => {
+      document.body.classList.toggle('menu-open');
+      menuButton.setAttribute('aria-expanded', String(document.body.classList.contains('menu-open')));
     });
   };
+
   const loadDashboard = async () => {
-    showState("loading");
+    showState('loading');
     try {
-      if (previewMode || !api()?.configured) {
-        renderProfile({ nome: "Marina Souza" });
-        showState("ready");
-        return;
-      }
-      const session = await api().getSession();
-      if (!session) {
-        window.location.href = "../../login/index.html";
-        return;
-      }
-      const [profile, notes] = await Promise.all([api().getProfile(session.user.id), api().listStudentNotes()]);
-      renderProfile(profile);
-      renderScores(notes);
-      selectSubject("Matemática");
-      showState("ready");
+      if (!api()?.configured) throw new Error('A conexão com o Supabase não está configurada.');
+      dashboardData = await api().getStudentDashboard();
+      subjects = buildSubjects(dashboardData);
+      renderProfile(dashboardData.profile);
+      renderNextStep();
+      renderSubjects();
+      renderWeek();
+      showState('ready');
     } catch (error) {
-      elements.errorMessage.textContent = error.message || "Tente novamente em alguns instantes.";
-      showState("error");
+      elements.errorMessage.textContent = error.message || 'Tente novamente em alguns instantes.';
+      showState('error');
     }
   };
-  document.querySelector("[data-retry]")?.addEventListener("click", loadDashboard);
+
+  document.querySelector('[data-retry]')?.addEventListener('click', loadDashboard);
   bindInteractions();
   loadDashboard();
 })();

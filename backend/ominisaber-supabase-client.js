@@ -1,7 +1,6 @@
 (() => {
   const config = window.OMINISABER_SUPABASE_CONFIG || {};
   const configured = Boolean(config.url && config.anonKey && window.supabase);
-  const previewMode = new URLSearchParams(window.location.search).get('preview') === '1';
   const client = configured ? window.supabase.createClient(config.url, config.anonKey) : null;
 
   const frontendIndex = window.location.pathname.indexOf('/frontend/');
@@ -9,12 +8,217 @@
   const routes = {
     login: `${frontendRoot}login/index.html`,
     dashboard: `${frontendRoot}aluno/dashboard_principal/index.html`,
+    passwordReset: `${frontendRoot}redefinir-senha/index.html`,
     error: `${frontendRoot}erro/index.html`
+  };
+
+  const teacherRoutes = {
+    matematica: `${frontendRoot}professor/professor_matematica/dashboard/index.html`,
+    portugues: `${frontendRoot}professor/professor_portugues/dashboard/index.html`,
+    tecnico_administracao: `${frontendRoot}professor/professor_tecnico_administracao/dashboard/index.html`,
+    tecnico_informatica: `${frontendRoot}professor/professor_tecnico_informatica/dashboard/index.html`
   };
 
   const currentPage = window.location.pathname;
   const isLoginPage = currentPage.includes('/login/');
-  const isPublicAuthPage = isLoginPage || currentPage.includes('/cadastro/');
+  const isPublicAuthPage = isLoginPage || currentPage.includes('/cadastro/') || currentPage.includes('/redefinir-senha/');
+  const isStudentArea = currentPage.includes('/frontend/aluno/');
+
+  const setupStudentSidebar = () => {
+    if (!isStudentArea) return;
+    document.body.dataset.appRole = 'student';
+    document.body.dataset.requiredRole = 'aluno';
+    document.body.classList.add('omni-student-nav-ready');
+
+    if (!document.getElementById('ominisaber-student-sidebar')) {
+      const link = document.createElement('link');
+      link.id = 'ominisaber-student-sidebar';
+      link.rel = 'stylesheet';
+      link.href = `${frontendRoot}shared/student-sidebar.css?v=20260903-2`;
+      document.head.appendChild(link);
+    }
+
+    const studentRoutes = {
+      dashboard: `${frontendRoot}aluno/dashboard_principal/index.html`,
+      trilhas: `${frontendRoot}aluno/modulo_de_trilhas/index.html`,
+      redacao: `${frontendRoot}aluno/laboratorio_de_redacao/index.html`,
+      evolucao: `${frontendRoot}aluno/minha_evolucao/index.html`,
+      biblioteca: `${frontendRoot}aluno/biblioteca_digital/index.html`,
+      notificacoes: `${frontendRoot}aluno/notificacoes/index.html`,
+      agenda: `${frontendRoot}aluno/agenda/index.html`,
+      perfil: `${frontendRoot}aluno/perfil/index.html`,
+      ajuda: `${frontendRoot}aluno/ajuda-suporte/index.html`
+    };
+    const activeKey = currentPage.includes('/modulo_de_trilhas/') ? 'trilhas'
+      : currentPage.includes('/laboratorio_de_redacao/') ? 'redacao'
+        : currentPage.includes('/minha_evolucao/') ? 'evolucao'
+          : currentPage.includes('/biblioteca_digital/') ? 'biblioteca'
+            : currentPage.includes('/notificacoes/') ? 'notificacoes'
+              : currentPage.includes('/agenda/') ? 'agenda'
+                : currentPage.includes('/perfil/') ? 'perfil'
+                  : currentPage.includes('/ajuda-suporte/') ? 'ajuda'
+                    : 'dashboard';
+    const navItem = (key, icon, label) => `<a href="${studentRoutes[key]}"${activeKey === key ? ' class="active" aria-current="page"' : ''}><span class="material-symbols-outlined" aria-hidden="true">${icon}</span><span>${label}</span></a>`;
+
+    const candidates = [...document.querySelectorAll('aside.sidebar,aside.app-sidebar,aside.study-sidebar')]
+      .filter((element) => !element.classList.contains('correction-sidebar') && !element.classList.contains('notes-drawer'));
+    const sidebar = candidates.shift() || document.createElement('aside');
+    candidates.forEach((element) => element.remove());
+    if (!sidebar.isConnected) document.body.prepend(sidebar);
+    sidebar.className = 'sidebar omni-student-sidebar';
+    sidebar.dataset.sidebar = '';
+    sidebar.setAttribute('aria-label', 'Navegação principal do aluno');
+    sidebar.innerHTML = `
+      <a class="omni-student-brand" href="${studentRoutes.dashboard}"><span class="omni-student-brand-mark material-symbols-outlined" aria-hidden="true">school</span><span>OminiSaber<small>Área do aluno</small></span></a>
+      <nav class="omni-student-nav">
+        <p class="omni-student-nav-label">Aprender</p>
+        ${navItem('dashboard', 'space_dashboard', 'Início')}
+        ${navItem('trilhas', 'route', 'Trilhas')}
+        ${navItem('redacao', 'edit_note', 'Redação')}
+        ${navItem('evolucao', 'monitoring', 'Evolução')}
+        ${navItem('biblioteca', 'local_library', 'Biblioteca')}
+        <p class="omni-student-nav-label">Organização</p>
+        ${navItem('notificacoes', 'notifications', 'Notificações')}
+        ${navItem('agenda', 'calendar_month', 'Agenda')}
+        ${navItem('perfil', 'person', 'Perfil')}
+        ${navItem('ajuda', 'help', 'Ajuda e suporte')}
+      </nav>
+      <div class="omni-student-account"><span class="omni-student-avatar" data-initials data-shell-avatar>AL</span><div><strong data-profile-name data-shell-name>Aluno</strong><small data-student-sidebar-grade data-profile-context data-profile-grade data-shell-class>Ensino Médio</small></div></div>
+      <button class="omni-student-signout" type="button" data-student-signout><span class="material-symbols-outlined" aria-hidden="true">logout</span>Sair</button>`;
+    sidebar.querySelector('[data-student-signout]')?.addEventListener('click', async (event) => {
+      event.currentTarget.disabled = true;
+      try { await signOut(); } catch (error) { notify(error.message, 'error'); event.currentTarget.disabled = false; }
+    });
+
+  };
+
+  const setupUniversalSidebar = () => {
+    if (isPublicAuthPage) return;
+    setupStudentSidebar();
+    const stylesheetId = 'ominisaber-sidebar-controls';
+    if (!document.getElementById(stylesheetId)) {
+      const link = document.createElement('link');
+      link.id = stylesheetId;
+      link.rel = 'stylesheet';
+      link.href = `${frontendRoot}shared/sidebar-controls.css?v=20260902-2`;
+      document.head.appendChild(link);
+    }
+
+    const sidebarSelector = '.sidebar,.library-sidebar,.portal-sidebar,.study-sidebar,.app-sidebar,[data-shared-sidebar]';
+    const mobileClasses = ['menu-open', 'nav-open', 'study-menu-open'];
+    const isMobile = () => window.matchMedia('(max-width: 900px)').matches;
+    const setCollapsed = (collapsed) => {
+      document.body.classList.toggle('omni-sidebar-collapsed', collapsed && !isMobile());
+      if (!isMobile()) localStorage.setItem('ominisaber-sidebar-collapsed', collapsed ? '1' : '0');
+      document.querySelectorAll('[data-omni-sidebar-close]').forEach((button) => {
+        button.setAttribute('aria-label', 'Fechar menu lateral');
+      });
+    };
+    const closeMobile = () => {
+      mobileClasses.forEach((className) => document.body.classList.remove(className));
+      document.querySelectorAll('[aria-expanded="true"]').forEach((button) => button.setAttribute('aria-expanded', 'false'));
+    };
+    const openMobile = (sidebar) => {
+      const className = sidebar.classList.contains('app-sidebar')
+        ? 'nav-open'
+        : sidebar.classList.contains('study-sidebar')
+          ? 'study-menu-open'
+          : 'menu-open';
+      document.body.classList.add(className);
+    };
+    const hydrate = () => {
+      const sidebars = [...document.querySelectorAll(sidebarSelector)].filter((sidebar) => !sidebar.closest('.builder-sidebar,.correction-sidebar'));
+      if (!sidebars.length) return;
+      document.querySelectorAll('.shared-sidebar-toggle,.sidebar-edge-reveal').forEach((control) => control.remove());
+      sidebars.forEach((sidebar) => {
+        if (sidebar.classList.contains('library-sidebar')) sidebar.setAttribute('data-sidebar', '');
+        if (document.body.dataset.appRole === 'library') {
+          const nav = sidebar.querySelector('nav');
+          if (nav && !nav.dataset.libraryNavReady) {
+            nav.dataset.libraryNavReady = 'true';
+            const items = [
+              ['dashboard', 'space_dashboard', 'Hoje'],
+              ['gestao_emprestimos', 'sync_alt', 'Circulação'],
+              ['estoque', 'shelves', 'Acervo e PDFs'],
+              ['configuracoes', 'tune', 'Regras']
+            ];
+            nav.innerHTML = items.map(([segment, icon, label]) => {
+              const href = `${frontendRoot}bibliotecaria/${segment}/${segment === 'dashboard' ? 'index.html' : 'index.html'}`;
+              const active = currentPage.includes(`/bibliotecaria/${segment}/`);
+              return `<a href="${href}"${active ? ' class="active" aria-current="page"' : ''}><span class="material-symbols-outlined" aria-hidden="true">${icon}</span><span>${label}</span></a>`;
+            }).join('');
+          }
+        }
+        if (document.body.dataset.appRole === 'library' && !sidebar.querySelector('[data-library-sidebar-status]')) {
+          const status = document.createElement('div');
+          status.className = 'library-sidebar-status';
+          status.dataset.librarySidebarStatus = 'true';
+          status.innerHTML = `<span class="material-symbols-outlined" aria-hidden="true">${configured ? 'cloud_done' : 'cloud_off'}</span><div><strong>${configured ? 'Acervo conectado' : 'Sem conexão'}</strong><small>${configured ? 'Dados em tempo real' : 'Revise o arquivo .env'}</small></div>`;
+          sidebar.insertBefore(status, sidebar.querySelector('[data-signout]'));
+        }
+        if (sidebar.dataset.omniSidebarReady) return;
+        sidebar.dataset.omniSidebarReady = 'true';
+        sidebar.classList.add('omni-sidebar-managed');
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'omni-sidebar-close';
+        button.dataset.omniSidebarClose = 'true';
+        button.setAttribute('aria-label', 'Fechar menu lateral');
+        button.innerHTML = '<span class="material-symbols-outlined" aria-hidden="true">left_panel_close</span>';
+        button.addEventListener('click', () => {
+          if (isMobile()) closeMobile();
+          else setCollapsed(true);
+        });
+        sidebar.appendChild(button);
+      });
+
+      if (!document.querySelector('[data-omni-sidebar-edge]')) {
+        const reveal = document.createElement('button');
+        reveal.type = 'button';
+        reveal.className = 'omni-sidebar-edge';
+        reveal.dataset.omniSidebarEdge = 'true';
+        reveal.setAttribute('aria-label', 'Abrir menu lateral');
+        reveal.innerHTML = '<span class="material-symbols-outlined" aria-hidden="true">left_panel_open</span>';
+        reveal.addEventListener('click', () => {
+          const sidebar = document.querySelector(sidebarSelector);
+          if (isMobile() && sidebar) openMobile(sidebar);
+          else setCollapsed(false);
+        });
+        document.body.appendChild(reveal);
+      }
+      if (!document.querySelector('[data-omni-sidebar-mobile]')) {
+        const mobileReveal = document.createElement('button');
+        mobileReveal.type = 'button';
+        mobileReveal.className = 'omni-sidebar-mobile';
+        mobileReveal.dataset.omniSidebarMobile = 'true';
+        mobileReveal.setAttribute('aria-label', document.body.dataset.appRole === 'library' ? 'Abrir menu da biblioteca' : 'Abrir menu lateral');
+        mobileReveal.innerHTML = '<span class="material-symbols-outlined" aria-hidden="true">menu</span><span>Menu</span>';
+        mobileReveal.addEventListener('click', () => {
+          const sidebar = document.querySelector(sidebarSelector);
+          if (sidebar) openMobile(sidebar);
+        });
+        document.body.appendChild(mobileReveal);
+      }
+      if (!document.querySelector('[data-omni-sidebar-backdrop]')) {
+        const backdrop = document.createElement('button');
+        backdrop.type = 'button';
+        backdrop.className = 'omni-sidebar-backdrop';
+        backdrop.dataset.omniSidebarBackdrop = 'true';
+        backdrop.setAttribute('aria-label', 'Fechar menu lateral');
+        backdrop.addEventListener('click', closeMobile);
+        document.body.appendChild(backdrop);
+      }
+    };
+
+    setCollapsed(localStorage.getItem('ominisaber-sidebar-collapsed') === '1');
+    hydrate();
+    const observer = new MutationObserver(hydrate);
+    observer.observe(document.body, { childList: true, subtree: true });
+    window.addEventListener('resize', () => {
+      if (isMobile()) document.body.classList.remove('omni-sidebar-collapsed');
+      else setCollapsed(localStorage.getItem('ominisaber-sidebar-collapsed') === '1');
+    }, { passive: true });
+  };
 
   const notify = (message, type = 'info') => {
     const event = new CustomEvent('ominisaber:notification', { detail: { message, type } });
@@ -59,9 +263,22 @@
     if (!ensureConfigured()) return null;
     const id = userId || (await getSession())?.user?.id;
     if (!id) return null;
-    const { data, error } = await client.from('perfis').select('*, turmas(id,nome,serie,ano_letivo)').eq('id', id).maybeSingle();
+    const { data, error } = await client.from('perfis').select('*, turmas!perfis_turma_id_fkey(id,nome,serie,ano_letivo)').eq('id', id).maybeSingle();
     if (error) throw error;
     return data;
+  };
+
+  const getProfileDestination = (profile) => {
+    if (!profile) throw new Error('PROFILE_NOT_FOUND');
+    if (profile.role === 'aluno') return routes.dashboard;
+    if (profile.role === 'bibliotecaria') return `${frontendRoot}bibliotecaria/dashboard/index.html`;
+    if (profile.role === 'gestor') return `${frontendRoot}gestor/dashboard/index.html`;
+    if (profile.role === 'professor') {
+      const destination = teacherRoutes[profile.tipo_professor];
+      if (!destination) throw new Error('TEACHER_SPECIALTY_NOT_FOUND');
+      return destination;
+    }
+    throw new Error('ROLE_NOT_SUPPORTED');
   };
 
   const requireRole = async (allowedRoles) => {
@@ -76,23 +293,56 @@
 
   const signIn = async (email, password) => {
     if (!ensureConfigured()) return { data: null, error: new Error('Supabase não configurado') };
-    let loginEmail = email;
-    if (!email.includes('@')) {
-      const { data, error } = await client.rpc('email_por_matricula', { matricula_input: email });
+    const identifier = String(email || '').trim();
+    let loginEmail = identifier.toLowerCase();
+    if (!identifier.includes('@')) {
+      const { data, error } = await client.rpc('email_por_matricula', { matricula_input: identifier });
       if (error) return { data: null, error };
       if (!data) return { data: null, error: new Error('Matrícula não encontrada.') };
-      loginEmail = data;
+      loginEmail = String(data).trim().toLowerCase();
     }
     return client.auth.signInWithPassword({ email: loginEmail, password });
   };
 
-  const signUp = async ({ nome, matricula, email, password }) => {
+  const signUp = async ({ nome, matricula, email, password, curso_tecnico }) => {
     if (!ensureConfigured()) return { data: null, error: new Error('Supabase não configurado') };
+    if (!['administracao', 'informatica'].includes(curso_tecnico)) {
+      return { data: null, error: new Error('Selecione o curso técnico do aluno.') };
+    }
     return client.auth.signUp({
-      email,
+      email: String(email || '').trim().toLowerCase(),
       password,
-      options: { data: { nome, matricula } }
+      options: {
+        emailRedirectTo: `${window.location.origin}${routes.login}?confirmacao=concluida`,
+        data: {
+          nome: String(nome || '').trim(),
+          matricula: String(matricula || '').trim(),
+          curso_tecnico
+        }
+      }
     });
+  };
+
+  const resendSignupConfirmation = async (email) => {
+    if (!ensureConfigured()) return { data: null, error: new Error('Supabase não configurado') };
+    return client.auth.resend({
+      type: 'signup',
+      email: String(email || '').trim().toLowerCase(),
+      options: { emailRedirectTo: `${window.location.origin}${routes.login}?confirmacao=concluida` }
+    });
+  };
+
+  const requestPasswordReset = async (email) => {
+    if (!ensureConfigured()) return { data: null, error: new Error('Supabase não configurado') };
+    return client.auth.resetPasswordForEmail(String(email || '').trim().toLowerCase(), {
+      redirectTo: `${window.location.origin}${routes.passwordReset}`
+    });
+  };
+
+  const clearSession = async () => {
+    if (!configured) return;
+    const { error } = await client.auth.signOut({ scope: 'local' });
+    if (error) throw error;
   };
 
   const signOut = async () => {
@@ -207,7 +457,7 @@
     if (!ensureConfigured()) return [];
     const session = await getSession();
     if (!session) throw new Error('Sessão expirada. Entre novamente.');
-    const { data, error } = await client.from('professor_turmas').select('materia, turmas(id, nome, serie)').eq('professor_id', session.user.id);
+    const { data, error } = await client.from('professor_turmas').select('materia, turmas!professor_turmas_turma_id_fkey(id,nome,serie)').eq('professor_id', session.user.id);
     if (error) throw error;
     return (data || []).map((item) => ({ ...item.turmas, materia: item.materia })).filter((item) => item.id);
   };
@@ -244,17 +494,74 @@
     return data;
   };
 
+  const listTeacherWritingPrompts = async () => {
+    if (!ensureConfigured()) return [];
+    const { session } = await assertTeacherSpecialty('portugues');
+    const { data, error } = await client.from('propostas_redacao')
+      .select('*, turmas!propostas_redacao_turma_id_fkey(id,nome,serie), materiais_redacao(*)')
+      .eq('professor_id', session.user.id)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return (data || []).map((prompt) => ({
+      ...prompt,
+      materiais_redacao: [...(prompt.materiais_redacao || [])].sort((a, b) => Number(a.ordem) - Number(b.ordem))
+    }));
+  };
+
   const listTeacherEssays = async () => {
     if (!ensureConfigured()) return [];
-    const { data, error } = await client.from('redacoes').select('*, perfis!redacoes_aluno_id_fkey(nome, turma_id), propostas_redacao(titulo, prazo)').in('status', ['enviada', 'corrigida']).order('enviada_em', { ascending: true });
+    await assertTeacherSpecialty('portugues');
+    const { data, error } = await client.from('redacoes').select('*, perfis!redacoes_aluno_id_fkey(nome,turma_id,turmas!perfis_turma_id_fkey(id,nome,serie)), propostas_redacao!redacoes_proposta_id_fkey(id,titulo,prazo,categoria), avaliacoes_competencias_redacao(competencia,nota,comentario), comentarios_redacao(id,inicio_offset,fim_offset,trecho,comentario,tipo,created_at)').in('status', ['enviada', 'corrigida']).order('enviada_em', { ascending: true });
     if (error) throw error;
+    return (data || []).map((essay) => ({
+      ...essay,
+      avaliacoes_competencias_redacao: [...(essay.avaliacoes_competencias_redacao || [])].sort((a, b) => Number(a.competencia) - Number(b.competencia)),
+      comentarios_redacao: [...(essay.comentarios_redacao || [])].sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+    }));
+  };
+
+  const listEssayCorrectionDrafts = async () => {
+    if (!ensureConfigured()) return [];
+    const { session } = await assertTeacherSpecialty('portugues');
+    const { data, error } = await client.from('rascunhos_correcao_redacao').select('*').eq('professor_id', session.user.id);
+    if (error) {
+      if (error.code === '42P01' || error.code === 'PGRST205') return [];
+      throw error;
+    }
     return data || [];
+  };
+
+  const saveEssayCorrectionDraft = async (essayId, { score = null, feedback = '', competencies = [] } = {}) => {
+    if (!ensureConfigured()) return null;
+    const { session } = await assertTeacherSpecialty('portugues');
+    const normalizedScore = score === '' || score === null ? null : Number(score);
+    const { data, error } = await client.from('rascunhos_correcao_redacao').upsert({
+      redacao_id: essayId,
+      professor_id: session.user.id,
+      nota: Number.isFinite(normalizedScore) ? normalizedScore : null,
+      feedback: String(feedback || '').slice(0, 20000),
+      competencias: Array.isArray(competencies) ? competencies : [],
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'redacao_id,professor_id' }).select().single();
+    if (error) throw error;
+    return data;
   };
 
   const correctEssay = async (essayId, { score, feedback, competencies = [], comments = [] }) => {
     if (!ensureConfigured()) return null;
     const session = await getSession();
     if (!session) throw new Error('Sessão expirada. Entre novamente.');
+    const atomic = await client.rpc('corrigir_redacao', {
+      redacao_input: essayId,
+      nota_input: score,
+      feedback_input: feedback,
+      competencias_input: competencies,
+      comentarios_input: comments
+    });
+    if (!atomic.error) return atomic.data;
+    if (atomic.error.code !== 'PGRST202' && atomic.error.code !== '42883') throw atomic.error;
+
+    // Compatibilidade temporária com bancos ainda sem a migração transacional.
     const { data, error } = await client.from('redacoes').update({ nota: score, feedback, status: 'corrigida', corrigida_por: session.user.id, corrigida_em: new Date().toISOString() }).eq('id', essayId).select().single();
     if (error) throw error;
     if (competencies.length) {
@@ -265,6 +572,8 @@
       const { error: commentsError } = await client.from('comentarios_redacao').insert(comments.map((item) => ({ redacao_id: essayId, professor_id: session.user.id, inicio_offset: item.inicioOffset ?? null, fim_offset: item.fimOffset ?? null, trecho: item.trecho || null, comentario: item.comentario, tipo: item.tipo || 'orientacao' })));
       if (commentsError) throw commentsError;
     }
+    const { error: draftError } = await client.from('rascunhos_correcao_redacao').delete().eq('redacao_id', essayId).eq('professor_id', session.user.id);
+    if (draftError && draftError.code !== '42P01' && draftError.code !== 'PGRST205') throw draftError;
     return data;
   };
 
@@ -302,7 +611,7 @@
   const listTeacherLabs = async ({ tipoProfessor, status } = {}) => {
     if (!ensureConfigured()) return [];
     const { session } = await assertTeacherSpecialty(tipoProfessor);
-    let query = client.from('laboratorios_docentes').select('*, turmas(id,nome,serie), entregas_laboratorio(id,status,nota)').eq('professor_id', session.user.id).eq('tipo_professor', tipoProfessor).order('created_at', { ascending: false });
+    let query = client.from('laboratorios_docentes').select('*, turmas!laboratorios_docentes_turma_id_fkey(id,nome,serie), entregas_laboratorio(id,status,nota)').eq('professor_id', session.user.id).eq('tipo_professor', tipoProfessor).order('created_at', { ascending: false });
     if (status) query = query.eq('status', status);
     const { data, error } = await query;
     if (error) throw error;
@@ -340,7 +649,7 @@
   const listTeacherEvaluations = async ({ tipoProfessor, status } = {}) => {
     if (!ensureConfigured()) return [];
     const { session } = await assertTeacherSpecialty(tipoProfessor);
-    let query = client.from('avaliacoes_docentes').select('*, turmas(id,nome,serie), questoes_avaliacao(id,tipo,pontos), tentativas_avaliacao(id,status,nota)').eq('professor_id', session.user.id).eq('tipo_professor', tipoProfessor).order('created_at', { ascending: false });
+    let query = client.from('avaliacoes_docentes').select('*, turmas!avaliacoes_docentes_turma_id_fkey(id,nome,serie), questoes_avaliacao(id,tipo,pontos), tentativas_avaliacao(id,status,nota)').eq('professor_id', session.user.id).eq('tipo_professor', tipoProfessor).order('created_at', { ascending: false });
     if (status) query = query.eq('status', status);
     const { data, error } = await query;
     if (error) throw error;
@@ -479,7 +788,7 @@
     if (!ensureConfigured()) return [];
     const session = await getSession();
     if (!session) throw new Error('Sessão expirada. Entre novamente.');
-    const { data, error } = await client.from('emprestimos').select('*, livros(id, titulo, autor)').eq('aluno_id', session.user.id).order('created_at', { ascending: false });
+    const { data, error } = await client.from('solicitacoes_emprestimo').select('*, livros(id, titulo, autor)').eq('aluno_id', session.user.id).order('solicitado_em', { ascending: false });
     if (error) throw error;
     return data || [];
   };
@@ -568,6 +877,79 @@
     return data || [];
   };
 
+  const managerSession = async () => {
+    if (!ensureConfigured()) throw new Error('Supabase não configurado.');
+    const session = await getSession();
+    if (!session) throw new Error('Sessão expirada. Entre novamente.');
+    const profile = await getProfile(session.user.id);
+    if (profile?.role !== 'gestor') throw new Error('Acesso exclusivo do gestor.');
+    return { session, profile };
+  };
+
+  const managerSelect = async (table, select = '*', options = {}) => {
+    await managerSession();
+    let query = client.from(table).select(select);
+    if (options.order) query = query.order(options.order, { ascending: options.ascending ?? true });
+    const { data, error } = await query;
+    if (error) throw error;
+    return data || [];
+  };
+
+  const getManagerOverview = async () => {
+    await managerSession();
+    const optional = (promise) => promise.catch(() => []);
+    const [classes, profiles, links, descriptors, trails, labs, evaluations, prompts, accesses] = await Promise.all([
+      managerSelect('turmas', '*', { order: 'nome' }),
+      managerSelect('perfis', '*'),
+      managerSelect('professor_turmas', 'professor_id,turma_id,materia,created_at'),
+      optional(managerSelect('descritores_curriculares', '*')),
+      managerSelect('trilhas', 'id,titulo,publicada,turma_id,materia_codigo,descritor_sedu,created_at'),
+      managerSelect('laboratorios_docentes', 'id,titulo,status,turma_id,created_at'),
+      managerSelect('avaliacoes_docentes', 'id,titulo,status,turma_id,created_at'),
+      managerSelect('propostas_redacao', 'id,titulo,publicada,turma_id,created_at'),
+      optional(managerSelect('solicitacoes_acesso', '*', { order: 'created_at', ascending: false }))
+    ]);
+    return { classes, profiles, links, descriptors, trails, labs, evaluations, prompts, accesses };
+  };
+
+  const listManagerClasses = () => managerSelect('turmas', '*', { order: 'nome' });
+  const saveManagerClass = async (payload) => {
+    await managerSession();
+    const record = { nome: payload.nome.trim(), ano_letivo: Number(payload.ano_letivo), serie: String(payload.serie || '').trim() || null };
+    const query = payload.id ? client.from('turmas').update(record).eq('id', payload.id) : client.from('turmas').insert(record);
+    const { data, error } = await query.select().single(); if (error) throw error; return data;
+  };
+  const listManagerProfiles = async (role) => {
+    const rows = await managerSelect('perfis', '*,turmas!perfis_turma_id_fkey(id,nome,serie)');
+    return role ? rows.filter((row) => row.role === role) : rows;
+  };
+  const updateManagerProfile = async (id, changes) => {
+    await managerSession();
+    const coreKeys = ['nome', 'matricula', 'curso_tecnico', 'turma_id', 'tipo_professor'];
+    const optionalKeys = ['ativo', 'email_contato', 'primeiro_acesso_pendente', 'ultimo_acesso_em'];
+    const core = Object.fromEntries(Object.entries(changes || {}).filter(([key]) => coreKeys.includes(key)));
+    const optionalFields = Object.fromEntries(Object.entries(changes || {}).filter(([key]) => optionalKeys.includes(key)));
+    if (Object.keys(core).length) {
+      const { error } = await client.from('perfis').update(core).eq('id', id);
+      if (error) throw error;
+    }
+    if (Object.keys(optionalFields).length) {
+      const { error } = await client.from('perfis').update(optionalFields).eq('id', id);
+      const missingColumn = error && (error.code === 'PGRST204' || error.code === '42703' || /column|schema cache/i.test(error.message || ''));
+      if (error && !missingColumn) throw error;
+    }
+    const { data, error } = await client.from('perfis').select('*,turmas!perfis_turma_id_fkey(id,nome,serie)').eq('id', id).single();
+    if (error) throw error;
+    return data;
+  };
+  const listManagerLinks = () => managerSelect('professor_turmas', 'professor_id,turma_id,materia,created_at,perfis!professor_turmas_professor_id_fkey(id,nome,tipo_professor),turmas!professor_turmas_turma_id_fkey(id,nome,serie)');
+  const saveManagerLink = async (payload) => { await managerSession(); const { data, error } = await client.from('professor_turmas').upsert(payload).select().single(); if (error) throw error; return data; };
+  const removeManagerLink = async (professorId, turmaId) => { await managerSession(); const { error } = await client.from('professor_turmas').delete().eq('professor_id', professorId).eq('turma_id', turmaId); if (error) throw error; };
+  const listManagerDescriptors = () => managerSelect('descritores_curriculares', '*', { order: 'codigo' });
+  const saveManagerDescriptor = async (payload) => { await managerSession(); const record = { ...payload, serie: Number(payload.serie), trimestre: Number(payload.trimestre) }; const query = record.id ? client.from('descritores_curriculares').update(record).eq('id', record.id) : client.from('descritores_curriculares').insert(record); const { data, error } = await query.select().single(); if (error) throw error; return data; };
+  const listManagerAudit = () => managerSelect('gestor_auditoria', '*,perfis!gestor_auditoria_gestor_id_fkey(nome)', { order: 'created_at', ascending: false });
+  const manageManagerAccess = async (action, payload) => { await managerSession(); const { data, error } = await client.functions.invoke('gestor-contas', { body: { action, ...payload } }); if (error) throw error; if (data?.error) throw new Error(data.error); return data; };
+
   const updateProfile = async ({ nome, email }) => {
     if (!ensureConfigured()) return null;
     const session = await getSession();
@@ -586,7 +968,7 @@
     if (!ensureConfigured()) return null;
     const session = await getSession();
     if (!session) throw new Error('Sessão expirada. Entre novamente.');
-    const { data, error } = await client.from('emprestimos').insert({ livro_id: livroId, aluno_id: session.user.id }).select().single();
+    const { data, error } = await client.rpc('biblioteca_solicitar_livro', { p_livro_id: livroId });
     if (error) throw error;
     return data;
   };
@@ -597,7 +979,7 @@
     if (!session) throw new Error('Sessão expirada. Entre novamente.');
     const profile = await getProfile(session.user.id);
     let query = client.from('eventos_agenda')
-      .select('*, turmas(id,nome,serie), perfis!eventos_agenda_professor_id_fkey(id,nome,tipo_professor)')
+      .select('*, turmas!eventos_agenda_turma_id_fkey(id,nome,serie), perfis!eventos_agenda_professor_id_fkey(id,nome,tipo_professor)')
       .order('inicio', { ascending: true });
     if (from) query = query.gte('inicio', from);
     if (to) query = query.lt('inicio', to);
@@ -695,10 +1077,104 @@
     return { session, profile };
   };
 
+  const listExperienceProgress = async ({ subject } = {}) => {
+    if (!ensureConfigured()) throw new Error('Supabase não configurado.');
+    const { session } = await requireStudentSession();
+    let query = client.from('progresso_experiencias')
+      .select('materia_codigo,experiencia_codigo,concluida,concluida_em,updated_at')
+      .eq('aluno_id', session.user.id);
+    if (subject) query = query.eq('materia_codigo', subject);
+    const { data, error } = await query.order('updated_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  };
+
+  const completeExperience = async ({ subject, code }) => {
+    if (!['matematica', 'fisica', 'portugues', 'redacao', 'tecnico_administracao', 'tecnico_informatica'].includes(subject)) {
+      throw new Error('Matéria inválida.');
+    }
+    if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(String(code || ''))) throw new Error('Experiência inválida.');
+    const { session } = await requireStudentSession();
+    const now = new Date().toISOString();
+    const { data, error } = await client.from('progresso_experiencias').upsert({
+      aluno_id: session.user.id,
+      materia_codigo: subject,
+      experiencia_codigo: code,
+      concluida: true,
+      concluida_em: now,
+      updated_at: now
+    }, { onConflict: 'aluno_id,materia_codigo,experiencia_codigo' }).select().single();
+    if (error) throw error;
+    return data;
+  };
+
+  const getStudentDashboard = async () => {
+    if (!ensureConfigured()) throw new Error('Supabase não configurado.');
+    const { session, profile } = await requireStudentSession();
+    if (!profile?.curso_tecnico) {
+      throw new Error('Seu curso técnico ainda não foi definido pela escola.');
+    }
+
+    const since = new Date();
+    since.setDate(since.getDate() - 6);
+    since.setHours(0, 0, 0, 0);
+
+    const [trailsResult, notesResult, essaysResult, historyResult, xpResult, experiencesResult] = await Promise.all([
+      client.from('trilhas')
+        .select('id,titulo,descricao,materia,materia_codigo,descritor_sedu,dificuldade,duracao_estimada_min,recompensa_xp,prazo,created_at,atividades(id,titulo,descricao,ordem,status,tipo_conteudo,duracao_minutos,recompensa_xp,progresso_atividades(aluno_id,concluida,nota,concluida_em))')
+        .eq('publicada', true)
+        .order('created_at', { ascending: false }),
+      client.from('notas')
+        .select('materia,materia_codigo,valor,created_at')
+        .eq('aluno_id', session.user.id)
+        .order('created_at', { ascending: false }),
+      client.from('redacoes')
+        .select('id,nota,status,updated_at')
+        .eq('aluno_id', session.user.id)
+        .order('updated_at', { ascending: false }),
+      client.from('historico_estudos')
+        .select('id,evento,created_at,trilha_id,atividade_id')
+        .eq('aluno_id', session.user.id)
+        .gte('created_at', since.toISOString())
+        .order('created_at', { ascending: true }),
+      client.from('xp_movimentos')
+        .select('xp')
+        .eq('aluno_id', session.user.id),
+      client.from('progresso_experiencias')
+        .select('materia_codigo,experiencia_codigo,concluida,concluida_em')
+        .eq('aluno_id', session.user.id)
+    ]);
+
+    for (const result of [trailsResult, notesResult, essaysResult, historyResult, xpResult, experiencesResult]) {
+      if (result.error) throw result.error;
+    }
+
+    const trails = (trailsResult.data || []).map((trail) => {
+      const activities = (trail.atividades || [])
+        .filter((activity) => activity.status === 'publicada')
+        .sort((a, b) => Number(a.ordem) - Number(b.ordem))
+        .map((activity) => ({
+          ...activity,
+          progresso: (activity.progresso_atividades || []).find((item) => item.aluno_id === session.user.id) || null
+        }));
+      return { ...trail, atividades: activities };
+    });
+
+    return {
+      profile,
+      trails,
+      notes: notesResult.data || [],
+      essays: essaysResult.data || [],
+      experiences: experiencesResult.data || [],
+      history: historyResult.data || [],
+      xp: (xpResult.data || []).reduce((total, item) => total + Number(item.xp || 0), 0)
+    };
+  };
+
   const listStudyCatalog = async ({ search = '', subject = '', area = '', difficulty = '', savedOnly = false } = {}) => {
     if (!ensureConfigured()) return [];
     const { session, profile } = await requireStudentSession();
-    let query = client.from('trilhas').select('id,titulo,descricao,materia,descritor_sedu,tipo,area_conhecimento,serie,trimestre,dificuldade,duracao_estimada_min,recompensa_xp,capa_url,tags,prazo,turma_id,atividades(id,titulo,ordem,status,tipo_conteudo,duracao_minutos,recompensa_xp,obrigatoria,prerequisito_atividade_id,progresso_atividades(aluno_id,concluida,nota,concluida_em))').eq('publicada', true).order('created_at', { ascending: false });
+    let query = client.from('trilhas').select('id,titulo,descricao,materia,materia_codigo,descritor_sedu,tipo,area_conhecimento,serie,trimestre,dificuldade,duracao_estimada_min,recompensa_xp,capa_url,tags,prazo,turma_id,atividades(id,titulo,ordem,status,tipo_conteudo,duracao_minutos,recompensa_xp,obrigatoria,prerequisito_atividade_id,progresso_atividades(aluno_id,concluida,nota,concluida_em))').eq('publicada', true).order('created_at', { ascending: false });
     query = profile?.turma_id ? query.or(`turma_id.is.null,turma_id.eq.${profile.turma_id}`) : query.is('turma_id', null);
     if (search.trim()) query = query.or(`titulo.ilike.%${search.trim()}%,descricao.ilike.%${search.trim()}%,materia.ilike.%${search.trim()}%`);
     if (subject) query = query.eq('materia', subject);
@@ -724,7 +1200,7 @@
     if (!ensureConfigured()) return null;
     const { session } = await requireStudentSession();
     const [trailResult, savedResult, prerequisitesResult, xpResult] = await Promise.all([
-      client.from('trilhas').select('id,titulo,descricao,materia,descritor_sedu,tipo,area_conhecimento,serie,trimestre,dificuldade,duracao_estimada_min,recompensa_xp,capa_url,tags,prazo,atividades(id,titulo,descricao,ordem,status,tipo_conteudo,duracao_minutos,recompensa_xp,obrigatoria,prerequisito_atividade_id,progresso_atividades(aluno_id,concluida,nota,concluida_em))').eq('id', trailId).eq('publicada', true).maybeSingle(),
+      client.from('trilhas').select('id,titulo,descricao,materia,materia_codigo,descritor_sedu,tipo,area_conhecimento,serie,trimestre,dificuldade,duracao_estimada_min,recompensa_xp,capa_url,tags,prazo,atividades(id,titulo,descricao,ordem,status,tipo_conteudo,duracao_minutos,recompensa_xp,obrigatoria,prerequisito_atividade_id,progresso_atividades(aluno_id,concluida,nota,concluida_em))').eq('id', trailId).eq('publicada', true).maybeSingle(),
       client.from('conteudos_salvos').select('id').eq('aluno_id', session.user.id).eq('trilha_id', trailId).maybeSingle(),
       client.from('trilhas_prerequisitos').select('prerequisito_trilha_id, trilhas!trilhas_prerequisitos_prerequisito_trilha_id_fkey(id,titulo,materia)').eq('trilha_id', trailId),
       client.from('xp_movimentos').select('xp').eq('aluno_id', session.user.id)
@@ -936,14 +1412,9 @@
   };
 
   const mount = async () => {
-    // O preview é somente uma vitrine local: não consulta nem altera dados reais.
-    if (previewMode) {
-      document.dispatchEvent(new CustomEvent('ominisaber:ready', { detail: { client: null, session: null, preview: true } }));
-      return;
-    }
     if (!configured) {
       if (isPublicAuthPage) return;
-      notify('Modo demonstração: configure o Supabase para salvar e carregar dados.', 'warning');
+      notify('O Supabase não está configurado. Preencha as chaves para carregar dados reais.', 'warning');
       return;
     }
 
@@ -957,6 +1428,10 @@
       const profile = await getProfile(session.user.id);
       document.querySelectorAll('[data-profile-name]').forEach((element) => {
         element.textContent = profile?.nome || session.user.email;
+      });
+      document.querySelectorAll('[data-student-sidebar-grade]').forEach((element) => {
+        const grade = profile?.turmas?.serie;
+        element.textContent = grade ? `${grade}º ano do Ensino Médio` : 'Ensino Médio';
       });
       document.querySelectorAll('[data-profile-email]').forEach((element) => {
         element.value = session.user.email || '';
@@ -992,9 +1467,13 @@
     notify,
     getSession,
     getProfile,
+    getProfileDestination,
     requireRole,
     signIn,
     signUp,
+    resendSignupConfirmation,
+    requestPasswordReset,
+    clearSession,
     signOut,
     listTrilhas,
     listStudentNotes,
@@ -1007,7 +1486,10 @@
     saveEssayPlanning,
     listTeacherClasses,
     createWritingPrompt,
+    listTeacherWritingPrompts,
     listTeacherEssays,
+    listEssayCorrectionDrafts,
+    saveEssayCorrectionDraft,
     correctEssay,
     getTeacherSummary,
     assertTeacherSpecialty,
@@ -1029,6 +1511,18 @@
     submitEssayDraft,
     getStudentEssay,
     listStudentEssayHistory,
+    getManagerOverview,
+    listManagerClasses,
+    saveManagerClass,
+    listManagerProfiles,
+    updateManagerProfile,
+    listManagerLinks,
+    saveManagerLink,
+    removeManagerLink,
+    listManagerDescriptors,
+    saveManagerDescriptor,
+    listManagerAudit,
+    manageManagerAccess,
     updateProfile,
     requestLoan,
     listAgendaEvents,
@@ -1039,6 +1533,9 @@
     markNotificationRead,
     markAllNotificationsRead,
     subscribeToAgenda,
+    listExperienceProgress,
+    completeExperience,
+    getStudentDashboard,
     listStudyCatalog,
     getStudyTrail,
     getStudyActivity,
@@ -1055,5 +1552,8 @@
     getStudyXp
   };
 
-  window.addEventListener('DOMContentLoaded', () => { mount().catch((error) => notify(error.message, 'error')); });
+  window.addEventListener('DOMContentLoaded', () => {
+    setupUniversalSidebar();
+    mount().catch((error) => notify(error.message, 'error'));
+  });
 })();

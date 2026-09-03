@@ -1,9 +1,14 @@
 (() => {
   const body = document.body;
-  const storageKey = 'ominisaber-matematica-progress';
+  let progressCache = {};
   const escapeHTML = (value = '') => String(value).replace(/[&<>'"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' })[char]);
-  const getProgress = () => { try { return JSON.parse(localStorage.getItem(storageKey) || '{}'); } catch { return {}; } };
-  const saveProgress = (value) => localStorage.setItem(storageKey, JSON.stringify(value));
+  const getProgress = () => progressCache;
+  const loadProgress = async () => {
+    if (!window.OminiSaber?.configured) throw new Error('O Supabase não está configurado.');
+    const rows = await window.OminiSaber.listExperienceProgress({ subject: 'matematica' });
+    progressCache = Object.fromEntries(rows.map((item) => [item.experiencia_codigo, { completed: item.concluida, completedAt: item.concluida_em }]));
+    return progressCache;
+  };
   const toast = (message) => {
     document.querySelector('[data-toast]')?.remove();
     const node = document.createElement('div');
@@ -81,23 +86,24 @@
       });
     } catch (error) { cards.forEach((card) => { card.querySelector('[data-quiz-copy]').textContent = 'Não foi possível consultar o quiz agora.'; card.querySelector('[data-open-quiz]').hidden = true; }); }
   };
-  const complete = (id, message) => {
-    const progress = getProgress(); progress[id] = { completed: true, completedAt: new Date().toISOString() }; saveProgress(progress);
-    document.querySelectorAll('[data-completion-state]').forEach((node) => { node.textContent = 'Atividade concluída'; }); toast(message || 'Atividade concluída.');
+  const complete = async (id, message) => {
+    try {
+      const row = await window.OminiSaber.completeExperience({ subject: 'matematica', code: id });
+      progressCache[id] = { completed: true, completedAt: row.concluida_em };
+      document.querySelectorAll('[data-completion-state]').forEach((node) => { node.textContent = 'Atividade concluída'; });
+      toast(message || 'Atividade concluída e salva na sua conta.');
+    } catch (error) { toast(error.message || 'Não foi possível salvar o progresso.'); }
   };
   const id = body.dataset.experience;
-  if (id && getProgress()[id]?.completed) document.querySelectorAll('[data-completion-state]').forEach((node) => { node.textContent = 'Atividade concluída'; });
-  window.OminiMath = { complete, getProgress, toast, loadTeacherQuiz };
+  const setupCompletionState = async () => {
+    await loadProgress();
+    if (id && getProgress()[id]?.completed) document.querySelectorAll('[data-completion-state]').forEach((node) => { node.textContent = 'Atividade concluída'; });
+  };
+  window.OminiMath = { complete, getProgress, loadProgress, toast, loadTeacherQuiz };
   setupMenu();
-  document.addEventListener('ominisaber:ready', (event) => {
+  document.addEventListener('ominisaber:ready', () => {
     setProfile();
-    if (event.detail?.preview) {
-      document.querySelectorAll('[data-teacher-quiz]').forEach((card) => {
-        card.querySelector('[data-quiz-copy]').textContent = 'Disponível quando o professor publicar.';
-        card.querySelector('[data-open-quiz]').hidden = true;
-      });
-      return;
-    }
+    setupCompletionState().catch((error) => toast(error.message));
     loadTeacherQuiz();
   });
   document.addEventListener('DOMContentLoaded', () => { if (!window.OminiSaber?.configured) loadTeacherQuiz(); });

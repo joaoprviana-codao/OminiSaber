@@ -21,7 +21,7 @@ OminiSaber/
 │   ├── bibliotecaria/
 │   ├── professor/
 │   │   ├── professor_matematica/{dashboard,laboratorio,avaliacoes}/
-│   │   ├── professor_portugues/{dashboard,laboratorio,avaliacoes}/
+│   │   ├── professor_portugues/{dashboard,laboratorio,avaliacoes,redacoes}/
 │   │   ├── professor_tecnico_administracao/{dashboard,laboratorio,avaliacoes}/
 │   │   ├── professor_tecnico_informatica/{dashboard,laboratorio,avaliacoes}/
 │   │   └── specialty/

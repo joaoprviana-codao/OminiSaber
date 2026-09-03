@@ -12,22 +12,14 @@ python -m http.server 4173
 
 Abra o endereço local na porta 4173. O arquivo raiz redireciona para o login.
 
-Para QA visual das páginas antigas, use ?preview=1. Os novos espaços docentes não utilizam dados fictícios: exigem sessão Supabase e mostram estados vazios quando ainda não há conteúdo.
-
-- frontend/aluno/dashboard_principal/index.html?preview=1
-- frontend/aluno/minha_evolucao/index.html?preview=1
-- frontend/bibliotecaria/dashboard/index.html?preview=1
-- frontend/bibliotecaria/gestao_emprestimos/index.html?preview=1
-- frontend/professor/dashboard/index.html?preview=1
-- frontend/professor/redacoes/index.html?preview=1
-- frontend/aluno/laboratorio_de_redacao/index.html?preview=1
+Todas as áreas exigem sessão e dados reais do Supabase. Sem configuração, sessão ou conteúdo publicado, a interface mostra um estado vazio ou uma mensagem de erro; não há modo de demonstração com registros fictícios.
 
 As rotas docentes de produção ficam em `frontend/professor/professor_*/`.
 
 ## Configurar Supabase
 
-1. Execute backend/ominisaber-schema.sql.
-2. Execute `backend/ominisaber-schema-espacos-docentes.sql` e os demais schemas complementares na ordem descrita em docs/padroes-do-projeto.md.
+1. Para uma instalação limpa, execute apenas `backend/ominisaber-schema-completo.sql` no SQL Editor.
+2. A ordem modular e as instruções de atualização ficam em `backend/README-SQL.md`.
 3. Configure URL e chave anon em backend/ominisaber-supabase-config.js.
 4. Nunca use service_role no navegador.
 

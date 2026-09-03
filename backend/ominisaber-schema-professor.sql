@@ -1,6 +1,8 @@
 -- OminiSaber | Extensão da área do professor e propostas de redação
 -- Execute após backend/ominisaber-schema.sql apenas em bancos já existentes.
 
+begin;
+
 do $$ begin
   create type public.tipo_professor as enum (
     'matematica', 'portugues', 'tecnico_administracao', 'tecnico_informatica'
@@ -23,12 +25,12 @@ create index if not exists idx_perfis_tipo_professor on public.perfis (tipo_prof
 
 create or replace function public.usuario_tipo_professor()
 returns public.tipo_professor
-language sql stable security definer set search_path = public
-as $$ select tipo_professor from public.perfis where id = auth.uid(); $$;
+language sql stable security definer set search_path = ''
+as $$ select tipo_professor from public.perfis where id = (select auth.uid()); $$;
 
 create or replace function public.professor_pode_gerenciar_materia(materia_input text)
 returns boolean
-language sql stable security definer set search_path = public
+language sql stable security definer set search_path = ''
 as $$
   select case public.usuario_tipo_professor()
     when 'matematica' then lower(materia_input) like any (array['%matem%', '%geometr%', '%estatíst%', '%estatist%'])
@@ -38,6 +40,11 @@ as $$
     else false
   end;
 $$;
+
+revoke all on function public.usuario_tipo_professor() from public, anon, authenticated;
+revoke all on function public.professor_pode_gerenciar_materia(text) from public, anon, authenticated;
+grant execute on function public.usuario_tipo_professor() to authenticated;
+grant execute on function public.professor_pode_gerenciar_materia(text) to authenticated;
 
 create table if not exists public.professor_turmas (
   professor_id uuid not null references public.perfis(id) on delete cascade,
@@ -88,13 +95,14 @@ alter table public.redacoes
 
 create index if not exists idx_propostas_redacao_professor on public.propostas_redacao (professor_id);
 create index if not exists idx_propostas_redacao_turma on public.propostas_redacao (turma_id, publicada, prazo);
+create index if not exists idx_redacoes_proposta on public.redacoes (proposta_id) where proposta_id is not null;
 
 alter table public.propostas_redacao enable row level security;
 
 drop trigger if exists set_propostas_redacao_updated_at on public.propostas_redacao;
 create trigger set_propostas_redacao_updated_at
 before update on public.propostas_redacao
-for each row execute procedure public.set_updated_at();
+for each row execute function public.set_updated_at();
 
 -- Reaplica as políticas com especialidade e múltiplas turmas.
 drop policy if exists perfis_select on public.perfis;
@@ -181,7 +189,12 @@ using (
 )
 with check (
   aluno_id = auth.uid() or public.usuario_role() = 'gestor'
-  or public.usuario_tipo_professor() = 'portugues'
+  or (public.usuario_tipo_professor() = 'portugues' and exists (
+    select 1
+    from public.perfis p
+    join public.professor_turmas pt on pt.turma_id = p.turma_id
+    where p.id = aluno_id and pt.professor_id = auth.uid()
+  ))
 );
 
 drop policy if exists progresso_select on public.progresso_atividades;
@@ -193,3 +206,5 @@ using (
     where p.id = aluno_id and pt.professor_id = auth.uid()
   ))
 );
+
+commit;

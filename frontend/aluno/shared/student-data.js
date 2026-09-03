@@ -53,11 +53,6 @@
     return layout('Minha evolução', 'Boletim e histórico baseados nos seus registros reais.', `<div class="grid gap-6 lg:grid-cols-3">${card('Notas', `<ul>${notesHTML}</ul>`)}${card('Progresso', `<ul>${progressHTML}</ul>`)}${card('Redações', `<p class="text-3xl font-bold text-indigo-600">${redacoes.length}</p><p class="mt-2 text-sm text-slate-500">produção(ões) enviada(s)</p>`)}</div>`);
   };
 
-  const renderConfiguracoes = async () => {
-    const profile = await api().getProfile();
-    return layout('Configurações', 'Atualize seus dados e preferências da conta.', `<div class="grid gap-6 lg:grid-cols-2"><section class="rounded-xl border border-slate-100 bg-white p-5 shadow-sm"><h2 class="font-headline-sm text-headline-sm">Perfil</h2><label class="mt-5 block text-sm font-semibold text-slate-700">Nome</label><input data-profile-name-input value="${escapeHTML(profile?.nome || '')}" class="mt-2 w-full rounded-lg border-slate-200 px-4 py-3"><label class="mt-4 block text-sm font-semibold text-slate-700">E-mail</label><input data-profile-email value="${escapeHTML((await api().getSession())?.user?.email || '')}" type="email" class="mt-2 w-full rounded-lg border-slate-200 px-4 py-3"><button data-save-profile class="mt-5 rounded-lg bg-indigo-600 px-5 py-3 font-semibold text-white">Salvar alterações</button></section>${card('Aparência', '<div class="flex flex-wrap gap-2"><button data-student-theme="light" class="rounded-lg border px-4 py-2 text-sm">Claro</button><button data-student-theme="dark" class="rounded-lg border px-4 py-2 text-sm">Escuro</button><button data-student-theme="system" class="rounded-lg border px-4 py-2 text-sm">Sistema</button></div>')}</div>`);
-  };
-
   const render = async () => {
     const main = document.querySelector('main');
     if (!main) return;
@@ -72,7 +67,7 @@
         if (['Ana Silva', 'Estudante Modelo'].includes(element.textContent.trim())) element.textContent = profile?.nome || 'Aluno';
         if (element.textContent.trim() === '3º Ano' || element.textContent.trim() === 'Ensino Médio') element.textContent = profile?.turma_id ? 'Turma cadastrada' : 'Turma não definida';
       });
-      const views = { dashboard_principal: renderDashboard, modulo_de_trilhas: renderTrilhas, biblioteca_digital: renderBiblioteca, laboratorio_de_redacao: renderRedacao, minha_evolucao: renderEvolucao, configuracoes: renderConfiguracoes };
+      const views = { dashboard_principal: renderDashboard, modulo_de_trilhas: renderTrilhas, biblioteca_digital: renderBiblioteca, laboratorio_de_redacao: renderRedacao, minha_evolucao: renderEvolucao };
       if (!views[page]) return;
       main.innerHTML = await views[page]();
       bindActions();

@@ -1,12 +1,5 @@
 (() => {
   const api = window.OminiSaber;
-  const previewMode = new URLSearchParams(window.location.search).get("preview") === "1";
-  const previewRequests = [
-    { id: "demo-1", status: "pendente", solicitado_em: "2026-08-30", perfis: { nome: "Camila Alves", turmas: { nome: "3º C" } }, livros: { titulo: "Quarto de Despejo", autor: "Carolina Maria de Jesus" } },
-    { id: "demo-2", status: "aprovado", solicitado_em: "2026-08-30", perfis: { nome: "Pedro Lima", turmas: { nome: "1º A" } }, livros: { titulo: "O Cortiço", autor: "Aluísio Azevedo" } },
-    { id: "demo-3", status: "emprestado", solicitado_em: "2026-08-21", devolucao_prevista_em: "2026-08-26", perfis: { nome: "Júlia Mendes", turmas: { nome: "2º B" } }, livros: { titulo: "Capitães da Areia", autor: "Jorge Amado" } },
-    { id: "demo-4", status: "devolvido", solicitado_em: "2026-08-18", devolucao_prevista_em: "2026-08-28", perfis: { nome: "Rafael Nunes", turmas: { nome: "2º A" } }, livros: { titulo: "Vidas Secas", autor: "Graciliano Ramos" } },
-  ];
   const toast = (message, type = "success") => {
     let element = document.querySelector("[data-toast]");
     if (!element) {
@@ -41,11 +34,11 @@
         )
       : "--";
   const getRequests = async (status) => {
-    if (previewMode || !api?.configured) return previewRequests.filter((item) => status === "atrasado" ? item.status === "emprestado" : !status || item.status === status);
+    if (!api?.configured) throw new Error("O Supabase não está configurado.");
     let query = api.client
       .from("solicitacoes_emprestimo")
       .select(
-        "*, livros(titulo, autor), perfis!solicitacoes_emprestimo_aluno_id_fkey(nome, turma_id, turmas(nome))",
+        "*, livros(titulo, autor), exemplares(numero_serie,isbn_individual,secoes_fisicas!exemplares_secao_fisica_id_fkey(nome)), perfis!solicitacoes_emprestimo_aluno_id_fkey(nome, turma_id, turmas(nome))",
       )
       .order("created_at", { ascending: false });
     if (status && status !== "atrasado") query = query.eq("status", status);
@@ -54,13 +47,7 @@
     return data || [];
   };
   const loadStats = async () => {
-    if (previewMode || !api?.configured) {
-      document.querySelector("[data-total]")?.replaceChildren("320");
-      document.querySelector("[data-available]")?.replaceChildren("284");
-      document.querySelector("[data-pending]")?.replaceChildren("6");
-      document.querySelector("[data-overdue]")?.replaceChildren("3");
-      return;
-    }
+    if (!api?.configured) throw new Error("O Supabase não está configurado.");
     const [
       { data: books, error: bookError },
       { data: requests, error: requestError },
@@ -91,17 +78,11 @@
         new Date(item.devolucao_prevista_em) < new Date(),
     ).length;
   };
-  const action = async (rpc, id) => {
-    if (previewMode || !api?.configured) {
-      toast("Operação simulada com sucesso no modo de visualização.");
-      window.dispatchEvent(new CustomEvent("library:refresh"));
-      return;
-    }
-    const { data: session } = await api.client.auth.getSession();
-    const args =
-      rpc === "biblioteca_aprovar_solicitacao"
-        ? { p_solicitacao_id: id, p_aprovado_por: session.session.user.id }
-        : { p_solicitacao_id: id };
+  const action = async (rpc, id, extra = {}) => {
+    if (!api?.configured) throw new Error("O Supabase não está configurado.");
+    const args = rpc === "biblioteca_recusar_solicitacao"
+      ? { p_solicitacao_id: id, p_motivo: extra.motivo }
+      : { p_solicitacao_id: id };
     const { error } = await api.client.rpc(rpc, args);
     if (error) throw error;
     toast("Operação concluída com sucesso.");
@@ -145,13 +126,15 @@
                 : "";
             const button =
               item.status === "pendente"
-                ? `<button class="button secondary" data-action="approve" data-id="${item.id}">Aprovar</button>`
+                ? `<div class="row-actions"><button class="button secondary" data-action="separate" data-id="${item.id}"><span class="material-symbols-outlined">inventory_2</span>Separar</button><button class="button danger icon-only" data-reject-open="${item.id}" aria-label="Recusar solicitação"><span class="material-symbols-outlined">close</span></button></div>`
                 : item.status === "aprovado"
                   ? `<button class="button" data-action="deliver" data-id="${item.id}">Confirmar entrega</button>`
                   : item.status === "emprestado"
                     ? `<button class="button danger" data-action="return" data-id="${item.id}">Dar baixa / devolver</button>`
                     : "";
-            return `<tr><td><strong>${escape(item.perfis?.nome)}</strong><small>${escape(item.perfis?.turmas?.nome || "Turma não informada")}</small></td><td><strong>${escape(item.livros?.titulo)}</strong><small>${escape(item.livros?.autor)}</small></td><td><span class="badge ${statusClass}">${label}</span><small>${item.status === "emprestado" ? `Até ${date(item.devolucao_prevista_em)}` : date(item.solicitado_em)}</small></td><td>${button}</td></tr>`;
+            const copy = item.exemplares;
+            const location = copy?.secoes_fisicas?.nome || item.observacao || "Localização pendente";
+            return `<tr><td data-label="Aluno / turma"><strong>${escape(item.perfis?.nome)}</strong><small>${escape(item.perfis?.turmas?.nome || "Turma não informada")}</small></td><td data-label="Livro"><strong>${escape(item.livros?.titulo)}</strong><small>${escape(item.livros?.autor)}</small>${copy ? `<small>Exemplar ${escape(copy.numero_serie)} · ${escape(location)}</small>` : ""}</td><td data-label="Status / prazo"><span class="badge ${statusClass}">${label}</span><small>${item.status === "emprestado" ? `Até ${date(item.devolucao_prevista_em)}` : date(item.solicitado_em)}</small></td><td data-label="Ação">${button}</td></tr>`;
           })
           .join("")
       : '<tr><td colspan="4" class="empty">Nenhum registro encontrado.</td></tr>';
@@ -162,7 +145,7 @@
       if (!button) return;
       button.disabled = true;
       const rpc = {
-        approve: "biblioteca_aprovar_solicitacao",
+        separate: "biblioteca_separar_solicitacao",
         deliver: "biblioteca_confirmar_entrega",
         return: "biblioteca_registrar_devolucao",
       }[button.dataset.action];
@@ -176,24 +159,50 @@
   const setupManagement = () => {
     const table = document.querySelector("[data-requests]");
     if (!table) return;
-    let current = "pendente";
+    const allowedTabs = ["pendente", "aprovado", "emprestado", "atrasado", "devolvido"];
+    let current = new URLSearchParams(location.search).get("aba") || "pendente";
+    if (!allowedTabs.includes(current)) current = "pendente";
     const search = document.querySelector("[data-search]");
     const render = () =>
       renderRequests(table, current, search.value).catch((error) =>
         toast(error.message, "error"),
       );
-    document.querySelectorAll("[data-tab]").forEach((tab) =>
+    document.querySelectorAll("[data-tab]").forEach((tab) => {
+      tab.classList.toggle("active", tab.dataset.tab === current);
       tab.addEventListener("click", () => {
         current = tab.dataset.tab;
         document
           .querySelectorAll("[data-tab]")
           .forEach((item) => item.classList.toggle("active", item === tab));
         render();
-      }),
-    );
+      });
+    });
     search.addEventListener("input", render);
     bindActions(table);
+    const rejectDialog = document.querySelector("[data-reject-dialog]");
+    const rejectForm = document.querySelector("[data-reject-form]");
+    table.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-reject-open]");
+      if (!button) return;
+      rejectForm.elements.solicitacao_id.value = button.dataset.rejectOpen;
+      rejectForm.elements.motivo.value = "";
+      rejectDialog.showModal();
+      rejectForm.elements.motivo.focus();
+    });
+    document.querySelectorAll("[data-reject-close]").forEach((button) => button.addEventListener("click", () => rejectDialog.close()));
+    rejectForm?.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const button = rejectForm.querySelector('[type="submit"]');
+      button.disabled = true;
+      try {
+        await action("biblioteca_recusar_solicitacao", rejectForm.elements.solicitacao_id.value, { motivo: rejectForm.elements.motivo.value.trim() });
+        rejectDialog.close();
+      } catch (error) { toast(error.message, "error"); }
+      finally { button.disabled = false; }
+    });
     window.addEventListener("library:refresh", render);
+    const channel = api.client.channel("biblioteca-circulacao").on("postgres_changes", { event: "*", schema: "public", table: "solicitacoes_emprestimo" }, render).subscribe();
+    window.addEventListener("beforeunload", () => api.client.removeChannel(channel), { once: true });
     render();
   };
   const setupInventory = () => {
@@ -228,7 +237,17 @@
   const setupSettings = () => {
     const form = document.querySelector("[data-library-settings]");
     if (!form) return;
-    if (previewMode || !api?.configured) return;
+    if (!api?.configured) return toast("O Supabase não está configurado.", "error");
+    const renderPreview = () => {
+      const days = Number(form.prazo_dias.value || 15);
+      const limit = Number(form.limite_livros.value || 1);
+      const daysTarget = document.querySelector("[data-rules-days]");
+      const limitTarget = document.querySelector("[data-rules-limit]");
+      if (daysTarget) daysTarget.textContent = `${days} dias`;
+      if (limitTarget) limitTarget.textContent = `${limit} ${limit === 1 ? "livro" : "livros"}`;
+    };
+    form.addEventListener("change", renderPreview);
+    renderPreview();
     api.client
       .from("configuracoes_biblioteca")
       .select("*")
@@ -238,10 +257,13 @@
         if (data) {
           form.prazo_dias.value = data.prazo_dias;
           form.limite_livros.value = data.limite_livros;
+          renderPreview();
         }
       });
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
+      const button = form.querySelector("[data-settings-save]");
+      button.disabled = true;
       const { error } = await api.client
         .from("configuracoes_biblioteca")
         .update({
@@ -251,6 +273,7 @@
         .eq("id", true);
       if (error) toast(error.message, "error");
       else toast("Regras da biblioteca atualizadas.");
+      button.disabled = false;
     });
   };
   const initialize = () => {
@@ -260,7 +283,7 @@
     setupSettings();
   };
   document.addEventListener("ominisaber:ready", initialize);
-  if (previewMode || !api?.configured) initialize();
+  if (!api?.configured) initialize();
   document
     .querySelector("[data-signout]")
     ?.addEventListener("click", () => api.signOut());

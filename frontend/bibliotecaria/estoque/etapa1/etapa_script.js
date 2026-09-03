@@ -2,7 +2,6 @@
 	const api = window.OminiSaber;
 	const state = { authors: [], isbnValues: [], scanner: null, selectedAuthor: null };
 	const $ = (selector) => document.querySelector(selector);
-	const localKey = "ominisaber:bibliotecaria:autores";
 
 	const toast = (message, type = "success") => {
 		const element = $("[data-toast]");
@@ -17,18 +16,9 @@
 	const normalize = (value) => String(value || "").trim().replace(/\s+/g, " ");
 	const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[char]);
 
-	const readLocalAuthors = () => {
-		try { return JSON.parse(localStorage.getItem(localKey) || "[]"); } catch { return []; }
-	};
-
-	const saveLocalAuthor = (author) => {
-		const authors = [...readLocalAuthors(), author];
-		localStorage.setItem(localKey, JSON.stringify(authors));
-	};
-
 	const fetchAuthors = async (term = "") => {
 		const query = normalize(term);
-		if (!online()) return readLocalAuthors().filter((author) => author.nome.toLowerCase().includes(query.toLowerCase()));
+		if (!online()) throw new Error("O Supabase não está configurado.");
 		let request = api.client.from("autores").select("id, nome").order("nome").limit(30);
 		if (query) request = request.ilike("nome", `%${query}%`);
 		const { data, error } = await request;
@@ -67,12 +57,10 @@
 			const name = normalize(new FormData(event.currentTarget).get("nome"));
 			if (!name) return;
 			try {
-				let author;
-				if (online()) {
-					const result = await api.client.from("autores").insert({ nome: name }).select("id, nome").single();
-					if (result.error) throw result.error;
-					author = result.data;
-				} else { author = { id: `local-${Date.now()}`, nome: name }; saveLocalAuthor(author); }
+				if (!online()) throw new Error("O Supabase não está configurado.");
+				const result = await api.client.from("autores").insert({ nome: name }).select("id, nome").single();
+				if (result.error) throw result.error;
+				const author = result.data;
 				event.currentTarget.reset(); $("[data-new-author-modal]").close(); selectAuthor(author); toast("Autor cadastrado e selecionado.");
 			} catch (error) { toast(error.message?.includes("duplicate") ? "Este autor já está cadastrado." : (error.message || "Não foi possível cadastrar o autor."), "error"); }
 		});
@@ -140,15 +128,10 @@
 		try {
 			updatePreview();
 			const isbns = state.isbnValues.slice(0, quantity).map((isbn) => isbn?.replace(/\D/g, "") || null);
-			let result;
-			if (online()) {
-				const response = await api.client.rpc("biblioteca_cadastrar_lote_livros", { p_titulo: values.titulo.trim(), p_autor_id: values.autor_id, p_genero: values.genero, p_isbn: values.isbn.replace(/\D/g, "") || null, p_prefixo: values.prefixo, p_isbns: isbns });
-				if (response.error) throw response.error;
-				result = response.data;
-			} else {
-				result = { quantidade };
-				toast("Modo demonstração: lote simulado neste navegador.", "info");
-			}
+			if (!online()) throw new Error("O Supabase não está configurado.");
+			const response = await api.client.rpc("biblioteca_cadastrar_lote_livros", { p_titulo: values.titulo.trim(), p_autor_id: values.autor_id, p_genero: values.genero, p_isbn: values.isbn.replace(/\D/g, "") || null, p_prefixo: values.prefixo, p_isbns: isbns });
+			if (response.error) throw response.error;
+			const result = response.data;
 			toast(`${result.quantidade || quantity} exemplar(es) cadastrado(s) com sucesso.`);
 			form.reset(); $("[name=quantidade]").value = 1; state.isbnValues = []; state.selectedAuthor = null; updatePreview();
 		} catch (error) { toast(error.message || "Não foi possível cadastrar o lote.", "error"); } finally { button.disabled = false; }

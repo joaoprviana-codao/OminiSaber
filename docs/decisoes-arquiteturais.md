@@ -37,13 +37,13 @@
 - Aluno: descoberta, domínio, motivação e feedback educativo.
 - Bibliotecária: fila operacional, exceções, busca e conclusão rápida.
 
-## ADR-006 — Modo de visualização isolado
+## ADR-006 — Dados reais e falha explícita
 
-**Decisão:** páginas redesenhadas antigas podem aceitar `?preview=1` com conteúdo demonstrativo. Nos novos espaços docentes, o modo apresenta apenas estados vazios e bloqueia qualquer gravação, evitando confundir demonstração visual com dados reais.
+**Decisão:** as áreas operacionais não fabricam conteúdo quando o Supabase está indisponível. A interface apresenta estado vazio ou erro e só grava com sessão válida.
 
-**Motivo:** permite QA visual sem contas ou dados pessoais.
+**Motivo:** notas, progresso, empréstimos e produções escolares não podem ser confundidos com registros fictícios.
 
-**Limite:** não cria sessão, não consulta dados reais e não concede autorização.
+**Limite:** testes visuais devem usar uma instância de desenvolvimento com dados de teste identificados no próprio banco e protegidos pelas mesmas políticas RLS.
 
 ## ADR-007 — Rotas canônicas
 

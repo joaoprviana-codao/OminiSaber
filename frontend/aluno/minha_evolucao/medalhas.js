@@ -1,39 +1,4 @@
 (() => {
-  const fallbackAchievements = [
-    {
-      id: "primeira-redacao",
-      nome: "Primeira Redação",
-      descricao: "Envie sua primeira redação para avaliação.",
-      categoria: "redacao",
-      xp: 150,
-      icone: "edit_note",
-    },
-    {
-      id: "leitor-assiduo",
-      nome: "Leitor Assíduo",
-      descricao: "Conclua seu primeiro empréstimo na biblioteca.",
-      categoria: "leitura",
-      xp: 200,
-      icone: "menu_book",
-    },
-    {
-      id: "explorador-trilhas",
-      nome: "Explorador de Trilhas",
-      descricao: "Conclua sua primeira atividade de uma trilha.",
-      categoria: "trilhas",
-      xp: 100,
-      icone: "route",
-    },
-    {
-      id: "foco-total",
-      nome: "Foco Total",
-      descricao: "Alcance média acima de 8 em uma matéria.",
-      categoria: "geral",
-      xp: 250,
-      icone: "local_fire_department",
-    },
-  ];
-
   const state = {
     achievements: [],
     unlocked: new Map(),
@@ -126,55 +91,23 @@
     elements.error.classList.toggle("is-hidden", name !== "error");
     elements.content.classList.toggle("is-hidden", name !== "ready");
   };
-  const isMissingAchievementsTable = (error) => {
-    const message = String(error?.message || error || "").toLowerCase();
-    return (
-      error?.code === "PGRST200" ||
-      error?.code === "PGRST205" ||
-      message.includes("schema cache") ||
-      message.includes("conquistas")
-    );
-  };
-  const loadFallback = () => {
-    state.achievements = fallbackAchievements;
-    state.unlocked.clear();
-    state.unlocked.set("explorador-trilhas", {
-      conquista_id: "explorador-trilhas",
-      desbloqueado_em: new Date().toISOString(),
-      conquista: fallbackAchievements[2],
-    });
-    setSummary();
-    renderCards();
-    setState("ready");
-    const notice = document.querySelector("[data-fallback-notice]");
-    if (notice) notice.classList.remove("is-hidden");
-  };
-  const setSummary = () => {
+  const setSummary = (xpTotal) => {
     const unlocked = [...state.unlocked.values()];
-    const unlockedXp = unlocked.reduce(
-      (total, record) => total + getXp(record.conquista || record),
-      0,
-    );
-    state.xp = unlockedXp;
-    const level = Math.floor(unlockedXp / 500) + 1;
-    const progress = unlockedXp % 500;
-    const title =
-      level >= 5
-        ? "Mestre das Trilhas"
-        : level >= 3
-          ? "Desbravador"
-          : "Explorador";
+    const levelProgress = window.OminiSaberLevels.progressFor(xpTotal);
+    state.xp = levelProgress.xp;
     elements.unlockedCount.forEach((element) => {
       element.textContent = `${unlocked.length} desbloqueada${unlocked.length === 1 ? "" : "s"}`;
     });
     elements.xp.forEach((element) => {
-      element.textContent = `${unlockedXp.toLocaleString("pt-BR")} XP`;
+      element.textContent = `${levelProgress.xp.toLocaleString("pt-BR")} XP`;
     });
-    elements.level.textContent = `Nível ${level}`;
-    elements.levelTitle.textContent = title;
-    elements.xpBar.style.width = `${Math.round((progress / 500) * 100)}%`;
+    elements.level.textContent = `Nível ${levelProgress.current.number}`;
+    elements.levelTitle.textContent = levelProgress.current.name;
+    elements.xpBar.style.width = `${levelProgress.percentage}%`;
     document.querySelector("[data-xp-detail]").textContent =
-      `${progress} de 500 XP para o nível ${level + 1}`;
+      levelProgress.next
+        ? `${levelProgress.remaining.toLocaleString("pt-BR")} XP para ${levelProgress.next.name}`
+        : "Nível máximo alcançado";
   };
   const renderCards = () => {
     const filtered = state.achievements.filter(
@@ -224,20 +157,20 @@
     setState("loading");
     try {
       if (!api()?.configured || !api().client) {
-        loadFallback();
-        return;
+        throw new Error("O Supabase não está configurado.");
       }
       const session = await api().getSession();
       if (!session) {
         window.location.href = "../../login/index.html";
         return;
       }
-      const [achievementsResult, unlockedResult] = await Promise.all([
+      const [achievementsResult, unlockedResult, xpData] = await Promise.all([
         api().client.from("conquistas").select("*"),
         api()
           .client.from("conquistas_aluno")
           .select("*")
           .eq("aluno_id", session.user.id),
+        api().getStudyXp(),
       ]);
       if (achievementsResult.error) throw achievementsResult.error;
       if (unlockedResult.error) throw unlockedResult.error;
@@ -245,14 +178,10 @@
       (unlockedResult.data || []).forEach((record) =>
         state.unlocked.set(String(getUnlockedId(record)), record),
       );
-      setSummary();
+      setSummary(xpData.total);
       renderCards();
       setState("ready");
     } catch (error) {
-      if (isMissingAchievementsTable(error)) {
-        loadFallback();
-        return;
-      }
       elements.errorMessage.textContent =
         error.message || "Não foi possível carregar suas conquistas.";
       setState("error");

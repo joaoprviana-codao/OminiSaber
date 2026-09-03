@@ -11,10 +11,10 @@
 		<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 		<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 		<script src="../../../../backend/ominisaber-supabase-config.js"></script>
-		<script src="../../../../backend/ominisaber-supabase-client.js"></script>
+		<script src="../../../../backend/ominisaber-supabase-client.js?v=20260902-2"></script>
 		<script defer src="etapa_script.js"></script>
 	</head>
-	<body>
+	<body data-app-role="library">
 		<main class="page-shell">
 			<a class="back-link" href="../index.html"><span class="material-symbols-outlined">arrow_back</span>Voltar ao acervo</a>
 			<header class="page-header">
@@ -30,7 +30,7 @@
 				<form class="panel book-form" data-book-form novalidate>
 					<div class="panel-heading"><div><p class="eyebrow">NOVA OBRA</p><h2>Dados bibliográficos</h2></div><span class="material-symbols-outlined heading-icon">menu_book</span></div>
 					<div class="form-grid">
-						<label class="field full-width">Título da obra<input class="input" name="titulo" required maxlength="180" placeholder="Ex.: Dom Casmurro" /></label>
+						<label class="field full-width">Título da obra<input class="input" name="titulo" required maxlength="180" placeholder="Digite o título como aparece na capa" /></label>
 						<div class="field full-width">
 							<label for="author-name">Nome do autor</label>
 							<div class="input-with-action">
@@ -64,7 +64,7 @@
 			<section class="modal-card" aria-labelledby="author-title">
 				<button class="modal-close" type="button" data-author-close aria-label="Fechar"><span class="material-symbols-outlined">close</span></button>
 				<p class="eyebrow">CATÁLOGO PADRONIZADO</p><h2 id="author-title">Selecionar autor</h2><p class="muted">Pesquise pelo primeiro nome ou sobrenome.</p>
-				<div class="search-box"><span class="material-symbols-outlined">search</span><input class="input" data-author-search placeholder="Ex.: Machado" autocomplete="off" /></div>
+				<div class="search-box"><span class="material-symbols-outlined">search</span><input class="input" data-author-search placeholder="Digite um nome ou sobrenome" autocomplete="off" /></div>
 				<div class="author-results" data-author-results><p class="empty">Digite para pesquisar autores.</p></div>
 				<button class="button secondary full" type="button" data-new-author><span class="material-symbols-outlined">person_add</span>Cadastrar novo autor</button>
 			</section>
@@ -74,7 +74,7 @@
 			<form class="modal-card" data-new-author-form>
 				<button class="modal-close" type="button" data-new-author-close aria-label="Fechar"><span class="material-symbols-outlined">close</span></button>
 				<p class="eyebrow">NOVO REGISTRO</p><h2>Cadastrar autor</h2><p class="muted">Use o nome completo como aparece na obra.</p>
-				<label class="field">Nome completo<input class="input" name="nome" required maxlength="160" placeholder="Ex.: Machado de Assis" /></label>
+				<label class="field">Nome completo<input class="input" name="nome" required maxlength="160" placeholder="Digite o nome completo" /></label>
 				<div class="modal-actions"><button class="button secondary" type="button" data-new-author-close>Cancelar</button><button class="button" type="submit">Salvar autor</button></div>
 			</form>
 		</dialog>

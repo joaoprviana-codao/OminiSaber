@@ -20,9 +20,8 @@
   document.addEventListener('click', (event) => {
     if (innerWidth <= 900 && body.classList.contains('nav-open') && !event.target.closest('.app-sidebar') && !event.target.closest('[data-menu-toggle]')) body.classList.remove('nav-open');
   });
-  document.querySelector('[data-theme-toggle]')?.addEventListener('click', () => document.querySelector('[href*="configuracoes"]')?.click());
   document.addEventListener('ominisaber:ready', async (event) => {
-    if (event.detail?.preview || !event.detail?.session) return;
+    if (!event.detail?.session) return;
     try {
       const profile = await window.OminiSaber.getProfile(event.detail.session.user.id);
       const name = profile?.nome || event.detail.session.user.email || 'Aluno';

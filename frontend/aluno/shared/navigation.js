@@ -11,7 +11,7 @@
     redacao: `${frontendRoot}aluno/laboratorio_de_redacao/index.html`,
     evolucao: `${frontendRoot}aluno/minha_evolucao/index.html`,
     biblioteca: `${frontendRoot}aluno/biblioteca_digital/index.html`,
-    configuracoes: `${frontendRoot}aluno/configuracoes/index.html`,
+    perfil: `${frontendRoot}aluno/perfil/index.html`,
     login: `${frontendRoot}login/index.html`,
     error: `${frontendRoot}erro/index.html`,
     professor: `${frontendRoot}professor/dashboard/index.html`,
@@ -93,16 +93,6 @@
     });
     sidebar.prepend(button);
 
-    const navigation = sidebar.querySelector('nav, ul, [role="navigation"]') || (sidebar.tagName === 'NAV' ? sidebar : null);
-    if (navigation && !navigation.querySelector('[data-settings-link]')) {
-      const link = document.createElement('a');
-      link.href = routes.configuracoes;
-      link.dataset.settingsLink = 'true';
-      link.className = 'flex items-center gap-md px-4 py-3 text-on-surface-variant hover:bg-slate-50 rounded-lg transition-colors duration-200';
-      link.innerHTML = '<span class="material-symbols-outlined" aria-hidden="true">settings</span><span class="font-label-md text-label-md">Configurações</span>';
-      navigation.appendChild(link);
-    }
-
     const reveal = document.createElement('button');
     reveal.type = 'button';
     reveal.className = 'sidebar-edge-reveal';
@@ -131,12 +121,6 @@
   };
 
   document.querySelectorAll('a[href="#"]').forEach(applyRoute);
-  document.querySelectorAll('button').forEach((button) => {
-    if (normalize(button.textContent).includes('settings')) {
-      button.addEventListener('click', () => { window.location.href = routes.configuracoes; });
-    }
-  });
-
   setupSidebar();
   setupHeaderTheme();
   setupThemeChoices();

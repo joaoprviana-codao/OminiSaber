@@ -3,115 +3,88 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Acesse sua jornada de aprendizado OminiSaber">
-  <title>OminiSaber | Login</title>
+  <meta name="description" content="Acesse seu espaço institucional OminiSaber">
+  <title>OminiSaber | Entrar</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Material+Symbols+Outlined:wght@400&family=Poppins:wght@600;700&family=Fraunces:ital,wght@1,500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Material+Symbols+Rounded:opsz,wght@20..48,400..600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=20260903-login-3">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <!-- Mantendo seus scripts de backend -->
-  <script src="../../backend/ominisaber-supabase-config.js"></script>
-  <script src="../../backend/ominisaber-supabase-client.js"></script>
+  <script src="../../backend/ominisaber-supabase-config.js?v=20260903-login-3"></script>
+  <script src="../../backend/ominisaber-supabase-client.js?v=20260903-login-3"></script>
 </head>
 <body>
+  <header class="brand-bar">
+    <a class="brand" href="./index.html" aria-label="OminiSaber — página de acesso">
+      <span class="brand-icon material-symbols-rounded" aria-hidden="true">school</span>
+      <span>Omini<span>Saber</span></span>
+    </a>
+  </header>
 
-  <!-- Fundo ambiente: gradiente animado + ícones de matérias flutuando -->
-  <div class="ambient" aria-hidden="true">
-    <div class="ambient-grid"></div>
-    <span class="floating-icon icon-1 material-symbols-outlined">auto_stories</span>
-    <span class="floating-icon icon-2 material-symbols-outlined">science</span>
-    <span class="floating-icon icon-3 material-symbols-outlined">calculate</span>
-    <span class="floating-icon icon-4 material-symbols-outlined">functions</span>
-    <span class="floating-icon icon-5 material-symbols-outlined">edit_square</span>
-  </div>
+  <main class="login-layout">
+    <section class="welcome" aria-labelledby="welcome-title">
+      <div class="welcome-copy">
+        <p class="eyebrow">Educação conectada</p>
+        <h1 id="welcome-title">Seu espaço<br>Omini<span>Saber</span></h1>
+        <p>Entre para continuar aprendendo,<br>ensinando e organizando.</p>
+      </div>
+      <img class="journey-art" src="assets/jornada-ominisaber-3d.png" alt="Livros, tecnologia e caminhos de aprendizagem conectados">
+    </section>
 
-  <main class="login-shell">
-    <!-- O cartão é desenhado como um caderno aberto: página da esquerda (identidade)
-         + lombada encadernada + página da direita (formulário) -->
-    <section class="login-card" aria-labelledby="login-title">
-
-      <div class="story-page">
-        <div class="punch-holes" aria-hidden="true">
-          <span></span><span></span><span></span><span></span><span></span>
+    <section class="access" aria-labelledby="login-title">
+      <div class="access-inner">
+        <div class="access-heading">
+          <p class="eyebrow">Acesso institucional</p>
+          <h2 id="login-title">Bem-vindo de volta</h2>
+          <p>Use os dados fornecidos pela sua escola.</p>
         </div>
 
-        <div class="brand-block">
-          <span class="brand-mark" aria-hidden="true">
-            <span class="material-symbols-outlined">school</span>
-          </span>
-          <div>
-            <p class="brand">OminiSaber</p>
-            <p class="tagline">Sua jornada de aprendizado começa aqui.</p>
+        <form id="loginForm" novalidate aria-describedby="loginError">
+          <div id="loginError" class="login-message" role="alert" aria-live="assertive" tabindex="-1" hidden></div>
+          <button id="resendConfirmation" class="secondary-action" type="button" hidden>Reenviar e-mail de confirmação</button>
+
+          <div class="form-field">
+            <label for="email">Matrícula ou e-mail</label>
+            <span class="input-shell">
+              <span class="material-symbols-rounded field-icon" aria-hidden="true">person</span>
+              <input id="email" name="email" type="text" autocomplete="username" placeholder="Digite sua matrícula ou e-mail" required>
+            </span>
           </div>
-        </div>
 
-        <blockquote class="story-quote">
-          “Cada página virada é um passo mais perto do seu objetivo.”
-        </blockquote>
+          <div class="form-field">
+            <label for="password">Senha</label>
+            <span class="input-shell">
+              <span class="material-symbols-rounded field-icon" aria-hidden="true">lock</span>
+              <input id="password" name="password" type="password" autocomplete="current-password" placeholder="Digite sua senha" required>
+              <button class="password-toggle" id="togglePassword" type="button" aria-label="Mostrar senha" aria-pressed="false">
+                <span class="material-symbols-rounded" aria-hidden="true">visibility</span>
+              </button>
+            </span>
+          </div>
 
-        <ol class="journey-steps">
-          <li class="is-current"><span class="step-dot"></span>Entrar</li>
-          <li><span class="step-dot"></span>Aprender</li>
-          <li><span class="step-dot"></span>Evoluir</li>
-        </ol>
-      </div>
-
-      <div class="spine" aria-hidden="true">
-        <span class="spine-ring"></span>
-        <span class="spine-ring"></span>
-        <span class="spine-ring"></span>
-        <span class="spine-ring"></span>
-        <span class="spine-ring"></span>
-      </div>
-
-      <div class="form-page">
-        <div class="card-content">
-          <h1 id="login-title">Bem-vindo(a) de volta!</h1>
-
-          <form id="loginForm" novalidate aria-describedby="loginError">
-            <div id="loginError" class="login-error" role="alert" aria-live="assertive" hidden></div>
-
-            <div class="form-field">
-              <label for="email">E-mail ou matrícula</label>
-              <div class="input-wrapper">
-                <span class="material-symbols-outlined field-icon" aria-hidden="true">person</span>
-                <input id="email" name="email" type="text" autocomplete="username" placeholder="ex: maria.souza@ominisaber.com.br" required>
-              </div>
-            </div>
-
-            <div class="form-field">
-              <div class="password-label-row">
-                <label for="password">Senha</label>
-                <a href="#" data-forgot-password>Esqueci minha senha</a>
-              </div>
-              <div class="input-wrapper">
-                <span class="material-symbols-outlined field-icon" aria-hidden="true">lock</span>
-                <input id="password" name="password" type="password" autocomplete="current-password" placeholder="Digite sua senha" required>
-                <button class="password-toggle" id="togglePassword" type="button" aria-label="Mostrar senha" aria-pressed="false">
-                  <span class="material-symbols-outlined" aria-hidden="true">visibility</span>
-                </button>
-              </div>
-            </div>
-
+          <div class="form-options">
             <label class="remember-option" for="remember-me">
               <input id="remember-me" name="remember-me" type="checkbox">
-              <span>Lembrar-me neste dispositivo</span>
+              <span>Lembrar neste dispositivo</span>
             </label>
+            <a href="#" data-forgot-password>Esqueci minha senha</a>
+          </div>
 
-            <button class="submit-button" type="submit">
-              <span class="btn-spinner" aria-hidden="true"></span>
-              <span class="btn-label">Entrar</span>
-            </button>
-          </form>
+          <button class="submit-button" type="submit">
+            <span class="btn-spinner" aria-hidden="true"></span>
+            <span class="btn-label">Entrar no OminiSaber</span>
+            <span class="material-symbols-rounded btn-arrow" aria-hidden="true">arrow_forward</span>
+          </button>
+        </form>
 
-          <p class="register-prompt">Ainda não tem acesso? <a href="../cadastro/index.html">Fale com a secretaria</a></p>
+        <div class="access-assurance" aria-label="Informações de acesso e segurança">
+          <p><span class="assurance-icon material-symbols-rounded" aria-hidden="true">school</span>Acesso fornecido pela sua escola</p>
+          <p class="secure"><span class="assurance-icon material-symbols-rounded" aria-hidden="true">lock</span>Ambiente protegido</p>
         </div>
       </div>
-
     </section>
   </main>
 
-  <script defer src="script.js"></script>
+  <script defer src="script.js?v=20260903-login-3"></script>
 </body>
 </html>
