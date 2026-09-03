@@ -6,7 +6,7 @@
 begin;
 
 -- ============================================================================
--- ETAPA 1/15: schema/core.sql
+-- ETAPA 1/16: schema/core.sql
 -- ============================================================================
 
 -- OminiSaber | Schema Supabase
@@ -792,7 +792,7 @@ grant execute on function public.aluno_pode_acessar_materia(public.materia_aluno
 -- O arquivo separado permite atualizar bases existentes sem recriar o schema principal.
 
 -- ============================================================================
--- ETAPA 2/15: migrations/20260831_acesso_materias_aluno.sql
+-- ETAPA 2/16: migrations/20260831_acesso_materias_aluno.sql
 -- ============================================================================
 
 do $$ begin
@@ -960,7 +960,7 @@ create policy trilhas_select on public.trilhas for select to authenticated using
 );
 
 -- ============================================================================
--- ETAPA 3/15: schema/configuracoes.sql
+-- ETAPA 3/16: schema/configuracoes.sql
 -- ============================================================================
 
 -- Preferencias e dados editaveis do perfil do aluno.
@@ -987,7 +987,7 @@ drop trigger if exists perfis_updated_at on public.perfis;
 drop function if exists public.atualizar_perfil_updated_at();
 
 -- ============================================================================
--- ETAPA 4/15: schema/biblioteca.sql
+-- ETAPA 4/16: schema/biblioteca.sql
 -- ============================================================================
 
 -- OminiSaber | Biblioteca digital e leituras do aluno
@@ -1302,7 +1302,7 @@ create trigger set_exemplares_updated_at before update on public.exemplares
 for each row execute function public.set_updated_at();
 
 -- ============================================================================
--- ETAPA 5/15: schema/estoque-etapa1.sql
+-- ETAPA 5/16: schema/estoque-etapa1.sql
 -- ============================================================================
 
 -- OminiSaber | Migracao da Etapa 1: autores, obras e exemplares
@@ -1417,7 +1417,7 @@ create trigger set_autores_updated_at before update on public.autores
 for each row execute function public.set_updated_at();
 
 -- ============================================================================
--- ETAPA 6/15: schema/estoque-etapa2.sql
+-- ETAPA 6/16: schema/estoque-etapa2.sql
 -- ============================================================================
 
 -- OminiSaber | Migracao da Etapa 2: secoes fisicas e alocacao
@@ -1521,7 +1521,7 @@ create trigger set_secoes_fisicas_updated_at before update on public.secoes_fisi
 for each row execute function public.set_updated_at();
 
 -- ============================================================================
--- ETAPA 7/15: schema/conquistas.sql
+-- ETAPA 7/16: schema/conquistas.sql
 -- ============================================================================
 
 -- OminiSaber | Catálogo e progresso de conquistas
@@ -1593,7 +1593,7 @@ revoke insert, update, delete on table public.conquistas from anon, authenticate
 revoke insert, update, delete on table public.conquistas_aluno from anon, authenticated;
 
 -- ============================================================================
--- ETAPA 8/15: schema/espacos-docentes.sql
+-- ETAPA 8/16: schema/espacos-docentes.sql
 -- ============================================================================
 
 -- OminiSaber | Espaços funcionais por especialidade docente
@@ -1998,7 +1998,7 @@ revoke all on public.laboratorios_docentes, public.avaliacoes_docentes, public.q
 grant select, insert, update, delete on public.laboratorios_docentes, public.avaliacoes_docentes, public.questoes_avaliacao, public.gabaritos_avaliacao, public.entregas_laboratorio, public.tentativas_avaliacao to authenticated;
 
 -- ============================================================================
--- ETAPA 9/15: migrations/20260831_trilhas_estudos_completos.sql
+-- ETAPA 9/16: migrations/20260831_trilhas_estudos_completos.sql
 -- ============================================================================
 
 create schema if not exists private authorization postgres;
@@ -2418,7 +2418,7 @@ create trigger set_anotacoes_aula_updated_at before update on public.anotacoes_a
 for each row execute function public.set_updated_at();
 
 -- ============================================================================
--- ETAPA 10/15: migrations/20260831_redacao_jornada_completa.sql
+-- ETAPA 10/16: migrations/20260831_redacao_jornada_completa.sql
 -- ============================================================================
 
 create schema if not exists private authorization postgres;
@@ -2786,7 +2786,7 @@ create trigger set_avaliacoes_competencias_redacao_updated_at before update on p
 for each row execute function public.set_updated_at();
 
 -- ============================================================================
--- ETAPA 11/15: migrations/20260831_agenda_notificacoes.sql
+-- ETAPA 11/16: migrations/20260831_agenda_notificacoes.sql
 -- ============================================================================
 
 create extension if not exists pgcrypto;
@@ -3001,7 +3001,7 @@ begin
 end $$;
 
 -- ============================================================================
--- ETAPA 12/15: migrations/20260902_biblioteca_acervo_unificado.sql
+-- ETAPA 12/16: migrations/20260902_biblioteca_acervo_unificado.sql
 -- ============================================================================
 
 -- OminiSaber | Acervo físico, PDFs verificados e reserva transacional
@@ -3331,7 +3331,7 @@ begin
 end $$;
 
 -- ============================================================================
--- ETAPA 13/15: migrations/20260903_portal_gestor.sql
+-- ETAPA 13/16: migrations/20260903_portal_gestor.sql
 -- ============================================================================
 
 alter table public.perfis add column if not exists email_contato text;
@@ -3442,7 +3442,7 @@ grant select, insert on public.solicitacoes_acesso to authenticated;
 grant select on public.gestor_auditoria to authenticated;
 
 -- ============================================================================
--- ETAPA 14/15: migrations/20260903_importacao_curricular.sql
+-- ETAPA 14/16: migrations/20260903_importacao_curricular.sql
 -- ============================================================================
 
 alter table public.descritores_curriculares
@@ -3679,7 +3679,101 @@ revoke all on function public.aprovar_importacao_curriculo(uuid) from public, an
 grant execute on function public.aprovar_importacao_curriculo(uuid) to authenticated;
 
 -- ============================================================================
--- ETAPA 15/15: migrations/20260903_redacoes_avaliacoes_portugues.sql
+-- ETAPA 15/16: migrations/20260903_importacao_curricular_fase1.sql
+-- ============================================================================
+
+alter table public.importacoes_curriculo
+  add column if not exists curriculo_id uuid references public.curriculos(id) on delete set null,
+  add column if not exists versao integer;
+
+update public.curriculos
+set status = 'publicado', updated_at = now()
+where status = 'aprovado';
+
+create or replace function public.aprovar_importacao_curriculo(p_importacao_id uuid)
+returns uuid
+language plpgsql
+security definer set search_path = ''
+as $$
+declare
+  imp public.importacoes_curriculo;
+  novo_curriculo_id uuid;
+  proxima_versao integer;
+  periodo public.curriculo_periodos;
+  habilidade public.habilidades_curriculares;
+  descritor public.descritores_curriculares;
+  objeto public.objetos_conhecimento;
+  item jsonb;
+  child jsonb;
+  serie_num smallint;
+  tri_num smallint;
+begin
+  if public.usuario_role() <> 'gestor' then raise exception 'Apenas gestores podem aprovar importações'; end if;
+  select * into imp from public.importacoes_curriculo where id = p_importacao_id for update;
+  if imp.id is null then raise exception 'Importação não encontrada'; end if;
+  if imp.status <> 'revisao' then raise exception 'A importação precisa estar em revisão'; end if;
+  if imp.materia_codigo is null then raise exception 'Componente curricular não identificado'; end if;
+
+  select coalesce(max(versao), 0) + 1 into proxima_versao
+  from public.curriculos
+  where origem = coalesce(imp.origem, 'Não identificada')
+    and ano_letivo = imp.ano_letivo
+    and materia_codigo = imp.materia_codigo;
+
+  insert into public.curriculos (nome, origem, ano_letivo, materia_codigo, versao, status, criado_por)
+  values (
+    coalesce(imp.origem, 'Currículo importado') || ' ' || imp.ano_letivo,
+    coalesce(imp.origem, 'Não identificada'), imp.ano_letivo,
+    imp.materia_codigo, proxima_versao, 'publicado', imp.importado_por
+  ) returning id into novo_curriculo_id;
+
+  for item in select payload from public.importacoes_curriculo_itens
+    where importacao_id = imp.id and tipo = 'habilidade' and status not in ('rejeitado', 'revisar')
+  loop
+    serie_num := nullif((item ->> 'serie')::smallint, 0);
+    tri_num := coalesce(nullif((item ->> 'trimestre')::smallint, 0), imp.trimestre);
+    if serie_num is null or tri_num is null then continue; end if;
+    insert into public.curriculo_periodos (curriculo_id, serie, trimestre)
+    values (novo_curriculo_id, serie_num, tri_num)
+    on conflict (curriculo_id, serie, trimestre) do update set trimestre = excluded.trimestre
+    returning * into periodo;
+    insert into public.habilidades_curriculares (codigo, descricao, materia_codigo)
+    values (upper(item ->> 'codigo'), coalesce(nullif(item ->> 'descricao', ''), 'Descrição pendente'), imp.materia_codigo)
+    on conflict (codigo, materia_codigo) do update set descricao = case when public.habilidades_curriculares.descricao = 'Descrição pendente' then excluded.descricao else public.habilidades_curriculares.descricao end
+    returning * into habilidade;
+    insert into public.habilidade_curriculo_periodos (habilidade_id, periodo_id, quinzena, semana, source_page)
+    values (habilidade.id, periodo.id, item ->> 'quinzena', item ->> 'semana', nullif(item ->> 'source_page', '')::integer)
+    on conflict (habilidade_id, periodo_id) do update set quinzena = excluded.quinzena, semana = excluded.semana, source_page = excluded.source_page;
+    for child in select value from jsonb_array_elements(coalesce(item -> 'descritores', '[]'::jsonb))
+    loop
+      insert into public.descritores_curriculares (codigo, titulo, descricao, materia_codigo, serie, trimestre, status)
+      values (upper(child ->> 'code'), upper(child ->> 'code'), nullif(child ->> 'descricao', ''), imp.materia_codigo, serie_num, tri_num, 'revisao')
+      on conflict (codigo) do update set descricao = coalesce(public.descritores_curriculares.descricao, excluded.descricao)
+      returning * into descritor;
+      insert into public.habilidade_descritores values (habilidade.id, descritor.id, periodo.id) on conflict do nothing;
+    end loop;
+    for child in select value from jsonb_array_elements(coalesce(item -> 'expectativas', '[]'::jsonb))
+    loop
+      insert into public.expectativas_aprendizagem (habilidade_id, periodo_id, descricao) values (habilidade.id, periodo.id, child #>> '{}') on conflict do nothing;
+    end loop;
+    for child in select value from jsonb_array_elements(coalesce(item -> 'objetos', '[]'::jsonb))
+    loop
+      insert into public.objetos_conhecimento (descricao) values (child #>> '{}') on conflict (descricao) do update set descricao = excluded.descricao returning * into objeto;
+      insert into public.habilidade_objetos values (habilidade.id, objeto.id, periodo.id) on conflict do nothing;
+    end loop;
+  end loop;
+  update public.importacoes_curriculo
+  set status = 'aprovada', curriculo_id = novo_curriculo_id, versao = proxima_versao, updated_at = now()
+  where id = imp.id;
+  return novo_curriculo_id;
+end;
+$$;
+
+revoke all on function public.aprovar_importacao_curriculo(uuid) from public, anon, authenticated;
+grant execute on function public.aprovar_importacao_curriculo(uuid) to authenticated;
+
+-- ============================================================================
+-- ETAPA 16/16: migrations/20260903_redacoes_avaliacoes_portugues.sql
 -- ============================================================================
 
 -- Rascunhos privados da devolutiva. A redação do aluno permanece imutável até

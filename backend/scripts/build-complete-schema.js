@@ -20,6 +20,7 @@ const sources = [
   'migrations/20260902_biblioteca_acervo_unificado.sql',
   'migrations/20260903_portal_gestor.sql',
   'migrations/20260903_importacao_curricular.sql',
+  'migrations/20260903_importacao_curricular_fase1.sql',
   'migrations/20260903_redacoes_avaliacoes_portugues.sql'
 ];
 

@@ -1,15 +1,28 @@
 (() => {
-  const SKILL_RE = /\bEM\d{2}[A-Z]{2}\d{2}\b/gi;
+  const SKILL_RE = /\b(?:EM|EF)\d{2}[A-Z]{2}\d{2}\b/gi;
   const DESCRIPTOR_RE = /\bD\d{3}(?:_[A-Z])?\b/gi;
   const clean = (value) => String(value || '').replace(/\s+/g, ' ').trim();
   const unique = (values) => [...new Set(values.map(clean).filter(Boolean))];
   const first = (value, pattern) => String(value || '').match(pattern)?.[1] || null;
+  const normalizeLines = (values) => values.map((value) => String(value || '').trim()).filter(Boolean).join('\n');
   const context = (text) => ({
     serie: /(?:1ª|1a|1º|1o)\s*(?:série|serie)/i.test(text) ? 1 : /(?:2ª|2a|2º|2o)\s*(?:série|serie)/i.test(text) ? 2 : /(?:3ª|3a|3º|3o)\s*(?:série|serie)/i.test(text) ? 3 : null,
     trimestre: /(?:1º|1o|1ª|1a)\s*trimestre/i.test(text) ? 1 : /(?:2º|2o|2ª|2a)\s*trimestre/i.test(text) ? 2 : /(?:3º|3o|3ª|3a)\s*trimestre/i.test(text) ? 3 : null,
     quinzena: first(text, /(\d+ª?\s*quinzena)/i),
     semana: first(text, /(\d+ª?\s*semana)/i),
   });
+  const detectSubject = (text) => {
+    const normalized = String(text || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    const rules = [
+      ['tecnico_informatica', /informatica|programacao|banco de dados|redes de computadores|computacao/],
+      ['tecnico_administracao', /administracao|gestao|empreendedorismo|marketing|financas/],
+      ['redacao', /redacao|producao textual|texto dissertativo/],
+      ['matematica', /matematica|algebra|geometria|estatistica/],
+      ['fisica', /fisica|mecanica|termodinamica|eletromagnetismo/],
+      ['portugues', /lingua portuguesa|portugues|literatura|linguagens/],
+    ];
+    return rules.find(([, pattern]) => pattern.test(normalized))?.[0] || null;
+  };
   const confidence = ({ code, description, serie, trimestre }) => {
     let score = code ? 55 : 15;
     if (description.length >= 20) score += 20;
@@ -26,7 +39,7 @@
       origem: options.origem || (/(SEDU|secretaria de estado da educação)/i.test(text) ? 'SEDU-ES' : null),
       ano_letivo: Number(options.ano || first(text, /\b(20\d{2})\b/)) || null,
       modalidade: /ensino\s+m[eé]dio/i.test(text) ? 'Ensino Médio' : null,
-      materia_codigo: options.materia || null,
+      materia_codigo: options.materia || detectSubject(text),
       ...context(text),
     };
     const matches = [];
@@ -43,8 +56,14 @@
         if (/(?:série|serie|trimestre)/i.test(lines[lineIndex].line)) contextStart = lineIndex;
       }
       const block = lines.slice(contextStart, end).map((entry) => entry.line).join('\n');
-      const codeEnd = block.search(/[\r\n]/);
-      const description = clean((codeEnd >= 0 ? block.slice(codeEnd) : '').replace(/^[\s:–-]+/, '').split(/(?:descritor(?:es)?|expectativa(?:s)?|objeto(?:s)?\s+de\s+conhecimento)/i)[0]);
+      const firstLine = lines[match.index]?.line || '';
+      const firstLineDescription = firstLine.slice(match.offset + match.code.length);
+      const remainingLines = [];
+      for (const entry of lines.slice(match.index + 1, end)) {
+        if (/\bD\d{3}(?:_[A-Z])?\b/i.test(entry.line) || /\bdescritor(?:es)?\b/i.test(entry.line)) break;
+        remainingLines.push(entry.line);
+      }
+      const description = normalizeLines([firstLineDescription, ...remainingLines].map((value) => value.replace(/^[\s:–-]+/, '').split(/(?:descritor(?:es)?|expectativa(?:s)?|objeto(?:s)?\s+de\s+conhecimento)/i)[0]));
       const local = context(block);
       const descriptors = unique(block.match(DESCRIPTOR_RE) || []).map((code) => ({ code: code.toUpperCase(), descricao: '' }));
       const score = confidence({ ...local, code: match.code, description });
@@ -66,8 +85,8 @@
         },
       };
     });
-    if (!items.length) items.push({ tipo: 'aviso', source_page: 1, confianca: 20, status: 'revisar', payload: { mensagem: 'Nenhuma habilidade com código EM foi identificada.' } });
+    if (!items.length) items.push({ tipo: 'aviso', source_page: 1, confianca: 20, status: 'revisar', payload: { mensagem: 'Nenhuma habilidade com código EM ou EF foi identificada.' } });
     return { detected, items, resumo: { habilidades: items.filter((item) => item.tipo === 'habilidade').length, descritores: unique(items.flatMap((item) => item.payload.descritores || []).map((item) => item.code)).length, paginas: pages.length } };
   };
-  window.OminiSaberCurriculumParser = { parseCurriculumPages, confidence, itemStatus };
+  window.OminiSaberCurriculumParser = { parseCurriculumPages, confidence, itemStatus, detectSubject };
 })();

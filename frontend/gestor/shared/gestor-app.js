@@ -408,7 +408,7 @@
         const pages = [];
         for (let pageNumber = 1; pageNumber <= document.numPages; pageNumber += 1) { const page = await document.getPage(pageNumber); const text = await page.getTextContent(); pages.push(text.items.map((item) => item.str).join("\n")); document.querySelector("#import-progress").textContent = `Texto extraído: página ${pageNumber} de ${document.numPages}`; }
         const parsed = window.OminiSaberCurriculumParser.parseCurriculumPages(pages, data);
-        const result = await api().createCurriculumImport({ ...data, resumo: parsed.resumo, texto: pages.join("\n\f\n") }, parsed.items);
+        const result = await api().createCurriculumImport({ ...data, materia: data.materia || parsed.detected.materia_codigo, resumo: parsed.resumo, texto: pages.join("\n\f\n") }, parsed.items);
         if (result.duplicate) { toast("Este documento já foi importado."); return review(result.importacao, { ...parsed, items: result.items || parsed.items }); }
         await review(result.importacao, { ...parsed, items: result.items || parsed.items });
       } catch (error) { content().innerHTML = `<div class="panel"><h2>Não foi possível analisar o currículo</h2><p>${esc(error.message)}</p><button class="btn" id="retry-import">Voltar</button></div>`; document.querySelector("#retry-import").onclick = descriptorsPage; }
