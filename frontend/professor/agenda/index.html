@@ -14,46 +14,49 @@
       href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@700;800&family=Material+Symbols+Outlined:FILL@0..1"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="../../aluno/shared/account-shell.css" />
+    <link rel="stylesheet" href="../specialty/portal.css" />
     <link rel="stylesheet" href="style.css" />
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../../../backend/ominisaber-supabase-config.js"></script>
     <script src="../../../backend/ominisaber-supabase-client.js"></script>
     <script defer src="script.js"></script>
   </head>
-  <body data-required-role="professor,gestor">
-    <aside class="app-sidebar" aria-label="Navegação do professor">
-      <a class="app-brand" href="../dashboard/index.html"
-        ><span class="brand-symbol material-symbols-outlined">school</span
-        ><span>OminiSaber<small>Área do professor</small></span></a
+  <body class="agenda-page" data-required-role="professor,gestor">
+    <aside class="portal-sidebar" aria-label="Navegação do professor de Português">
+      <a class="portal-brand" href="../professor_portugues/dashboard/index.html"
+        ><span class="brand-symbol material-symbols-outlined">edit_note</span
+        ><span>OminiSaber<small>Português</small></span></a
       >
-      <p class="nav-label">Central pedagógica</p>
-      <nav class="app-nav">
-        <a href="../dashboard/index.html"
+      <nav class="portal-nav">
+        <a href="../professor_portugues/dashboard/index.html"
           ><span class="material-symbols-outlined">space_dashboard</span>Visão
           geral</a
+        ><a href="../professor_portugues/laboratorio/index.html"
+          ><span class="material-symbols-outlined">menu_book</span>Oficina de
+          linguagem</a
+        ><a href="../professor_portugues/avaliacoes/index.html"
+          ><span class="material-symbols-outlined">fact_check</span
+          >Avaliações</a
+        ><a href="../professor_portugues/redacoes/index.html"
+          ><span class="material-symbols-outlined">edit_note</span>Redações</a
         ><a class="active" href="index.html" aria-current="page"
           ><span class="material-symbols-outlined">calendar_month</span>Agenda
           das turmas</a
-        ><a href="../dashboard/index.html#turmas"
-          ><span class="material-symbols-outlined">groups</span>Minhas turmas</a
-        ><a href="../dashboard/index.html#avaliacoes"
-          ><span class="material-symbols-outlined">fact_check</span
-          >Avaliações</a
-        ><a href="../redacoes/index.html"
-          ><span class="material-symbols-outlined">edit_note</span>Redações</a
         >
       </nav>
-      <div class="sidebar-person">
-        <span class="person-avatar material-symbols-outlined">person</span>
+      <div class="portal-profile">
+        <span class="portal-avatar material-symbols-outlined">person</span>
         <div>
           <strong data-teacher-name>Professor</strong
           ><span data-teacher-specialty>Docente</span>
         </div>
       </div>
+      <button class="portal-signout" type="button" data-role-signout>
+        <span class="material-symbols-outlined">logout</span>Sair
+      </button>
     </aside>
-    <main class="app-main">
-      <header class="app-topbar">
+    <main class="portal-main">
+      <header class="portal-topbar">
         <button
           class="icon-button menu-button"
           type="button"
@@ -63,18 +66,19 @@
         >
           <span class="material-symbols-outlined">menu</span>
         </button>
-        <div class="topbar-title">
-          <strong>Agenda compartilhada</strong
-          ><span>Organize a turma e mantenha os alunos informados</span>
+        <div>
+          <p class="eyebrow">CENTRAL DE LINGUAGENS</p>
+          <h1>Agenda das turmas</h1>
+          <p>Organize a turma e mantenha os alunos informados.</p>
         </div>
         <div class="topbar-actions">
-          <a class="button secondary" href="../dashboard/index.html"
+          <a class="button secondary" href="../professor_portugues/dashboard/index.html"
             ><span class="material-symbols-outlined">arrow_back</span>Voltar ao
             painel</a
           >
         </div>
       </header>
-      <div class="page">
+      <div class="portal-content">
         <header class="page-heading">
           <div>
             <p class="eyebrow">PLANEJAMENTO COLETIVO</p>
