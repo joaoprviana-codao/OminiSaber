@@ -6,7 +6,7 @@
 begin;
 
 -- ============================================================================
--- ETAPA 1/14: ominisaber-schema.sql
+-- ETAPA 1/14: schema/core.sql
 -- ============================================================================
 
 -- OminiSaber | Schema Supabase
@@ -788,7 +788,7 @@ grant execute on function public.eh_gestor_ou_professor() to authenticated;
 grant execute on function public.aluno_pode_acessar_materia(public.materia_aluno) to authenticated;
 
 -- A instalação funcional dos quatro espaços docentes continua em:
--- backend/ominisaber-schema-espacos-docentes.sql
+-- backend/schema/espacos-docentes.sql
 -- O arquivo separado permite atualizar bases existentes sem recriar o schema principal.
 
 -- ============================================================================
@@ -960,11 +960,11 @@ create policy trilhas_select on public.trilhas for select to authenticated using
 );
 
 -- ============================================================================
--- ETAPA 3/14: ominisaber-schema-configuracoes.sql
+-- ETAPA 3/14: schema/configuracoes.sql
 -- ============================================================================
 
 -- Preferencias e dados editaveis do perfil do aluno.
--- Execute depois de backend/ominisaber-schema.sql.
+-- Execute depois de backend/schema/core.sql.
 
 alter table public.perfis
   add column if not exists tema_preferido text not null default 'light'
@@ -987,11 +987,11 @@ drop trigger if exists perfis_updated_at on public.perfis;
 drop function if exists public.atualizar_perfil_updated_at();
 
 -- ============================================================================
--- ETAPA 4/14: ominisaber-schema-biblioteca.sql
+-- ETAPA 4/14: schema/biblioteca.sql
 -- ============================================================================
 
 -- OminiSaber | Biblioteca digital e leituras do aluno
--- Execute depois de backend/ominisaber-schema.sql.
+-- Execute depois de backend/schema/core.sql.
 
 create table if not exists public.livros (
   id uuid primary key default gen_random_uuid(),
@@ -1302,11 +1302,11 @@ create trigger set_exemplares_updated_at before update on public.exemplares
 for each row execute function public.set_updated_at();
 
 -- ============================================================================
--- ETAPA 5/14: ominisaber-schema-estoque-etapa1.sql
+-- ETAPA 5/14: schema/estoque-etapa1.sql
 -- ============================================================================
 
 -- OminiSaber | Migracao da Etapa 1: autores, obras e exemplares
--- Execute depois de ominisaber-schema-biblioteca.sql no SQL Editor do Supabase.
+-- Execute depois de backend/schema/biblioteca.sql no SQL Editor do Supabase.
 
 create table if not exists public.autores (
   id uuid primary key default gen_random_uuid(),
@@ -1417,11 +1417,11 @@ create trigger set_autores_updated_at before update on public.autores
 for each row execute function public.set_updated_at();
 
 -- ============================================================================
--- ETAPA 6/14: ominisaber-schema-estoque-etapa2.sql
+-- ETAPA 6/14: schema/estoque-etapa2.sql
 -- ============================================================================
 
 -- OminiSaber | Migracao da Etapa 2: secoes fisicas e alocacao
--- Execute depois de ominisaber-schema-biblioteca.sql e ominisaber-schema-estoque-etapa1.sql.
+-- Execute depois de backend/schema/biblioteca.sql e backend/schema/estoque-etapa1.sql.
 
 create table if not exists public.secoes_fisicas (
   id uuid primary key default gen_random_uuid(),
@@ -1521,11 +1521,11 @@ create trigger set_secoes_fisicas_updated_at before update on public.secoes_fisi
 for each row execute function public.set_updated_at();
 
 -- ============================================================================
--- ETAPA 7/14: ominisaber-schema-conquistas.sql
+-- ETAPA 7/14: schema/conquistas.sql
 -- ============================================================================
 
 -- OminiSaber | Catálogo e progresso de conquistas
--- Execute depois de backend/ominisaber-schema.sql.
+-- Execute depois de backend/schema/core.sql.
 
 create table if not exists public.conquistas (
   id uuid primary key default gen_random_uuid(),
@@ -1593,7 +1593,7 @@ revoke insert, update, delete on table public.conquistas from anon, authenticate
 revoke insert, update, delete on table public.conquistas_aluno from anon, authenticated;
 
 -- ============================================================================
--- ETAPA 8/14: ominisaber-schema-espacos-docentes.sql
+-- ETAPA 8/14: schema/espacos-docentes.sql
 -- ============================================================================
 
 -- OminiSaber | Espaços funcionais por especialidade docente

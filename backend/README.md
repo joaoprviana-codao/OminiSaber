@@ -40,7 +40,7 @@ O login aceita o nome informado como matrícula. Essas contas são apenas para t
 
 ## Segurança
 
-Nunca coloque `SUPABASE_SERVICE_ROLE_KEY` em `ominisaber-supabase-config.js`, HTML, JavaScript público ou Git. Execute `ominisaber-schema.sql` e `ominisaber-schema-espacos-docentes.sql` no SQL Editor antes de usar o seed.
+Nunca coloque `SUPABASE_SERVICE_ROLE_KEY` em `ominisaber-supabase-config.js`, HTML, JavaScript público ou Git. Para uma instalação nova, execute somente `ominisaber-schema-completo.sql` no SQL Editor antes de usar o seed.
 
 ## Instalação e verificação atuais
 

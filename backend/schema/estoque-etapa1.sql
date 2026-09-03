@@ -1,5 +1,5 @@
 -- OminiSaber | Migracao da Etapa 1: autores, obras e exemplares
--- Execute depois de ominisaber-schema-biblioteca.sql no SQL Editor do Supabase.
+-- Execute depois de backend/schema/biblioteca.sql no SQL Editor do Supabase.
 
 begin;
 

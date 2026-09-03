@@ -1,5 +1,5 @@
 -- OminiSaber | Catálogo e progresso de conquistas
--- Execute depois de backend/ominisaber-schema.sql.
+-- Execute depois de backend/schema/core.sql.
 
 begin;
 

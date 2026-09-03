@@ -6,14 +6,14 @@ const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 const backendRoot = path.resolve(scriptDirectory, '..');
 const outputPath = path.join(backendRoot, 'ominisaber-schema-completo.sql');
 const sources = [
-  'ominisaber-schema.sql',
+  'schema/core.sql',
   'migrations/20260831_acesso_materias_aluno.sql',
-  'ominisaber-schema-configuracoes.sql',
-  'ominisaber-schema-biblioteca.sql',
-  'ominisaber-schema-estoque-etapa1.sql',
-  'ominisaber-schema-estoque-etapa2.sql',
-  'ominisaber-schema-conquistas.sql',
-  'ominisaber-schema-espacos-docentes.sql',
+  'schema/configuracoes.sql',
+  'schema/biblioteca.sql',
+  'schema/estoque-etapa1.sql',
+  'schema/estoque-etapa2.sql',
+  'schema/conquistas.sql',
+  'schema/espacos-docentes.sql',
   'migrations/20260831_trilhas_estudos_completos.sql',
   'migrations/20260831_redacao_jornada_completa.sql',
   'migrations/20260831_agenda_notificacoes.sql',

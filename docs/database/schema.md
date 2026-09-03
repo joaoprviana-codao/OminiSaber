@@ -6,7 +6,7 @@ Oferecer uma visão legível do PostgreSQL usado pelo OmniSaber.
 
 ## Estrutura
 
-A fonte consolidada é `backend/ominisaber-schema-completo.sql`. Os arquivos `ominisaber-schema-*.sql` representam etapas ou domínios do mesmo modelo.
+A fonte consolidada é `backend/ominisaber-schema-completo.sql`. Os schemas organizados por domínio ficam em `backend/schema/` e representam a fonte humana do mesmo modelo.
 
 ## Grupos principais
 

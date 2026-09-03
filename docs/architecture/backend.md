@@ -17,7 +17,7 @@ O cliente resolve sessão, perfil, consultas e mutações. Operações sensívei
 
 ## Banco de dados
 
-A fonte consolidada é `backend/ominisaber-schema-completo.sql`; arquivos modulares documentam etapas de evolução e podem ser usados conforme `backend/README-SQL.md`.
+A fonte consolidada é `backend/ominisaber-schema-completo.sql`; schemas por domínio ficam em `backend/schema/`, enquanto migrations documentam evolução e atualização incremental.
 
 ## Pontos de atenção
 

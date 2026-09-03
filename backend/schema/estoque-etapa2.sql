@@ -1,5 +1,5 @@
 -- OminiSaber | Migracao da Etapa 2: secoes fisicas e alocacao
--- Execute depois de ominisaber-schema-biblioteca.sql e ominisaber-schema-estoque-etapa1.sql.
+-- Execute depois de backend/schema/biblioteca.sql e backend/schema/estoque-etapa1.sql.
 
 begin;
 

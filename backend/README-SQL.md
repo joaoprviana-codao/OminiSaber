@@ -22,19 +22,19 @@ npm run schema:build
 
 Execute os arquivos abaixo no SQL Editor do Supabase, exatamente nesta ordem:
 
-1. `ominisaber-schema.sql`
+1. `schema/core.sql`
 2. `migrations/20260831_acesso_materias_aluno.sql`
-3. `ominisaber-schema-configuracoes.sql`
-4. `ominisaber-schema-biblioteca.sql`
-5. `ominisaber-schema-estoque-etapa1.sql`
-6. `ominisaber-schema-estoque-etapa2.sql`
-7. `ominisaber-schema-conquistas.sql`
-8. `ominisaber-schema-espacos-docentes.sql`
+3. `schema/configuracoes.sql`
+4. `schema/biblioteca.sql`
+5. `schema/estoque-etapa1.sql`
+6. `schema/estoque-etapa2.sql`
+7. `schema/conquistas.sql`
+8. `schema/espacos-docentes.sql`
 9. `migrations/20260831_trilhas_estudos_completos.sql`
 10. `migrations/20260831_redacao_jornada_completa.sql`
 11. `migrations/20260831_agenda_notificacoes.sql`
 
-`ominisaber-schema-professor.sql` é somente uma atualização de compatibilidade para bancos antigos. Não é necessário executá-lo em uma instalação nova, pois o conteúdo estrutural correspondente já está no schema principal.
+`schema/professor.sql` é somente uma atualização de compatibilidade para bancos antigos. Não é necessário executá-lo em uma instalação nova, pois o conteúdo estrutural correspondente já está no schema principal.
 
 ## Validação local
 

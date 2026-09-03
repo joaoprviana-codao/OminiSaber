@@ -779,7 +779,7 @@ grant execute on function public.eh_gestor_ou_professor() to authenticated;
 grant execute on function public.aluno_pode_acessar_materia(public.materia_aluno) to authenticated;
 
 -- A instalação funcional dos quatro espaços docentes continua em:
--- backend/ominisaber-schema-espacos-docentes.sql
+-- backend/schema/espacos-docentes.sql
 -- O arquivo separado permite atualizar bases existentes sem recriar o schema principal.
 
 commit;

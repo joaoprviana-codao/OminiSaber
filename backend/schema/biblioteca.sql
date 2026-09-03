@@ -1,5 +1,5 @@
 -- OminiSaber | Biblioteca digital e leituras do aluno
--- Execute depois de backend/ominisaber-schema.sql.
+-- Execute depois de backend/schema/core.sql.
 
 begin;
 

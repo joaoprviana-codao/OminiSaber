@@ -1,5 +1,5 @@
 -- OminiSaber | Extensão da área do professor e propostas de redação
--- Execute após backend/ominisaber-schema.sql apenas em bancos já existentes.
+-- Execute após backend/schema/core.sql apenas em bancos já existentes.
 
 begin;
 

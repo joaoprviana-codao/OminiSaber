@@ -44,4 +44,4 @@ Os filtros de `Todas`, `Trilhas`, `Redação`, `Leitura` e `Geral` são aplicado
 
 Como o escopo desta tela não altera o gateway, a galeria usa o cliente público já inicializado em `window.OminiSaber.client`. As consultas continuam protegidas pelas políticas RLS do Supabase.
 
-Se `conquistas` ou `conquistas_aluno` ainda não existirem, ou se o PostgREST retornar `PGRST200`, `PGRST205` ou uma mensagem de `schema cache`, `medalhas.js` carrega quatro medalhas locais padrão e sinaliza o modo de demonstração sem interromper a página. O catálogo persistente pode ser instalado executando `backend/ominisaber-schema-conquistas.sql`, que cria as tabelas, policies, grants e registros iniciais.
+Se `conquistas` ou `conquistas_aluno` ainda não existirem, ou se o PostgREST retornar `PGRST200`, `PGRST205` ou uma mensagem de `schema cache`, `medalhas.js` carrega quatro medalhas locais padrão e sinaliza o modo de demonstração sem interromper a página. O catálogo persistente pode ser instalado executando `backend/schema/conquistas.sql`, que cria as tabelas, policies, grants e registros iniciais.
