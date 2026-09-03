@@ -14,6 +14,8 @@ O documento é identificado por SHA-256. Uma segunda tentativa do mesmo arquivo 
 
 Estados da importação: `upload`, `processando`, `revisao`, `aprovada`, `rejeitada` e `erro`. Itens com confiança abaixo de 90% ficam em `revisar`; a tela bloqueia a aprovação até que sejam aprovados ou rejeitados individualmente.
 
+No escopo exclusivo de Ensino Médio, códigos `EM...` são emitidos como `habilidade` com etapa `ensino_medio`. Códigos `EF...` são preservados como `referencia_ensino_fundamental`, sempre em revisão, e não são materializados como habilidades principais.
+
 ## Modelo de dados
 
 - `curriculos`: entidade anual por origem, ano, componente e versão.
@@ -26,6 +28,12 @@ Estados da importação: `upload`, `processando`, `revisao`, `aprovada`, `rejeit
 - `importacoes_curriculo` e `importacoes_curriculo_itens`: staging, metadados, erros, resumo, confiança e revisão.
 
 A RPC `aprovar_importacao_curriculo` é exclusiva de Gestor. Ela cria/reutiliza o currículo anual, períodos, habilidades, descritores, expectativas e objetos com `ON CONFLICT`, e só considera itens não rejeitados.
+
+### Dívidas técnicas da Fase 1
+
+- `max(versao) + 1` ainda precisa de uma estratégia de concorrência no banco.
+- Habilidades e descritores são entidades globais reutilizadas; versões ainda não são snapshots históricos totalmente imutáveis.
+- Os padrões de habilidades devem permanecer adequados ao Ensino Médio e não evoluir para um parser genérico de toda a BNCC.
 
 ## Segurança e versionamento
 

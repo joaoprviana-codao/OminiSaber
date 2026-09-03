@@ -20,6 +20,20 @@ assert(automaticSubject.detected.materia_codigo === 'matematica', 'matéria dete
 assert(automaticSubject.items[0].payload.codigo === 'EF67MA01', 'código EF reconhecido');
 assert(automaticSubject.items[0].payload.descricao === 'Resolver problemas\ncontinuação da habilidade', 'descrição multiline preservada');
 
+const structured = parse(['1ª série\n1º trimestre\nEM13LP03 Desenvolver leitura\nDescritores:\nD021_P Inferir informações\ncom base no texto\nD022_P Analisar recursos\nExpectativas de aprendizagem:\nReconhecer estratégias\nem textos diversos\nObjetos de conhecimento:\nCoesão e coerência\nPráticas de linguagem'], {});
+assert(structured.items[0].payload.descritores.length === 2, 'múltiplos descritores');
+assert(structured.items[0].payload.descritores[0].descricao === 'Inferir informações\ncom base no texto', 'descritor multiline');
+assert(structured.items[0].payload.expectativas.join('\n') === 'Reconhecer estratégias\nem textos diversos', 'expectativa multiline');
+assert(structured.items[0].payload.objetos.join('\n') === 'Coesão e coerência\nPráticas de linguagem', 'objeto multiline');
+
+const table = parse([{ items: [
+	{ str: '1ª série', transform: [1, 0, 0, 1, 20, 700], width: 50 },
+	{ str: '2º trimestre', transform: [1, 0, 0, 1, 220, 700], width: 70 },
+	{ str: 'EM13LP04', transform: [1, 0, 0, 1, 20, 680], width: 60 },
+	{ str: 'Interpretar textos', transform: [1, 0, 0, 1, 90, 680], width: 100 },
+] }], {});
+assert(table.items[0].payload.codigo === 'EM13LP04' && table.items[0].confianca < 90, 'tabela ambígua em revisão');
+
 const subjects = [
 	['Língua Portuguesa', 'portugues'],
 	['Matemática', 'matematica'],
@@ -30,10 +44,11 @@ const subjects = [
 ];
 subjects.forEach(([label, code]) => assert(parse([`Componente curricular: ${label}\nEM13XX01 Descrição válida`], {}).detected.materia_codigo === code, `matéria ${label}`));
 
-const allSeries = parse(['2ª série - 2º trimestre\nEM13CO15 Aplicar pensamento computacional\n3ª série - 3º trimestre\nEM13LP06 Analisar textos'], {});
-assert(allSeries.items.length === 2, 'documento com múltiplas séries');
+const allSeries = parse(['2ª série - 2º trimestre\nEM13CO15 Aplicar pensamento computacional\n3ª série - 3º trimestre\nEM13LP06 Analisar textos\nEF67LP01 Referência anterior'], {});
+assert(allSeries.items.length === 3, 'documento com múltiplas séries');
 assert(allSeries.items[0].payload.serie === 2 && allSeries.items[1].payload.serie === 3, 'séries locais');
 assert(allSeries.items[0].payload.trimestre === 2 && allSeries.items[1].payload.trimestre === 3, 'trimestres locais');
+assert(allSeries.items.some((item) => item.tipo === 'referencia_ensino_fundamental' && item.etapa === 'ensino_fundamental' && item.status === 'revisar'), 'referência EF separada');
 
 const unknown = parse(['Documento escaneado sem texto selecionável'], {});
 assert(unknown.items[0].tipo === 'aviso' && unknown.items[0].confianca < 70, 'estrutura desconhecida em revisão');

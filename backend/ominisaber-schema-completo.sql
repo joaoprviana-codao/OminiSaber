@@ -6,7 +6,7 @@
 begin;
 
 -- ============================================================================
--- ETAPA 1/16: schema/core.sql
+-- ETAPA 1/17: schema/core.sql
 -- ============================================================================
 
 -- OminiSaber | Schema Supabase
@@ -792,7 +792,7 @@ grant execute on function public.aluno_pode_acessar_materia(public.materia_aluno
 -- O arquivo separado permite atualizar bases existentes sem recriar o schema principal.
 
 -- ============================================================================
--- ETAPA 2/16: migrations/20260831_acesso_materias_aluno.sql
+-- ETAPA 2/17: migrations/20260831_acesso_materias_aluno.sql
 -- ============================================================================
 
 do $$ begin
@@ -960,7 +960,7 @@ create policy trilhas_select on public.trilhas for select to authenticated using
 );
 
 -- ============================================================================
--- ETAPA 3/16: schema/configuracoes.sql
+-- ETAPA 3/17: schema/configuracoes.sql
 -- ============================================================================
 
 -- Preferencias e dados editaveis do perfil do aluno.
@@ -987,7 +987,7 @@ drop trigger if exists perfis_updated_at on public.perfis;
 drop function if exists public.atualizar_perfil_updated_at();
 
 -- ============================================================================
--- ETAPA 4/16: schema/biblioteca.sql
+-- ETAPA 4/17: schema/biblioteca.sql
 -- ============================================================================
 
 -- OminiSaber | Biblioteca digital e leituras do aluno
@@ -1302,7 +1302,7 @@ create trigger set_exemplares_updated_at before update on public.exemplares
 for each row execute function public.set_updated_at();
 
 -- ============================================================================
--- ETAPA 5/16: schema/estoque-etapa1.sql
+-- ETAPA 5/17: schema/estoque-etapa1.sql
 -- ============================================================================
 
 -- OminiSaber | Migracao da Etapa 1: autores, obras e exemplares
@@ -1417,7 +1417,7 @@ create trigger set_autores_updated_at before update on public.autores
 for each row execute function public.set_updated_at();
 
 -- ============================================================================
--- ETAPA 6/16: schema/estoque-etapa2.sql
+-- ETAPA 6/17: schema/estoque-etapa2.sql
 -- ============================================================================
 
 -- OminiSaber | Migracao da Etapa 2: secoes fisicas e alocacao
@@ -1521,7 +1521,7 @@ create trigger set_secoes_fisicas_updated_at before update on public.secoes_fisi
 for each row execute function public.set_updated_at();
 
 -- ============================================================================
--- ETAPA 7/16: schema/conquistas.sql
+-- ETAPA 7/17: schema/conquistas.sql
 -- ============================================================================
 
 -- OminiSaber | Catálogo e progresso de conquistas
@@ -1593,7 +1593,7 @@ revoke insert, update, delete on table public.conquistas from anon, authenticate
 revoke insert, update, delete on table public.conquistas_aluno from anon, authenticated;
 
 -- ============================================================================
--- ETAPA 8/16: schema/espacos-docentes.sql
+-- ETAPA 8/17: schema/espacos-docentes.sql
 -- ============================================================================
 
 -- OminiSaber | Espaços funcionais por especialidade docente
@@ -1998,7 +1998,7 @@ revoke all on public.laboratorios_docentes, public.avaliacoes_docentes, public.q
 grant select, insert, update, delete on public.laboratorios_docentes, public.avaliacoes_docentes, public.questoes_avaliacao, public.gabaritos_avaliacao, public.entregas_laboratorio, public.tentativas_avaliacao to authenticated;
 
 -- ============================================================================
--- ETAPA 9/16: migrations/20260831_trilhas_estudos_completos.sql
+-- ETAPA 9/17: migrations/20260831_trilhas_estudos_completos.sql
 -- ============================================================================
 
 create schema if not exists private authorization postgres;
@@ -2418,7 +2418,7 @@ create trigger set_anotacoes_aula_updated_at before update on public.anotacoes_a
 for each row execute function public.set_updated_at();
 
 -- ============================================================================
--- ETAPA 10/16: migrations/20260831_redacao_jornada_completa.sql
+-- ETAPA 10/17: migrations/20260831_redacao_jornada_completa.sql
 -- ============================================================================
 
 create schema if not exists private authorization postgres;
@@ -2786,7 +2786,7 @@ create trigger set_avaliacoes_competencias_redacao_updated_at before update on p
 for each row execute function public.set_updated_at();
 
 -- ============================================================================
--- ETAPA 11/16: migrations/20260831_agenda_notificacoes.sql
+-- ETAPA 11/17: migrations/20260831_agenda_notificacoes.sql
 -- ============================================================================
 
 create extension if not exists pgcrypto;
@@ -3001,7 +3001,7 @@ begin
 end $$;
 
 -- ============================================================================
--- ETAPA 12/16: migrations/20260902_biblioteca_acervo_unificado.sql
+-- ETAPA 12/17: migrations/20260902_biblioteca_acervo_unificado.sql
 -- ============================================================================
 
 -- OminiSaber | Acervo físico, PDFs verificados e reserva transacional
@@ -3331,7 +3331,7 @@ begin
 end $$;
 
 -- ============================================================================
--- ETAPA 13/16: migrations/20260903_portal_gestor.sql
+-- ETAPA 13/17: migrations/20260903_portal_gestor.sql
 -- ============================================================================
 
 alter table public.perfis add column if not exists email_contato text;
@@ -3442,7 +3442,7 @@ grant select, insert on public.solicitacoes_acesso to authenticated;
 grant select on public.gestor_auditoria to authenticated;
 
 -- ============================================================================
--- ETAPA 14/16: migrations/20260903_importacao_curricular.sql
+-- ETAPA 14/17: migrations/20260903_importacao_curricular.sql
 -- ============================================================================
 
 alter table public.descritores_curriculares
@@ -3679,7 +3679,7 @@ revoke all on function public.aprovar_importacao_curriculo(uuid) from public, an
 grant execute on function public.aprovar_importacao_curriculo(uuid) to authenticated;
 
 -- ============================================================================
--- ETAPA 15/16: migrations/20260903_importacao_curricular_fase1.sql
+-- ETAPA 15/17: migrations/20260903_importacao_curricular_fase1.sql
 -- ============================================================================
 
 alter table public.importacoes_curriculo
@@ -3773,7 +3773,17 @@ revoke all on function public.aprovar_importacao_curriculo(uuid) from public, an
 grant execute on function public.aprovar_importacao_curriculo(uuid) to authenticated;
 
 -- ============================================================================
--- ETAPA 16/16: migrations/20260903_redacoes_avaliacoes_portugues.sql
+-- ETAPA 16/17: migrations/20260903_importacao_curricular_fase2.sql
+-- ============================================================================
+
+alter table public.importacoes_curriculo_itens
+  drop constraint if exists importacoes_curriculo_itens_tipo_check;
+alter table public.importacoes_curriculo_itens
+  add constraint importacoes_curriculo_itens_tipo_check
+  check (tipo in ('habilidade','referencia_ensino_fundamental','descritor','aviso'));
+
+-- ============================================================================
+-- ETAPA 17/17: migrations/20260903_redacoes_avaliacoes_portugues.sql
 -- ============================================================================
 
 -- Rascunhos privados da devolutiva. A redação do aluno permanece imutável até
