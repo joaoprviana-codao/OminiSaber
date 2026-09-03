@@ -1,7 +1,7 @@
 (() => {
   const SKILL_RE = /\b(?:EM|EF)\d{2}[A-Z]{2}\d{2}\b/gi;
   const DESCRIPTOR_RE = /\bD\d{3}(?:_[A-Z])?\b/gi;
-  const CURRICULAR_HEADER_RE = /^(?:\s*(?:habilidade(?:s)?(?:\s+da\s+computa[cç][aã]o|\s+principal)?|objeto(?:s)?\s+de\s+conhecimento|expectativa(?:s)?(?:\s+de\s+aprendizagem)?|descritor(?:es)?|materiais?\s+estruturados?|material\s+estruturado|componente\s+curricular|s[eé]rie|trimestre|quinzena|semana)\b|\s*(?:EM|EF)\d{2}[A-Z]{2}\d{2}\b)/i;
+  const CURRICULAR_HEADER_RE = /^(?:\s*(?:(?:[1-3]\s*[ªºa]?)\s*(?:s[eé]rie|trimestre|quinzena|semana)|habilidade(?:s)?(?:\s+da\s+computa[cç][aã]o|\s+principal)?|objeto(?:s)?\s+de\s+conhecimento|expectativa(?:s)?(?:\s+de\s+aprendizagem)?|descritor(?:es)?|materiais?\s+estruturados?|material\s+estruturado|componente\s+curricular|s[eé]rie|trimestre|quinzena|semana)\b|\s*(?:EM|EF)\d{2}[A-Z]{2}\d{2}\b)/i;
   const clean = (value) => String(value || '').replace(/\s+/g, ' ').trim();
   const unique = (values) => [...new Set(values.map(clean).filter(Boolean))];
   const first = (value, pattern) => String(value || '').match(pattern)?.[1] || null;

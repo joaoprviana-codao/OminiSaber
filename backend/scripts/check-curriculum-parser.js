@@ -28,6 +28,10 @@ assert(structured.items[0].payload.descritores[0].descricao === 'Inferir informa
 assert(structured.items[0].payload.expectativas.join('\n') === 'Reconhecer estratégias\nem textos diversos', 'expectativa multiline');
 assert(structured.items[0].payload.objetos.join('\n') === 'Coesão e coerência\nPráticas de linguagem', 'objeto multiline');
 
+const headerBoundaries = parse(['1ª série\n1º trimestre\nEM13LP05 Ler criticamente\nD023_P Inferir uma ideia\n2ª série\n3º trimestre\nEM13LP06 Outra habilidade'], {});
+assert(headerBoundaries.items[0].payload.descritores[0].descricao === 'Inferir uma ideia', 'descritor não absorve série numerada');
+assert(headerBoundaries.items[1].payload.serie === 2 && headerBoundaries.items[1].payload.trimestre === 3, 'cabeçalhos numerados detectados');
+
 const table = parse([{ items: [
 	{ str: '1ª série', transform: [1, 0, 0, 1, 20, 700], width: 50 },
 	{ str: '2º trimestre', transform: [1, 0, 0, 1, 220, 700], width: 70 },
@@ -66,4 +70,5 @@ assert(migration.includes("where importacao_id = imp.id and tipo = 'habilidade'"
 assert(phase2Migration.includes('referencia_ensino_fundamental'), 'staging aceita referência EF');
 assert(gestorSource.includes('name="materia_codigo"') && gestorSource.includes('payload.materia_codigo'), 'matéria editada usa materia_codigo');
 assert(!gestorSource.includes('payload.materia)'), 'payload.materia não é usado');
+assert(gestorSource.includes('ok: "OK"') && gestorSource.includes('aprovado: "Aprovado"') && gestorSource.includes('rejeitado: "Rejeitado"'), 'status aprovado e rejeitado têm labels explícitos');
 console.log('OK parser curricular: trimestre único, múltiplas séries, duplicatas por código e habilidade sem descritor.');
