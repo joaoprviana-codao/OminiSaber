@@ -1,9 +1,7 @@
 window.OMINI_TEACHER_PORTAL = window.OMINI_TEACHER_CONFIGS.portugues;
 
-window.renderPortugueseEssays = async ({ content, data, api, preview, escapeHtml, toast, reload }) => {
-  const [essays, prompts, drafts] = preview
-    ? [[], [], []]
-    : await Promise.all([api.listTeacherEssays(), api.listTeacherWritingPrompts(), api.listEssayCorrectionDrafts()]);
+window.renderPortugueseEssays = async ({ content, data, api, escapeHtml, toast, reload }) => {
+  const [essays, prompts, drafts] = await Promise.all([api.listTeacherEssays(), api.listTeacherWritingPrompts(), api.listEssayCorrectionDrafts()]);
   let selectedId = essays[0]?.id || null;
   let currentView = 'entregas';
   const draftByEssay = new Map(drafts.map((draft) => [draft.redacao_id, draft]));

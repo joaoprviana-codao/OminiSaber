@@ -462,6 +462,13 @@
     return (data || []).map((item) => ({ ...item.turmas, materia: item.materia })).filter((item) => item.id);
   };
 
+  const listTeacherStudentIds = async (classIds) => {
+    if (!classIds.length) return [];
+    const { data, error } = await client.from('perfis').select('id').eq('role', 'aluno').in('turma_id', classIds);
+    if (error) throw error;
+    return (data || []).map((item) => item.id);
+  };
+
   const createWritingPrompt = async ({ title, category, command, motivators = [], rubric, deadline, classId = null, className = null, published = false, pinned = false, summary = '', axis = '', difficulty = 'intermediaria', estimatedMinutes = 90, keywords = [], details = {} }) => {
     if (!ensureConfigured()) return null;
     const session = await getSession();
@@ -510,8 +517,11 @@
 
   const listTeacherEssays = async () => {
     if (!ensureConfigured()) return [];
-    await assertTeacherSpecialty('portugues');
-    const { data, error } = await client.from('redacoes').select('*, perfis!redacoes_aluno_id_fkey(nome,turma_id,turmas!perfis_turma_id_fkey(id,nome,serie)), propostas_redacao!redacoes_proposta_id_fkey(id,titulo,prazo,categoria), avaliacoes_competencias_redacao(competencia,nota,comentario), comentarios_redacao(id,inicio_offset,fim_offset,trecho,comentario,tipo,created_at)').in('status', ['enviada', 'corrigida']).order('enviada_em', { ascending: true });
+    const { session } = await assertTeacherSpecialty('portugues');
+    const classes = await listTeacherClasses();
+    const studentIds = await listTeacherStudentIds(classes.map((item) => item.id));
+    if (!studentIds.length) return [];
+    const { data, error } = await client.from('redacoes').select('*, perfis!redacoes_aluno_id_fkey(nome,turma_id,turmas!perfis_turma_id_fkey(id,nome,serie)), propostas_redacao!redacoes_proposta_id_fkey(id,titulo,prazo,categoria), avaliacoes_competencias_redacao(competencia,nota,comentario), comentarios_redacao(id,inicio_offset,fim_offset,trecho,comentario,tipo,created_at)').in('aluno_id', studentIds).in('status', ['enviada', 'corrigida']).order('enviada_em', { ascending: true });
     if (error) throw error;
     return (data || []).map((essay) => ({
       ...essay,
@@ -582,13 +592,13 @@
     const profile = await getProfile();
     const classes = await listTeacherClasses();
     const classIds = classes.map((item) => item.id);
-    if (!classIds.length && profile?.turma_id) classIds.push(profile.turma_id);
+    const studentIds = await listTeacherStudentIds(classIds);
     let studentsQuery = client.from('perfis').select('id', { count: 'exact', head: true }).eq('role', 'aluno');
     if (classIds.length) studentsQuery = studentsQuery.in('turma_id', classIds);
     const [studentsResult, essaysResult, progressResult] = await Promise.all([
       studentsQuery,
-      client.from('redacoes').select('id', { count: 'exact', head: true }).eq('status', 'enviada'),
-      client.from('progresso_atividades').select('concluida')
+      studentIds.length ? client.from('redacoes').select('id', { count: 'exact', head: true }).in('aluno_id', studentIds).eq('status', 'enviada') : Promise.resolve({ count: 0, error: null }),
+      studentIds.length ? client.from('progresso_atividades').select('concluida').in('aluno_id', studentIds) : Promise.resolve({ data: [], error: null })
     ]);
     if (studentsResult.error) throw studentsResult.error;
     if (essaysResult.error) throw essaysResult.error;
@@ -984,9 +994,18 @@
     if (from) query = query.gte('inicio', from);
     if (to) query = query.lt('inicio', to);
     if (own) query = query.eq('professor_id', session.user.id);
+    if (profile?.role === 'professor') {
+      const classes = await listTeacherClasses();
+      const classIds = classes.map((item) => item.id);
+      if (!classIds.length) return [];
+      query = query.in('turma_id', classIds);
+    }
     if (profile?.role === 'aluno' && profile.turma_id) query = query.eq('turma_id', profile.turma_id).eq('status', 'publicado');
     const { data, error } = await query;
-    if (error) throw error;
+    if (error) {
+      console.error('[OminiSaber][Supabase] Falha ao consultar eventos_agenda para o usuário autenticado.', error);
+      throw error;
+    }
     return data || [];
   };
 

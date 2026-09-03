@@ -13,3 +13,12 @@
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
 .lesson-steps{padding:12px 16px;gap:0}.lesson-steps li{min-height:27px;padding:2px 8px}.lesson-steps li span{width:20px;height:20px}
 img.avatar{object-fit:cover;padding:0}
+
+/* O palco mantém as bolhas afastadas das bordas e deixa o arraste livre. */
+.mastery-map{min-height:600px;padding:12px;isolation:isolate}
+.map-links{inset:12px;width:calc(100% - 24px);height:calc(100% - 24px);z-index:0}
+.subject-node{z-index:1;cursor:grab;user-select:none;touch-action:none;transition:transform .22s cubic-bezier(.2,.8,.2,1),box-shadow .22s,opacity .18s}
+.subject-node:hover,.subject-node:focus-visible,.subject-node.selected{outline:0;transform:translate(-50%,-50%) scale(1.05);box-shadow:0 12px 28px rgba(30,36,82,.18)}
+.subject-node.dragging{cursor:grabbing;transform:translate(-50%,-50%) scale(1.08);box-shadow:0 18px 38px rgba(30,36,82,.24);transition:none;z-index:3}
+.general-node{left:50%;top:50%;width:146px;min-height:146px;--node-color:var(--indigo-700);cursor:default;z-index:2}
+.general-node:hover{transform:translate(-50%,-50%) scale(1.03)}

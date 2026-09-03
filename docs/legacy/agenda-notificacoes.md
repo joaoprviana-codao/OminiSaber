@@ -55,7 +55,7 @@ Armazena o conteúdo comum do aviso. Uma única linha atende toda a turma; não 
 
 Registra apenas a relação entre usuário e notificação lida. Essa separação mantém a consulta simples e preserva o estado individual.
 
-O schema completo está em [`backend/migrations/20260831_agenda_notificacoes.sql`](../backend/migrations/20260831_agenda_notificacoes.sql).
+O schema completo está em [`../../backend/migrations/20260831_agenda_notificacoes.sql`](../../backend/migrations/20260831_agenda_notificacoes.sql).
 
 ## Segurança
 

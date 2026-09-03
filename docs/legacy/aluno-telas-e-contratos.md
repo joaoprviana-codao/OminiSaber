@@ -77,7 +77,7 @@ Layout necessário:
 
 Serviços: `listStudyCatalog`, `getStudyTrail`, `getStudyActivity`, `toggleSavedContent`, `listSavedContent`, `saveLessonNotes`, `completeLesson`, `startActivityAttempt`, `getActiveActivityAttempt`, `answerActivityQuestion`, `getActivityResult`, `recordStudyEvent`, `listStudyHistory` e `getStudyXp`.
 
-O contrato de dados, as sete rotas e as políticas de acesso estão detalhados em [Trilhas e estudos](trilhas-e-estudos.md). A estrutura SQL incremental fica em `backend/migrations/20260831_trilhas_estudos_completos.sql`.
+O contrato de dados, as sete rotas e as políticas de acesso estão detalhados em [Trilhas e estudos](trilhas-e-estudos.md). A estrutura SQL incremental fica em `../../backend/migrations/20260831_trilhas_estudos_completos.sql`.
 
 As experiências detalhadas de Língua Portuguesa possuem telas próprias e consomem as avaliações publicadas pelo professor. As respostas são persistidas em `tentativas_avaliacao`, respeitando o vínculo entre aluno e turma.
 

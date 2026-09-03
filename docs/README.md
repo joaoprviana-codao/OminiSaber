@@ -1,24 +1,58 @@
-# Documentação técnica do OminiSaber
+# Documentação do OmniSaber
 
-- [Área do gestor](area-do-gestor.md)
+Índice central da documentação técnica e operacional do projeto.
 
-Esta pasta reúne a referência técnica e de produto do projeto.
+## Primeiros passos
 
-## Leitura recomendada
+- [Instalação](getting-started/instalacao.md)
+- [Configuração e ambiente](getting-started/configuracao.md)
+- [Supabase](getting-started/supabase.md)
 
-1. [Arquitetura](arquitetura.md) — componentes, camadas e fluxo de dados.
-2. [Stack tecnológica](stack.md) — tecnologias adotadas e responsabilidades.
-3. [Decisões arquiteturais](decisoes-arquiteturais.md) — motivos e consequências das escolhas.
-4. [Segurança](seguranca.md) — autenticação, autorização, RLS e riscos conhecidos.
-5. [Padrões do projeto](padroes-do-projeto.md) — nomes, arquivos, rotas, CSS, JavaScript e SQL.
-6. [Experiência e acessibilidade](experiencia-e-acessibilidade.md) — princípios para aluno e biblioteca.
-7. [Área do professor](area-do-professor.md) — quatro espaços, laboratórios, avaliações e redações.
-8. [Trilhas e estudos](trilhas-e-estudos.md) — catálogo, aulas, atividades, resultados, salvos e histórico ligados ao Supabase.
-9. [Jornada completa de redação](redacao-jornada-completa.md) — propostas, planejamento, editor, revisão, correção e versões.
+## Arquitetura
 
-## Fontes de verdade
+- [Visão geral](architecture/visao-geral.md)
+- [Frontend](architecture/frontend.md)
+- [Backend](architecture/backend.md)
+- [Autenticação](architecture/autenticacao.md)
+- [Permissões e RLS](architecture/permissoes-rls.md)
+- [Fluxo de dados](architecture/fluxo-de-dados.md)
 
-- O banco é definido pelos arquivos SQL prefixados por ominisaber-schema.
-- O navegador acessa o Supabase por meio de backend/ominisaber-supabase-client.js.
-- A configuração pública fica em backend/ominisaber-supabase-config.js.
-- As páginas canônicas usam index.html; code.html existe apenas para compatibilidade.
+## Banco de dados
+
+- [Schema](database/schema.md)
+- [Tabelas](database/tabelas.md)
+- [Relacionamentos](database/relacionamentos.md)
+- [Migrations](database/migrations.md)
+- [Policies RLS](database/rls-policies.md)
+- [Convenções](database/convencoes.md)
+
+## Módulos
+
+- [Aluno](modules/aluno/README.md)
+- [Professor](modules/professor/README.md)
+- [Professor de Português](modules/professor-portugues/README.md)
+- [Redações](modules/redacoes/README.md)
+- [Avaliações](modules/avaliacoes/README.md)
+- [Agenda](modules/agenda/README.md)
+- [Biblioteca](modules/biblioteca/README.md)
+- [Administração](modules/administracao/README.md)
+
+## Guias de usuário
+
+- [Aluno](user-guides/aluno.md)
+- [Professor](user-guides/professor.md)
+- [Professor de Português](user-guides/professor-portugues.md)
+- [Administrador](user-guides/administrador.md)
+
+## Desenvolvimento e manutenção
+
+- [Estrutura de pastas](development/estrutura-de-pastas.md)
+- [Convenções de código](development/convencoes-de-codigo.md)
+- [Cliente Supabase](development/supabase-client.md)
+- [Debugging](development/debugging.md)
+- [Troubleshooting](development/troubleshooting.md)
+- [Known issues](development/known-issues.md)
+- [Checklist](development/checklist-de-desenvolvimento.md)
+- [Design system](design/design-system.md)
+
+Documentos históricos preservados ficam em [legacy](legacy/README.md).

@@ -4,7 +4,6 @@
   if (!config || !root) return;
   const api = () => window.OminiSaber;
   const page = document.body.dataset.page || 'dashboard';
-  const preview = new URLSearchParams(location.search).get('preview') === '1';
   const escapeHtml = (value = '') => String(value).replace(/[&<>'"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[char]));
   const formatDate = (value) => value ? new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }).format(new Date(value)) : 'Sem prazo';
   const toast = (message, type = 'success') => {
@@ -38,7 +37,7 @@
   const renderDashboard = async (data) => {
     const content = document.querySelector('[data-portal-content]');
     let essays = [];
-    if (config.type === 'portugues' && !preview) essays = await api().listTeacherEssays();
+    if (config.type === 'portugues') essays = await api().listTeacherEssays();
     const publishedLabs = data.labs.filter((item) => item.status === 'publicado').length;
     const draftEvaluations = data.evaluations.filter((item) => item.status === 'rascunho').length;
     const pending = config.type === 'portugues' ? essays.filter((item) => item.status === 'enviada').length : data.labs.reduce((sum, item) => sum + (item.entregas_laboratorio || []).filter((entry) => entry.status === 'enviada').length, 0);
@@ -71,8 +70,8 @@
   const load = async () => {
     const content = document.querySelector('[data-portal-content]');
     content.innerHTML = '<section class="loading-state" aria-live="polite"><span class="material-symbols-outlined">progress_activity</span><p>Carregando dados do Supabase...</p></section>';
-    try { const data = preview ? { profile: null, classes: [], labs: [], evaluations: [], studentCount: 0 } : await api().getTeacherWorkspace(config.type); document.querySelector('[data-portal-profile]').textContent = data.profile?.nome || (preview ? 'Visualização sem dados' : 'Professor'); if (page === 'dashboard') await renderDashboard(data); else if (page === 'laboratorio') renderLabs(data); else if (page === 'redacoes' && typeof window.renderPortugueseEssays === 'function') await window.renderPortugueseEssays({ content, data, api: api(), preview, escapeHtml, formatDate, toast, reload: load }); else renderEvaluations(data); }
-    catch (error) { content.innerHTML = `<section class="empty-state" role="alert"><span class="material-symbols-outlined">cloud_off</span><h2>Não foi possível carregar o espaço</h2><p>${escapeHtml(error.message)}</p><button class="button primary" type="button" data-retry> tentar novamente</button></section>`; document.querySelector('[data-retry]')?.addEventListener('click', load); }
+    try { const data = await api().getTeacherWorkspace(config.type); document.querySelector('[data-portal-profile]').textContent = data.profile?.nome || 'Professor'; if (page === 'dashboard') await renderDashboard(data); else if (page === 'laboratorio') renderLabs(data); else if (page === 'redacoes' && typeof window.renderPortugueseEssays === 'function') await window.renderPortugueseEssays({ content, data, api: api(), escapeHtml, formatDate, toast, reload: load }); else renderEvaluations(data); }
+    catch (error) { console.error(`[OminiSaber][Supabase][${config.type}] Falha ao carregar a página ${page}.`, error); content.innerHTML = `<section class="empty-state" role="alert"><span class="material-symbols-outlined">cloud_off</span><h2>Não foi possível carregar o espaço</h2><p>${escapeHtml(error.message)}</p><button class="button primary" type="button" data-retry> tentar novamente</button></section>`; document.querySelector('[data-retry]')?.addEventListener('click', load); }
   };
   shell();
   const agendaLink = document.createElement('a');
@@ -86,6 +85,5 @@
   document.querySelector('.portal-actions')?.prepend(agendaAction);
   document.addEventListener('click', (event) => { if (!document.body.classList.contains('menu-open')) return; const sidebar = document.querySelector('.portal-sidebar'); if (!sidebar?.contains(event.target) && !event.target.closest('[data-portal-menu]')) { document.body.classList.remove('menu-open'); document.querySelector('[data-portal-menu]')?.setAttribute('aria-expanded', 'false'); } });
   document.querySelectorAll('.portal-nav a').forEach((link) => link.addEventListener('click', () => document.body.classList.remove('menu-open')));
-  if (preview) document.addEventListener('submit', (event) => { event.preventDefault(); event.stopImmediatePropagation(); toast('Entre com uma conta docente para salvar no Supabase.', 'error'); }, true);
   document.addEventListener('ominisaber:ready', load, { once: true });
 })();

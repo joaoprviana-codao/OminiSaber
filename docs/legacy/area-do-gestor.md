@@ -19,7 +19,7 @@ A área do gestor concentra a organização institucional do OminiSaber. O dashb
 
 ## Arquitetura
 
-O frontend é composto por HTML, CSS e JavaScript compartilhados em `frontend/gestor/shared`. As páginas usam o cliente comum `backend/ominisaber-supabase-client.js`. O schema administrativo está em `backend/migrations/20260903_portal_gestor.sql` e também faz parte do schema unificado.
+O frontend é composto por HTML, CSS e JavaScript compartilhados em `frontend/gestor/shared`. As páginas usam o cliente comum `backend/ominisaber-supabase-client.js`. O schema administrativo está em `../../backend/migrations/20260903_portal_gestor.sql` e também faz parte do schema unificado.
 
 Os gráficos são renderizados com elementos semânticos, alimentados pelos descritores e conteúdos reais. Os ícones seguem Material Symbols e o restante da interface usa os componentes nativos do portal.
 

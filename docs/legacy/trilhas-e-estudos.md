@@ -65,7 +65,7 @@ As políticas usam `(select auth.uid())`, filtros por turma e índices nas colun
 
 1. Confirme que `backend/ominisaber-supabase-config.js` aponta para o projeto correto.
 2. Execute primeiro o schema-base do OminiSaber, caso ainda não esteja instalado.
-3. Aplique `backend/migrations/20260831_trilhas_estudos_completos.sql` no mesmo projeto.
+3. Aplique `../../backend/migrations/20260831_trilhas_estudos_completos.sql` no mesmo projeto.
 4. Cadastre trilhas e atividades com `publicada = false`, revise o conteúdo e só então publique.
 5. Cadastre cada questão pública em `questoes_atividades` e seu gabarito correspondente em `private.gabaritos_questoes`.
 6. Valide com contas reais de aluno de turmas diferentes, professor e gestor antes de produção.

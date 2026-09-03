@@ -25,12 +25,13 @@
   };
   const baseSubjects = ['matematica', 'fisica', 'portugues', 'redacao'];
   const positions = [
-    ['50%', '12%'], ['19%', '40%'], ['81%', '40%'], ['31%', '79%'], ['69%', '79%']
+    ['50%', '17%'], ['21%', '42%'], ['79%', '42%'], ['31%', '78%'], ['69%', '78%']
   ];
   let dashboardData;
   let subjects = [];
   let selectedCode = '';
   let openingDifficultyMap = false;
+  const draggedPositions = new Map();
 
   const escapeHTML = (value = '') => String(value).replace(/[&<>'"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[char]));
   const initials = (name = '') => name.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]).join('').toUpperCase() || 'AL';
@@ -64,6 +65,8 @@
     if (score >= 60) return { label: 'Em evolução', className: 'attention' };
     return { label: 'Precisa de atenção', className: 'danger' };
   };
+  const generalScore = () => average(subjects.map((subject) => subject.score).filter((score) => score !== null));
+  const generalStatus = () => statusFor(generalScore());
   const subjectAccess = (profile) => [
     ...baseSubjects,
     profile.curso_tecnico === 'administracao' ? 'tecnico_administracao' : 'tecnico_informatica'
@@ -129,11 +132,15 @@
 
   const renderSubjects = () => {
     elements.filter.innerHTML = '<option value="all">Todas as matérias</option>' + subjects.map((subject) => `<option value="${subject.code}">${escapeHTML(subject.label)}</option>`).join('');
-    elements.map.innerHTML = subjects.map((subject, index) => {
+    const score = generalScore();
+    const status = generalStatus();
+    const generalNode = `<div class="subject-node general-node" aria-label="Geral. ${score === null ? 'Sem registros' : `${score}% de desempenho`}"><span class="node-icon material-symbols-outlined">insights</span><strong>Geral</strong><b>${score === null ? '—' : `${score}%`}</b><small>${escapeHTML(status.label)}</small></div>`;
+    elements.map.innerHTML = `<svg class="map-links" aria-hidden="true" preserveAspectRatio="none"><line x1="50%" y1="50%" x2="50%" y2="17%"></line><line x1="50%" y1="50%" x2="21%" y2="42%"></line><line x1="50%" y1="50%" x2="79%" y2="42%"></line><line x1="50%" y1="50%" x2="31%" y2="78%"></line><line x1="50%" y1="50%" x2="69%" y2="78%"></line></svg>${generalNode}${subjects.map((subject, index) => {
       const status = statusFor(subject.score);
-      const [x, y] = positions[index];
-      return `<button class="subject-node ${index === 0 ? 'center selected' : ''} ${status.className}" style="--x:${x};--y:${y}" data-subject="${subject.code}" aria-pressed="${index === 0}" aria-label="${escapeHTML(subject.label)}. ${subject.score === null ? 'Sem registros' : `${subject.score}% de desempenho`}. Clique duas vezes ou pressione Enter para abrir o mapa de dificuldades."><span class="node-icon material-symbols-outlined">${subject.icon}</span><strong>${escapeHTML(subject.label)}</strong><b>${subject.score === null ? '—' : `${subject.score}%`}</b><small>${escapeHTML(status.label)}</small><span class="double-click-cue" aria-hidden="true">2×</span></button>`;
-    }).join('');
+      const saved = draggedPositions.get(subject.code);
+      const [x, y] = saved || positions[index];
+      return `<button class="subject-node ${index === 0 ? 'selected' : ''} ${status.className}" style="--x:${x};--y:${y}" data-subject="${subject.code}" aria-pressed="${index === 0}" aria-label="${escapeHTML(subject.label)}. ${subject.score === null ? 'Sem registros' : `${subject.score}% de desempenho`}. Clique duas vezes ou pressione Enter para abrir o mapa de dificuldades."><span class="node-icon material-symbols-outlined">${subject.icon}</span><strong>${escapeHTML(subject.label)}</strong><b>${subject.score === null ? '—' : `${subject.score}%`}</b><small>${escapeHTML(status.label)}</small><span class="double-click-cue" aria-hidden="true">2×</span></button>`;
+    }).join('')}`;
     renderSubjectDetail(subjects[0].code);
   };
 
@@ -170,9 +177,45 @@
   };
 
   const bindInteractions = () => {
+    let drag = null;
+    const updateDraggedPosition = (event) => {
+      if (!drag) return;
+      const rect = elements.map.getBoundingClientRect();
+      const radius = drag.node.offsetWidth / 2;
+      const x = Math.min(Math.max(event.clientX - rect.left, radius), rect.width - radius);
+      const y = Math.min(Math.max(event.clientY - rect.top, radius), rect.height - radius);
+      const xPercent = `${(x / rect.width) * 100}%`;
+      const yPercent = `${(y / rect.height) * 100}%`;
+      drag.node.style.setProperty('--x', xPercent);
+      drag.node.style.setProperty('--y', yPercent);
+      draggedPositions.set(drag.node.dataset.subject, [xPercent, yPercent]);
+      drag.moved = true;
+    };
+    elements.map.addEventListener('pointerdown', (event) => {
+      const node = event.target.closest('[data-subject]');
+      if (!node || event.button === 2) return;
+      drag = { node, startX: event.clientX, startY: event.clientY, moved: false };
+      node.classList.add('dragging');
+      node.setPointerCapture?.(event.pointerId);
+    });
+    elements.map.addEventListener('pointermove', (event) => {
+      if (!drag) return;
+      if (Math.hypot(event.clientX - drag.startX, event.clientY - drag.startY) <= 4) return;
+      event.preventDefault();
+      updateDraggedPosition(event);
+    });
+    elements.map.addEventListener('pointerup', (event) => {
+      if (!drag) return;
+      drag.node.classList.remove('dragging');
+      drag.node.releasePointerCapture?.(event.pointerId);
+      if (drag.moved) drag.node.dataset.suppressClick = 'true';
+      drag = null;
+    });
+    elements.map.addEventListener('pointercancel', () => { drag?.node.classList.remove('dragging'); drag = null; });
     elements.map.addEventListener('click', (event) => {
       const node = event.target.closest('[data-subject]');
       if (!node) return;
+      if (node.dataset.suppressClick) { delete node.dataset.suppressClick; return; }
       renderSubjectDetail(node.dataset.subject);
       if (event.detail >= 2) openDifficultyMap(node.dataset.subject);
     });

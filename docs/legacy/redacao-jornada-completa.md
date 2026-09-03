@@ -41,4 +41,4 @@ A publicação da devolutiva usa a função `corrigir_redacao`, executada com `S
 
 Todas as novas tabelas públicas têm RLS e permissões explícitas. Planejamento e redação pertencem ao aluno autenticado. Professores de Português só acessam alunos de turmas vinculadas em `professor_turmas`; gestores mantêm acesso administrativo. Funções com privilégios ficam no schema `private`, sem execução concedida ao navegador.
 
-Migrações: `backend/migrations/20260831_redacao_jornada_completa.sql` e `backend/migrations/20260903_redacoes_avaliacoes_portugues.sql`.
+Migrações: `../../backend/migrations/20260831_redacao_jornada_completa.sql` e `../../backend/migrations/20260903_redacoes_avaliacoes_portugues.sql`.

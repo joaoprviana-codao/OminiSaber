@@ -56,7 +56,7 @@ Nenhuma métrica dessa página é preenchida no código. Pendências, média, te
 
 `perfis.tipo_professor` usa o enum `tipo_professor` e é obrigatório quando `role = 'professor'`. `professor_turmas` representa o vínculo muitos-para-muitos entre docentes e turmas. `propostas_redacao` contém autoria, turma, textos motivadores, detalhes e estado de publicação. `planejamentos_redacao`, `repertorios_redacao`, `versoes_redacao`, `comentarios_redacao`, `avaliacoes_competencias_redacao` e `rascunhos_correcao_redacao` completam a jornada. As notas permanecem entre 0 e 1000.
 
-Para bancos existentes, execute `backend/migrations/20260903_redacoes_avaliacoes_portugues.sql` depois do schema atual. Para uma instalação limpa, use `backend/ominisaber-schema-completo.sql`. As migrações são incrementais e não apagam redações existentes.
+Para bancos existentes, execute `../../backend/migrations/20260903_redacoes_avaliacoes_portugues.sql` depois do schema atual. Para uma instalação limpa, use `backend/ominisaber-schema-completo.sql`. As migrações são incrementais e não apagam redações existentes.
 
 ## Responsividade e acessibilidade
 

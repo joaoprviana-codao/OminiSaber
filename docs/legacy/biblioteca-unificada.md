@@ -40,7 +40,7 @@ O índice parcial `idx_solicitacao_ativa_aluno_livro` impede pedidos ativos dupl
 
 O projeto de destino é sempre o definido por `SUPABASE_URL` no `.env`. Não use IDs de projetos descobertos em outras contas.
 
-Para uma instalação limpa, execute `backend/ominisaber-schema-completo.sql`. Em um banco OminiSaber já existente, execute apenas `backend/migrations/20260902_biblioteca_acervo_unificado.sql` no SQL Editor do projeto indicado pelo `.env`.
+Para uma instalação limpa, execute `backend/ominisaber-schema-completo.sql`. Em um banco OminiSaber já existente, execute apenas `../../backend/migrations/20260902_biblioteca_acervo_unificado.sql` no SQL Editor do projeto indicado pelo `.env`.
 
 Depois, valide localmente:
 
