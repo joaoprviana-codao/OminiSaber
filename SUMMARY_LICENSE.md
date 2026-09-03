@@ -1,8 +1,7 @@
 # Licença do OmniSaber
 
 > Este é um **resumo informativo**. O texto que vale juridicamente é o das
-> licenças completas: [`LICENSE`](./LICENSE) (inglês, versão oficial) e
-> [`LICENSE-PT-BR`](./LICENSE-PT-BR) (tradução em português).
+> licenças completas: [`LICENSE`](./LICENSE) (inglês, versão oficial)
 
 ---
 
