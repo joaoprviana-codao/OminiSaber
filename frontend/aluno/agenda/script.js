@@ -1,16 +1,191 @@
 (() => {
-  const state = { cursor: new Date(), selected: new Date(), events: [], filter: 'all', unsubscribe: null };
-  const el = { calendar: document.querySelector('[data-calendar]'), month: document.querySelector('[data-month-title]'), loading: document.querySelector('[data-loading]'), dayLabel: document.querySelector('[data-selected-label]'), dayNumber: document.querySelector('[data-selected-number]'), dayEvents: document.querySelector('[data-day-events]'), upcoming: document.querySelector('[data-upcoming-events]') };
-  const isoDay = (date) => `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+  const state = {
+    cursor: new Date(),
+    selected: new Date(),
+    events: [],
+    filter: "all",
+    unsubscribe: null,
+  };
+  const el = {
+    calendar: document.querySelector("[data-calendar]"),
+    month: document.querySelector("[data-month-title]"),
+    loading: document.querySelector("[data-loading]"),
+    dayLabel: document.querySelector("[data-selected-label]"),
+    dayNumber: document.querySelector("[data-selected-number]"),
+    dayEvents: document.querySelector("[data-day-events]"),
+    upcoming: document.querySelector("[data-upcoming-events]"),
+  };
+  const isoDay = (date) =>
+    `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
   const sameDay = (date, iso) => isoDay(date) === isoDay(new Date(iso));
-  const escapeHtml = (value='') => String(value).replace(/[&<>'"]/g,(char)=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
-  const visibleEvents = () => state.filter === 'all' ? state.events : state.events.filter((item)=>item.tipo===state.filter);
-  const typeLabel = { prova:'Prova',recuperacao:'Recuperação',trabalho:'Trabalho',atividade:'Atividade',aula:'Aula',reuniao:'Reunião',outro:'Evento' };
-  const renderEvent = (event) => { const date=new Date(event.inicio); return `<article class="agenda-event ${event.tipo}"><header><strong>${escapeHtml(event.titulo)}</strong><time>${event.dia_inteiro?'Dia todo':date.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</time></header><p>${escapeHtml(event.descricao||typeLabel[event.tipo]||'Compromisso escolar')}</p><div class="event-meta"><span><span class="material-symbols-outlined">book_2</span>${escapeHtml(event.materia||'Geral')}</span>${event.local?`<span><span class="material-symbols-outlined">location_on</span>${escapeHtml(event.local)}</span>`:''}<span><span class="material-symbols-outlined">person</span>${escapeHtml(event.perfis?.nome||'Professor')}</span></div></article>`; };
-  const renderDetails = () => { const items=visibleEvents().filter((item)=>sameDay(state.selected,item.inicio)); el.dayLabel.textContent=state.selected.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'}); el.dayNumber.textContent=state.selected.getDate(); el.dayEvents.innerHTML=items.length?items.map(renderEvent).join(''):`<div class="empty-day"><span class="material-symbols-outlined">event_available</span><p>Nenhum compromisso neste dia.</p></div>`; const now=new Date(); const upcoming=visibleEvents().filter((item)=>new Date(item.inicio)>=now).slice(0,4); el.upcoming.innerHTML=upcoming.length?upcoming.map((item)=>{const d=new Date(item.inicio);return `<div class="upcoming-row"><span class="upcoming-date">${d.getDate()}<br>${d.toLocaleDateString('pt-BR',{month:'short'}).replace('.','')}</span><div><strong>${escapeHtml(item.titulo)}</strong><span>${escapeHtml(item.materia||typeLabel[item.tipo])}</span></div></div>`}).join(''):`<p class="empty-day">Sem compromissos próximos.</p>`; };
-  const renderCalendar = () => { const year=state.cursor.getFullYear(),month=state.cursor.getMonth(); el.month.textContent=state.cursor.toLocaleDateString('pt-BR',{month:'long',year:'numeric'}); const first=new Date(year,month,1); const start=new Date(year,month,1-first.getDay()); let html=''; for(let i=0;i<42;i++){const day=new Date(start);day.setDate(start.getDate()+i);const items=visibleEvents().filter((item)=>sameDay(day,item.inicio));const classes=['calendar-day'];if(day.getMonth()!==month)classes.push('outside');if(sameDay(day,new Date().toISOString()))classes.push('today');if(isoDay(day)===isoDay(state.selected))classes.push('selected');html+=`<button class="${classes.join(' ')}" data-date="${isoDay(day)}" role="gridcell" aria-label="${day.toLocaleDateString('pt-BR')}"><span class="day-number">${day.getDate()}</span>${items.slice(0,2).map((item)=>`<span class="event-pill ${item.tipo}">${escapeHtml(item.titulo)}</span>`).join('')}${items.length>2?`<small class="more-events">+${items.length-2} eventos</small>`:''}</button>`;} el.calendar.innerHTML=html; renderDetails(); };
-  const load = async () => { el.loading.hidden=false; try { if(!window.OminiSaber?.configured) throw new Error('O Supabase não está configurado.'); const from=new Date(state.cursor.getFullYear(),state.cursor.getMonth()-1,1);const to=new Date(state.cursor.getFullYear(),state.cursor.getMonth()+2,1);state.events=await window.OminiSaber.listAgendaEvents({from:from.toISOString(),to:to.toISOString()}); const now=new Date();const next=state.events.filter((item)=>new Date(item.inicio)>=now&&item.status==='publicado');document.querySelector('[data-next-count]').textContent=next.length;document.querySelector('[data-assessment-count]').textContent=next.filter((item)=>['prova','recuperacao'].includes(item.tipo)).length;renderCalendar(); } catch(error){window.StudentShell?.notify(error.message||'Não foi possível carregar a agenda.','error');state.events=[];renderCalendar();} finally{el.loading.hidden=true;} };
-  el.calendar.addEventListener('click',(event)=>{const button=event.target.closest('[data-date]');if(!button)return;const [y,m,d]=button.dataset.date.split('-').map(Number);state.selected=new Date(y,m-1,d);renderCalendar();});
-  document.querySelector('[data-prev-month]').addEventListener('click',()=>{state.cursor=new Date(state.cursor.getFullYear(),state.cursor.getMonth()-1,1);load();});document.querySelector('[data-next-month]').addEventListener('click',()=>{state.cursor=new Date(state.cursor.getFullYear(),state.cursor.getMonth()+1,1);load();});document.querySelector('[data-today]').addEventListener('click',()=>{state.cursor=new Date();state.selected=new Date();load();});document.querySelector('[data-type-filter]').addEventListener('change',(event)=>{state.filter=event.target.value;renderCalendar();});
-  document.addEventListener('ominisaber:ready',()=>{load();if(window.OminiSaber?.configured)state.unsubscribe=window.OminiSaber.subscribeToAgenda(()=>load());},{once:true});window.addEventListener('beforeunload',()=>state.unsubscribe?.());
+  const escapeHtml = (value = "") =>
+    String(value).replace(
+      /[&<>'"]/g,
+      (char) =>
+        ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          "'": "&#39;",
+          '"': "&quot;",
+        })[char],
+    );
+  const visibleEvents = () =>
+    state.filter === "all"
+      ? state.events
+      : state.events.filter((item) => item.tipo === state.filter);
+  const typeLabel = {
+    prova: "Prova",
+    recuperacao: "Recuperação",
+    trabalho: "Trabalho",
+    atividade: "Atividade",
+    aula: "Aula",
+    reuniao: "Reunião",
+    outro: "Evento",
+  };
+  const renderEvent = (event) => {
+    const date = new Date(event.inicio);
+    return `<article class="agenda-event ${event.tipo}"><header><strong>${escapeHtml(event.titulo)}</strong><time>${event.dia_inteiro ? "Dia todo" : date.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}</time></header><p>${escapeHtml(event.descricao || typeLabel[event.tipo] || "Compromisso escolar")}</p><div class="event-meta"><span><span class="material-symbols-outlined">book_2</span>${escapeHtml(event.materia || "Geral")}</span>${event.local ? `<span><span class="material-symbols-outlined">location_on</span>${escapeHtml(event.local)}</span>` : ""}<span><span class="material-symbols-outlined">person</span>${escapeHtml(event.perfis?.nome || "Professor")}</span></div></article>`;
+  };
+  const renderDetails = () => {
+    const items = visibleEvents().filter((item) =>
+      sameDay(state.selected, item.inicio),
+    );
+    el.dayLabel.textContent = state.selected.toLocaleDateString("pt-BR", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+    });
+    el.dayNumber.textContent = state.selected.getDate();
+    el.dayEvents.innerHTML = items.length
+      ? items.map(renderEvent).join("")
+      : `<div class="empty-day"><span class="material-symbols-outlined">event_available</span><p>Nenhum compromisso neste dia.</p></div>`;
+    const now = new Date();
+    const upcoming = visibleEvents()
+      .filter((item) => new Date(item.inicio) >= now)
+      .slice(0, 4);
+    el.upcoming.innerHTML = upcoming.length
+      ? upcoming
+          .map((item) => {
+            const d = new Date(item.inicio);
+            return `<div class="upcoming-row"><span class="upcoming-date">${d.getDate()}<br>${d.toLocaleDateString("pt-BR", { month: "short" }).replace(".", "")}</span><div><strong>${escapeHtml(item.titulo)}</strong><span>${escapeHtml(item.materia || typeLabel[item.tipo])}</span></div></div>`;
+          })
+          .join("")
+      : `<p class="empty-day">Sem compromissos próximos.</p>`;
+  };
+  const renderCalendar = () => {
+    const year = state.cursor.getFullYear(),
+      month = state.cursor.getMonth();
+    el.month.textContent = state.cursor.toLocaleDateString("pt-BR", {
+      month: "long",
+      year: "numeric",
+    });
+    const first = new Date(year, month, 1);
+    const start = new Date(year, month, 1 - first.getDay());
+    let html = "";
+    for (let i = 0; i < 42; i++) {
+      const day = new Date(start);
+      day.setDate(start.getDate() + i);
+      const items = visibleEvents().filter((item) => sameDay(day, item.inicio));
+      const classes = ["calendar-day"];
+      if (day.getMonth() !== month) classes.push("outside");
+      if (sameDay(day, new Date().toISOString())) classes.push("today");
+      if (isoDay(day) === isoDay(state.selected)) classes.push("selected");
+      html += `<button class="${classes.join(" ")}" data-date="${isoDay(day)}" role="gridcell" aria-label="${day.toLocaleDateString("pt-BR")}"><span class="day-number">${day.getDate()}</span>${items
+        .slice(0, 2)
+        .map(
+          (item) =>
+            `<span class="event-pill ${item.tipo}">${escapeHtml(item.titulo)}</span>`,
+        )
+        .join(
+          "",
+        )}${items.length > 2 ? `<small class="more-events">+${items.length - 2} eventos</small>` : ""}</button>`;
+    }
+    el.calendar.innerHTML = html;
+    renderDetails();
+  };
+  const load = async () => {
+    el.loading.hidden = false;
+    try {
+      if (!window.OminiSaber?.configured)
+        throw new Error("O Supabase não está configurado.");
+      const from = new Date(
+        state.cursor.getFullYear(),
+        state.cursor.getMonth() - 1,
+        1,
+      );
+      const to = new Date(
+        state.cursor.getFullYear(),
+        state.cursor.getMonth() + 2,
+        1,
+      );
+      state.events = await window.OminiSaber.listAgendaEvents({
+        from: from.toISOString(),
+        to: to.toISOString(),
+      });
+      const now = new Date();
+      const next = state.events.filter(
+        (item) => new Date(item.inicio) >= now && item.status === "publicado",
+      );
+      document.querySelector("[data-next-count]").textContent = next.length;
+      document.querySelector("[data-assessment-count]").textContent =
+        next.filter((item) =>
+          ["prova", "recuperacao"].includes(item.tipo),
+        ).length;
+      renderCalendar();
+    } catch (error) {
+      window.StudentShell?.notify(
+        error.message || "Não foi possível carregar a agenda.",
+        "error",
+      );
+      state.events = [];
+      renderCalendar();
+    } finally {
+      el.loading.hidden = true;
+    }
+  };
+  el.calendar.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-date]");
+    if (!button) return;
+    const [y, m, d] = button.dataset.date.split("-").map(Number);
+    state.selected = new Date(y, m - 1, d);
+    renderCalendar();
+  });
+  document.querySelector("[data-prev-month]").addEventListener("click", () => {
+    state.cursor = new Date(
+      state.cursor.getFullYear(),
+      state.cursor.getMonth() - 1,
+      1,
+    );
+    load();
+  });
+  document.querySelector("[data-next-month]").addEventListener("click", () => {
+    state.cursor = new Date(
+      state.cursor.getFullYear(),
+      state.cursor.getMonth() + 1,
+      1,
+    );
+    load();
+  });
+  document.querySelector("[data-today]").addEventListener("click", () => {
+    state.cursor = new Date();
+    state.selected = new Date();
+    load();
+  });
+  document
+    .querySelector("[data-type-filter]")
+    .addEventListener("change", (event) => {
+      state.filter = event.target.value;
+      renderCalendar();
+    });
+  document.addEventListener(
+    "ominisaber:ready",
+    () => {
+      load();
+      if (window.OminiSaber?.configured)
+        state.unsubscribe = window.OminiSaber.subscribeToAgenda(() => load());
+    },
+    { once: true },
+  );
+  window.addEventListener("beforeunload", () => state.unsubscribe?.());
 })();

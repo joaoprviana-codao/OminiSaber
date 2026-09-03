@@ -1,52 +1,126 @@
 <!doctype html>
 <html lang="pt-BR">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Mapa de dificuldades por descritor do aluno no OminiSaber.">
-  <title>Mapa de dificuldades | OminiSaber</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700&family=Material+Symbols+Outlined:FILL@0..1" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="../../../backend/ominisaber-supabase-config.js"></script>
-  <script src="../../../backend/ominisaber-supabase-client.js?v=20260903-2"></script>
-  <script defer src="script.js?v=20260903-1"></script>
-</head>
-<body data-app-role="student" data-required-role="aluno">
-  <main class="difficulty-page" id="conteudo">
-    <header class="page-header">
-      <div class="header-copy">
-        <a class="back-link" href="../dashboard_principal/index.html"><span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>Voltar ao painel</a>
-        <p class="eyebrow">Diagnóstico da sua jornada</p>
-        <h1>Mapa de dificuldades</h1>
-        <p>Veja onde concentrar seus estudos. Cada ponto é uma trilha publicada e o centro reúne o progresso de todas elas.</p>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      name="description"
+      content="Mapa de dificuldades por descritor do aluno no OminiSaber."
+    />
+    <title>Mapa de dificuldades | OminiSaber</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700&family=Material+Symbols+Outlined:FILL@0..1"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../../backend/ominisaber-supabase-config.js"></script>
+    <script src="../../../backend/ominisaber-supabase-client.js?v=20260903-2"></script>
+    <script defer src="script.js?v=20260903-1"></script>
+  </head>
+  <body data-app-role="student" data-required-role="aluno">
+    <main class="difficulty-page" id="conteudo">
+      <header class="page-header">
+        <div class="header-copy">
+          <a class="back-link" href="../dashboard_principal/index.html"
+            ><span class="material-symbols-outlined" aria-hidden="true"
+              >arrow_back</span
+            >Voltar ao painel</a
+          >
+          <p class="eyebrow">Diagnóstico da sua jornada</p>
+          <h1>Mapa de dificuldades</h1>
+          <p>
+            Veja onde concentrar seus estudos. Cada ponto é uma trilha publicada
+            e o centro reúne o progresso de todas elas.
+          </p>
+        </div>
+        <label class="subject-picker"
+          ><span>Matéria</span
+          ><select data-subject-select aria-label="Escolher matéria"></select
+        ></label>
+      </header>
+
+      <section class="loading-state" data-state="loading" aria-live="polite">
+        <span class="loader" aria-hidden="true"></span>
+        <p>Lendo seu progresso no Supabase...</p>
+      </section>
+      <section class="error-state is-hidden" data-state="error" role="alert">
+        <span class="material-symbols-outlined" aria-hidden="true"
+          >cloud_off</span
+        >
+        <h2>Não foi possível montar o mapa</h2>
+        <p data-error-message></p>
+        <button type="button" data-retry>Tentar novamente</button>
+      </section>
+
+      <div class="map-content is-hidden" data-map-content>
+        <section class="summary-strip" aria-label="Resumo do diagnóstico">
+          <article>
+            <span
+              class="summary-icon danger material-symbols-outlined"
+              aria-hidden="true"
+              >priority_high</span
+            >
+            <div>
+              <strong data-attention-count>0</strong
+              ><small>precisam de atenção</small>
+            </div>
+          </article>
+          <article>
+            <span
+              class="summary-icon warning material-symbols-outlined"
+              aria-hidden="true"
+              >trending_up</span
+            >
+            <div>
+              <strong data-progress-count>0</strong><small>em evolução</small>
+            </div>
+          </article>
+          <article>
+            <span
+              class="summary-icon success material-symbols-outlined"
+              aria-hidden="true"
+              >verified</span
+            >
+            <div>
+              <strong data-strong-count>0</strong
+              ><small>com domínio forte</small>
+            </div>
+          </article>
+          <p>
+            <span class="material-symbols-outlined" aria-hidden="true"
+              >database</span
+            >Percentuais calculados com atividades publicadas e concluídas.
+          </p>
+        </section>
+
+        <section class="map-card" aria-labelledby="network-title">
+          <div class="map-heading">
+            <div>
+              <p class="eyebrow">Visão conectada</p>
+              <h2 id="network-title" data-map-title>Seus descritores</h2>
+            </div>
+            <div class="legend" aria-label="Legenda">
+              <span><i class="danger"></i>Atenção</span
+              ><span><i class="warning"></i>Evolução</span
+              ><span><i class="success"></i>Domínio</span
+              ><span><i></i>Sem evidência</span>
+            </div>
+          </div>
+          <div class="descriptor-network" data-network aria-live="polite"></div>
+        </section>
+
+        <section class="priority-section" aria-labelledby="priority-title">
+          <div>
+            <p class="eyebrow">Próximos passos</p>
+            <h2 id="priority-title">Trilhas para priorizar</h2>
+            <p>Comece pelas menores porcentagens e avance no seu ritmo.</p>
+          </div>
+          <div class="priority-list" data-priority-list></div>
+        </section>
       </div>
-      <label class="subject-picker"><span>Matéria</span><select data-subject-select aria-label="Escolher matéria"></select></label>
-    </header>
-
-    <section class="loading-state" data-state="loading" aria-live="polite"><span class="loader" aria-hidden="true"></span><p>Lendo seu progresso no Supabase...</p></section>
-    <section class="error-state is-hidden" data-state="error" role="alert"><span class="material-symbols-outlined" aria-hidden="true">cloud_off</span><h2>Não foi possível montar o mapa</h2><p data-error-message></p><button type="button" data-retry>Tentar novamente</button></section>
-
-    <div class="map-content is-hidden" data-map-content>
-      <section class="summary-strip" aria-label="Resumo do diagnóstico">
-        <article><span class="summary-icon danger material-symbols-outlined" aria-hidden="true">priority_high</span><div><strong data-attention-count>0</strong><small>precisam de atenção</small></div></article>
-        <article><span class="summary-icon warning material-symbols-outlined" aria-hidden="true">trending_up</span><div><strong data-progress-count>0</strong><small>em evolução</small></div></article>
-        <article><span class="summary-icon success material-symbols-outlined" aria-hidden="true">verified</span><div><strong data-strong-count>0</strong><small>com domínio forte</small></div></article>
-        <p><span class="material-symbols-outlined" aria-hidden="true">database</span>Percentuais calculados com atividades publicadas e concluídas.</p>
-      </section>
-
-      <section class="map-card" aria-labelledby="network-title">
-        <div class="map-heading"><div><p class="eyebrow">Visão conectada</p><h2 id="network-title" data-map-title>Seus descritores</h2></div><div class="legend" aria-label="Legenda"><span><i class="danger"></i>Atenção</span><span><i class="warning"></i>Evolução</span><span><i class="success"></i>Domínio</span><span><i></i>Sem evidência</span></div></div>
-        <div class="descriptor-network" data-network aria-live="polite"></div>
-      </section>
-
-      <section class="priority-section" aria-labelledby="priority-title">
-        <div><p class="eyebrow">Próximos passos</p><h2 id="priority-title">Trilhas para priorizar</h2><p>Comece pelas menores porcentagens e avance no seu ritmo.</p></div>
-        <div class="priority-list" data-priority-list></div>
-      </section>
-    </div>
-  </main>
-</body>
+    </main>
+  </body>
 </html>

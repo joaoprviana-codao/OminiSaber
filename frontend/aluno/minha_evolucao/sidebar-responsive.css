@@ -15,7 +15,9 @@
     align-self: center;
   }
 
-  body.omni-student-nav-ready:not(.omni-sidebar-collapsed) .level-emblem .material-symbols-outlined {
+  body.omni-student-nav-ready:not(.omni-sidebar-collapsed)
+    .level-emblem
+    .material-symbols-outlined {
     font-size: 38px;
   }
 
@@ -42,7 +44,9 @@
     border-radius: 18px;
   }
 
-  body.omni-student-nav-ready:not(.omni-sidebar-collapsed) .level-emblem .material-symbols-outlined {
+  body.omni-student-nav-ready:not(.omni-sidebar-collapsed)
+    .level-emblem
+    .material-symbols-outlined {
     grid-row: 1 / 3;
   }
 

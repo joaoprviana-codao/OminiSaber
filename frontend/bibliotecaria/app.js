@@ -80,9 +80,10 @@
   };
   const action = async (rpc, id, extra = {}) => {
     if (!api?.configured) throw new Error("O Supabase não está configurado.");
-    const args = rpc === "biblioteca_recusar_solicitacao"
-      ? { p_solicitacao_id: id, p_motivo: extra.motivo }
-      : { p_solicitacao_id: id };
+    const args =
+      rpc === "biblioteca_recusar_solicitacao"
+        ? { p_solicitacao_id: id, p_motivo: extra.motivo }
+        : { p_solicitacao_id: id };
     const { error } = await api.client.rpc(rpc, args);
     if (error) throw error;
     toast("Operação concluída com sucesso.");
@@ -133,7 +134,10 @@
                     ? `<button class="button danger" data-action="return" data-id="${item.id}">Dar baixa / devolver</button>`
                     : "";
             const copy = item.exemplares;
-            const location = copy?.secoes_fisicas?.nome || item.observacao || "Localização pendente";
+            const location =
+              copy?.secoes_fisicas?.nome ||
+              item.observacao ||
+              "Localização pendente";
             return `<tr><td data-label="Aluno / turma"><strong>${escape(item.perfis?.nome)}</strong><small>${escape(item.perfis?.turmas?.nome || "Turma não informada")}</small></td><td data-label="Livro"><strong>${escape(item.livros?.titulo)}</strong><small>${escape(item.livros?.autor)}</small>${copy ? `<small>Exemplar ${escape(copy.numero_serie)} · ${escape(location)}</small>` : ""}</td><td data-label="Status / prazo"><span class="badge ${statusClass}">${label}</span><small>${item.status === "emprestado" ? `Até ${date(item.devolucao_prevista_em)}` : date(item.solicitado_em)}</small></td><td data-label="Ação">${button}</td></tr>`;
           })
           .join("")
@@ -159,7 +163,13 @@
   const setupManagement = () => {
     const table = document.querySelector("[data-requests]");
     if (!table) return;
-    const allowedTabs = ["pendente", "aprovado", "emprestado", "atrasado", "devolvido"];
+    const allowedTabs = [
+      "pendente",
+      "aprovado",
+      "emprestado",
+      "atrasado",
+      "devolvido",
+    ];
     let current = new URLSearchParams(location.search).get("aba") || "pendente";
     if (!allowedTabs.includes(current)) current = "pendente";
     const search = document.querySelector("[data-search]");
@@ -189,20 +199,42 @@
       rejectDialog.showModal();
       rejectForm.elements.motivo.focus();
     });
-    document.querySelectorAll("[data-reject-close]").forEach((button) => button.addEventListener("click", () => rejectDialog.close()));
+    document
+      .querySelectorAll("[data-reject-close]")
+      .forEach((button) =>
+        button.addEventListener("click", () => rejectDialog.close()),
+      );
     rejectForm?.addEventListener("submit", async (event) => {
       event.preventDefault();
       const button = rejectForm.querySelector('[type="submit"]');
       button.disabled = true;
       try {
-        await action("biblioteca_recusar_solicitacao", rejectForm.elements.solicitacao_id.value, { motivo: rejectForm.elements.motivo.value.trim() });
+        await action(
+          "biblioteca_recusar_solicitacao",
+          rejectForm.elements.solicitacao_id.value,
+          { motivo: rejectForm.elements.motivo.value.trim() },
+        );
         rejectDialog.close();
-      } catch (error) { toast(error.message, "error"); }
-      finally { button.disabled = false; }
+      } catch (error) {
+        toast(error.message, "error");
+      } finally {
+        button.disabled = false;
+      }
     });
     window.addEventListener("library:refresh", render);
-    const channel = api.client.channel("biblioteca-circulacao").on("postgres_changes", { event: "*", schema: "public", table: "solicitacoes_emprestimo" }, render).subscribe();
-    window.addEventListener("beforeunload", () => api.client.removeChannel(channel), { once: true });
+    const channel = api.client
+      .channel("biblioteca-circulacao")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "solicitacoes_emprestimo" },
+        render,
+      )
+      .subscribe();
+    window.addEventListener(
+      "beforeunload",
+      () => api.client.removeChannel(channel),
+      { once: true },
+    );
     render();
   };
   const setupInventory = () => {
@@ -237,14 +269,16 @@
   const setupSettings = () => {
     const form = document.querySelector("[data-library-settings]");
     if (!form) return;
-    if (!api?.configured) return toast("O Supabase não está configurado.", "error");
+    if (!api?.configured)
+      return toast("O Supabase não está configurado.", "error");
     const renderPreview = () => {
       const days = Number(form.prazo_dias.value || 15);
       const limit = Number(form.limite_livros.value || 1);
       const daysTarget = document.querySelector("[data-rules-days]");
       const limitTarget = document.querySelector("[data-rules-limit]");
       if (daysTarget) daysTarget.textContent = `${days} dias`;
-      if (limitTarget) limitTarget.textContent = `${limit} ${limit === 1 ? "livro" : "livros"}`;
+      if (limitTarget)
+        limitTarget.textContent = `${limit} ${limit === 1 ? "livro" : "livros"}`;
     };
     form.addEventListener("change", renderPreview);
     renderPreview();

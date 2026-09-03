@@ -6,8 +6,12 @@
     <title>Empréstimos | Biblioteca | OminiSaber</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&family=Material+Symbols+Outlined:FILL@0..1" rel="stylesheet" />
-    <link rel="stylesheet" href="../library.css?v=20260902-1" /><link rel="stylesheet" href="../../shared/sidebar.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&family=Material+Symbols+Outlined:FILL@0..1"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../library.css?v=20260902-1" />
+    <link rel="stylesheet" href="../../shared/sidebar.css" />
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../../../backend/ominisaber-supabase-config.js"></script>
     <script src="../../../backend/ominisaber-supabase-client.js?v=20260902-2"></script>
@@ -53,7 +57,10 @@
           <div class="toolbar">
             <div>
               <h2>O que precisa ser resolvido</h2>
-              <p class="muted">Pesquise por aluno, turma ou título e conclua a ação na própria linha.</p>
+              <p class="muted">
+                Pesquise por aluno, turma ou título e conclua a ação na própria
+                linha.
+              </p>
             </div>
             <input
               class="input search"
@@ -67,7 +74,8 @@
               1 · Separar</button
             ><button class="tab" data-tab="aprovado" role="tab">
               2 · Entregar</button
-            ><button class="tab" data-tab="emprestado" role="tab">3 · Devolver</button
+            ><button class="tab" data-tab="emprestado" role="tab">
+              3 · Devolver</button
             ><button class="tab" data-tab="atrasado" role="tab">
               Atrasados</button
             ><button class="tab" data-tab="devolvido" role="tab">
@@ -96,12 +104,36 @@
     </div>
     <dialog class="modal" data-reject-dialog>
       <form class="modal-card" data-reject-form>
-        <button class="modal-close" type="button" data-reject-close aria-label="Fechar"><span class="material-symbols-outlined">close</span></button>
-        <p class="eyebrow">ATUALIZAR PEDIDO</p><h2>Por que não será atendido?</h2>
-        <p class="muted">O aluno verá este motivo na biblioteca e receberá uma notificação.</p>
+        <button
+          class="modal-close"
+          type="button"
+          data-reject-close
+          aria-label="Fechar"
+        >
+          <span class="material-symbols-outlined">close</span>
+        </button>
+        <p class="eyebrow">ATUALIZAR PEDIDO</p>
+        <h2>Por que não será atendido?</h2>
+        <p class="muted">
+          O aluno verá este motivo na biblioteca e receberá uma notificação.
+        </p>
         <input type="hidden" name="solicitacao_id" />
-        <label>Motivo<textarea class="input" name="motivo" rows="4" required minlength="3" maxlength="300" placeholder="Ex.: Exemplar em manutenção. Tente novamente na próxima semana."></textarea></label>
-        <div class="modal-actions"><button class="button secondary" type="button" data-reject-close>Cancelar</button><button class="button danger" type="submit">Recusar pedido</button></div>
+        <label
+          >Motivo<textarea
+            class="input"
+            name="motivo"
+            rows="4"
+            required
+            minlength="3"
+            maxlength="300"
+            placeholder="Ex.: Exemplar em manutenção. Tente novamente na próxima semana."
+          ></textarea>
+        </label>
+        <div class="modal-actions">
+          <button class="button secondary" type="button" data-reject-close>
+            Cancelar</button
+          ><button class="button danger" type="submit">Recusar pedido</button>
+        </div>
       </form>
     </dialog>
     <div class="toast" data-toast></div>

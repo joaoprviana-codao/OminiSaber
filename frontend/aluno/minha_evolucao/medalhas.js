@@ -104,10 +104,9 @@
     elements.level.textContent = `Nível ${levelProgress.current.number}`;
     elements.levelTitle.textContent = levelProgress.current.name;
     elements.xpBar.style.width = `${levelProgress.percentage}%`;
-    document.querySelector("[data-xp-detail]").textContent =
-      levelProgress.next
-        ? `${levelProgress.remaining.toLocaleString("pt-BR")} XP para ${levelProgress.next.name}`
-        : "Nível máximo alcançado";
+    document.querySelector("[data-xp-detail]").textContent = levelProgress.next
+      ? `${levelProgress.remaining.toLocaleString("pt-BR")} XP para ${levelProgress.next.name}`
+      : "Nível máximo alcançado";
   };
   const renderCards = () => {
     const filtered = state.achievements.filter(

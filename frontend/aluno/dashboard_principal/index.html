@@ -1,86 +1,207 @@
 <!doctype html>
 <html lang="pt-BR">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Painel de aprendizagem do OminiSaber conectado ao Supabase.">
-  <title>Painel do aluno | OminiSaber</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&family=Material+Symbols+Outlined:FILL@0..1" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="../../shared/sidebar.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="../../../backend/ominisaber-supabase-config.js"></script>
-  <script src="../../../backend/ominisaber-supabase-client.js?v=20260903-2"></script>
-  <script defer src="script.js?v=20260903-1"></script>
-</head>
-<body data-app-role="student">
-  <aside class="sidebar" data-sidebar aria-label="Navegação principal">
-    <a class="brand" href="index.html"><span class="brand-mark material-symbols-outlined" aria-hidden="true">school</span><span>OminiSaber</span></a>
-    <nav class="sidebar-nav">
-      <a class="nav-link active" href="index.html" aria-current="page"><span class="material-symbols-outlined">home</span><span>Início</span></a>
-      <a class="nav-link" href="../modulo_de_trilhas/index.html"><span class="material-symbols-outlined">route</span><span>Trilhas</span></a>
-      <a class="nav-link" href="../laboratorio_de_redacao/index.html"><span class="material-symbols-outlined">edit_note</span><span>Redação</span></a>
-      <a class="nav-link" href="../minha_evolucao/index.html"><span class="material-symbols-outlined">monitoring</span><span>Evolução</span></a>
-      <a class="nav-link" href="../biblioteca_digital/index.html"><span class="material-symbols-outlined">bookmark</span><span>Biblioteca</span></a>
-    </nav>
-    <div class="sidebar-profile">
-      <span class="avatar" data-initials aria-hidden="true"></span>
-      <div><strong data-profile-name></strong><span data-profile-context></span></div>
-      <a href="../perfil/index.html" aria-label="Abrir perfil"><span class="material-symbols-outlined">person</span></a>
-    </div>
-  </aside>
-
-  <main class="main-content">
-    <header class="topbar">
-      <button class="icon-button menu-button" type="button" data-menu-toggle aria-label="Abrir navegação" aria-expanded="false"><span class="material-symbols-outlined">menu</span></button>
-      <div><h1 data-greeting>Olá</h1><p data-current-date></p></div>
-      <div class="topbar-actions">
-        <button class="icon-button" type="button" data-focus-open aria-label="Abrir modo foco"><span class="material-symbols-outlined">timer</span></button>
-        <button class="icon-button notification-button" type="button" data-notification-toggle aria-label="Abrir notificações"><span class="material-symbols-outlined">notifications</span></button>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Painel de aprendizagem do OminiSaber conectado ao Supabase."
+    />
+    <title>Painel do aluno | OminiSaber</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&family=Material+Symbols+Outlined:FILL@0..1"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="../../shared/sidebar.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../../backend/ominisaber-supabase-config.js"></script>
+    <script src="../../../backend/ominisaber-supabase-client.js?v=20260903-2"></script>
+    <script defer src="script.js?v=20260903-1"></script>
+  </head>
+  <body data-app-role="student">
+    <aside class="sidebar" data-sidebar aria-label="Navegação principal">
+      <a class="brand" href="index.html"
+        ><span class="brand-mark material-symbols-outlined" aria-hidden="true"
+          >school</span
+        ><span>OminiSaber</span></a
+      >
+      <nav class="sidebar-nav">
+        <a class="nav-link active" href="index.html" aria-current="page"
+          ><span class="material-symbols-outlined">home</span
+          ><span>Início</span></a
+        >
+        <a class="nav-link" href="../modulo_de_trilhas/index.html"
+          ><span class="material-symbols-outlined">route</span
+          ><span>Trilhas</span></a
+        >
+        <a class="nav-link" href="../laboratorio_de_redacao/index.html"
+          ><span class="material-symbols-outlined">edit_note</span
+          ><span>Redação</span></a
+        >
+        <a class="nav-link" href="../minha_evolucao/index.html"
+          ><span class="material-symbols-outlined">monitoring</span
+          ><span>Evolução</span></a
+        >
+        <a class="nav-link" href="../biblioteca_digital/index.html"
+          ><span class="material-symbols-outlined">bookmark</span
+          ><span>Biblioteca</span></a
+        >
+      </nav>
+      <div class="sidebar-profile">
+        <span class="avatar" data-initials aria-hidden="true"></span>
+        <div>
+          <strong data-profile-name></strong><span data-profile-context></span>
+        </div>
+        <a href="../perfil/index.html" aria-label="Abrir perfil"
+          ><span class="material-symbols-outlined">person</span></a
+        >
       </div>
-    </header>
+    </aside>
 
-    <section class="state-panel" data-state="loading" aria-live="polite"><span class="loader" aria-hidden="true"></span><p>Carregando seus dados do Supabase...</p></section>
-    <section class="state-panel is-hidden" data-state="error" role="alert"><span class="material-symbols-outlined">cloud_off</span><h2>Não foi possível carregar o painel</h2><p data-error-message></p><button class="button primary" type="button" data-retry>Tentar novamente</button></section>
-
-    <div class="dashboard is-hidden" data-dashboard>
-      <section class="next-step" aria-labelledby="next-step-title" data-next-step></section>
-
-      <section class="mastery-section" aria-labelledby="mastery-title">
-        <div class="section-heading">
-          <div><p class="section-kicker">Dados reais da sua jornada</p><h2 id="mastery-title">Matérias disponíveis</h2><p class="map-instruction"><span class="material-symbols-outlined" aria-hidden="true">ads_click</span>Um clique consulta. Dois cliques abrem o mapa de dificuldades.</p></div>
-          <label class="filters"><span class="sr-only">Filtrar matéria</span><select data-subject-filter><option value="all">Todas as matérias</option></select></label>
+    <main class="main-content">
+      <header class="topbar">
+        <button
+          class="icon-button menu-button"
+          type="button"
+          data-menu-toggle
+          aria-label="Abrir navegação"
+          aria-expanded="false"
+        >
+          <span class="material-symbols-outlined">menu</span>
+        </button>
+        <div>
+          <h1 data-greeting>Olá</h1>
+          <p data-current-date></p>
         </div>
-        <div class="mastery-layout">
-          <div class="mastery-map" data-mastery-map aria-label="Selecione uma matéria para consultar o desempenho"></div>
-          <aside class="subject-detail" data-subject-detail aria-live="polite"></aside>
+        <div class="topbar-actions">
+          <button
+            class="icon-button"
+            type="button"
+            data-focus-open
+            aria-label="Abrir modo foco"
+          >
+            <span class="material-symbols-outlined">timer</span>
+          </button>
+          <button
+            class="icon-button notification-button"
+            type="button"
+            data-notification-toggle
+            aria-label="Abrir notificações"
+          >
+            <span class="material-symbols-outlined">notifications</span>
+          </button>
         </div>
+      </header>
+
+      <section class="state-panel" data-state="loading" aria-live="polite">
+        <span class="loader" aria-hidden="true"></span>
+        <p>Carregando seus dados do Supabase...</p>
+      </section>
+      <section class="state-panel is-hidden" data-state="error" role="alert">
+        <span class="material-symbols-outlined">cloud_off</span>
+        <h2>Não foi possível carregar o painel</h2>
+        <p data-error-message></p>
+        <button class="button primary" type="button" data-retry>
+          Tentar novamente
+        </button>
       </section>
 
-      <section class="weekly-progress" aria-labelledby="weekly-title">
-        <div><h2 id="weekly-title">Atividade nos últimos 7 dias</h2><p>Registros reais do seu histórico de estudos</p></div>
-        <ol data-weekly-days></ol>
-        <div class="weekly-total" data-weekly-total></div>
-      </section>
+      <div class="dashboard is-hidden" data-dashboard>
+        <section
+          class="next-step"
+          aria-labelledby="next-step-title"
+          data-next-step
+        ></section>
+
+        <section class="mastery-section" aria-labelledby="mastery-title">
+          <div class="section-heading">
+            <div>
+              <p class="section-kicker">Dados reais da sua jornada</p>
+              <h2 id="mastery-title">Matérias disponíveis</h2>
+              <p class="map-instruction">
+                <span class="material-symbols-outlined" aria-hidden="true"
+                  >ads_click</span
+                >Um clique consulta. Dois cliques abrem o mapa de dificuldades.
+              </p>
+            </div>
+            <label class="filters"
+              ><span class="sr-only">Filtrar matéria</span
+              ><select data-subject-filter>
+                <option value="all">Todas as matérias</option>
+              </select></label
+            >
+          </div>
+          <div class="mastery-layout">
+            <div
+              class="mastery-map"
+              data-mastery-map
+              aria-label="Selecione uma matéria para consultar o desempenho"
+            ></div>
+            <aside
+              class="subject-detail"
+              data-subject-detail
+              aria-live="polite"
+            ></aside>
+          </div>
+        </section>
+
+        <section class="weekly-progress" aria-labelledby="weekly-title">
+          <div>
+            <h2 id="weekly-title">Atividade nos últimos 7 dias</h2>
+            <p>Registros reais do seu histórico de estudos</p>
+          </div>
+          <ol data-weekly-days></ol>
+          <div class="weekly-total" data-weekly-total></div>
+        </section>
+      </div>
+    </main>
+
+    <dialog class="focus-dialog" data-focus-dialog>
+      <form method="dialog">
+        <button class="icon-button dialog-close" aria-label="Fechar">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+        <span class="focus-icon material-symbols-outlined">timer</span>
+        <p class="section-kicker">Modo foco</p>
+        <h2>25:00</h2>
+        <p>
+          Defina um período sem distrações para a atividade que você escolher.
+        </p>
+        <div class="focus-options">
+          <button type="button" class="chip selected" data-focus-minutes="25">
+            25 min</button
+          ><button type="button" class="chip" data-focus-minutes="45">
+            45 min</button
+          ><button type="button" class="chip" data-focus-minutes="60">
+            60 min
+          </button>
+        </div>
+        <button class="button primary" value="start">Começar sessão</button>
+      </form>
+    </dialog>
+    <div
+      class="difficulty-transition"
+      data-difficulty-transition
+      hidden
+      aria-live="assertive"
+      aria-label="Abrindo mapa de dificuldades"
+    >
+      <div class="transition-orbit" aria-hidden="true">
+        <span></span><span></span><span></span>
+      </div>
+      <div class="transition-core">
+        <span class="material-symbols-outlined" data-transition-icon
+          >route</span
+        >
+      </div>
+      <p>
+        Organizando seus descritores de
+        <strong data-transition-subject>aprendizagem</strong>...
+      </p>
     </div>
-  </main>
-
-  <dialog class="focus-dialog" data-focus-dialog>
-    <form method="dialog">
-      <button class="icon-button dialog-close" aria-label="Fechar"><span class="material-symbols-outlined">close</span></button>
-      <span class="focus-icon material-symbols-outlined">timer</span><p class="section-kicker">Modo foco</p><h2>25:00</h2>
-      <p>Defina um período sem distrações para a atividade que você escolher.</p>
-      <div class="focus-options"><button type="button" class="chip selected" data-focus-minutes="25">25 min</button><button type="button" class="chip" data-focus-minutes="45">45 min</button><button type="button" class="chip" data-focus-minutes="60">60 min</button></div>
-      <button class="button primary" value="start">Começar sessão</button>
-    </form>
-  </dialog>
-  <div class="difficulty-transition" data-difficulty-transition hidden aria-live="assertive" aria-label="Abrindo mapa de dificuldades">
-    <div class="transition-orbit" aria-hidden="true"><span></span><span></span><span></span></div>
-    <div class="transition-core"><span class="material-symbols-outlined" data-transition-icon>route</span></div>
-    <p>Organizando seus descritores de <strong data-transition-subject>aprendizagem</strong>...</p>
-  </div>
-  <div class="toast" data-toast role="status" aria-live="polite"></div>
-</body>
+    <div class="toast" data-toast role="status" aria-live="polite"></div>
+  </body>
 </html>

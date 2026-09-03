@@ -1,39 +1,134 @@
 <!doctype html>
 <html lang="pt-BR">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Ajuda e suporte do OminiSaber.">
-  <title>Ajuda e suporte | OminiSaber</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@700;800&family=Material+Symbols+Outlined:FILL@0..1" rel="stylesheet">
-  <link rel="stylesheet" href="../shared/account-shell.css">
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="sidebar-responsive.css?v=20260903-1">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="../../../backend/ominisaber-supabase-config.js"></script>
-  <script src="../../../backend/ominisaber-supabase-client.js?v=20260903-2"></script>
-  <script defer src="../shared/account-shell.js"></script>
-  <script defer src="script.js"></script>
-</head>
-<body data-app-role="student" data-required-role="aluno">
-  <aside class="app-sidebar" aria-label="Navegação principal"></aside>
-  <main class="app-main">
-    <header class="app-topbar">
-      <button class="icon-button menu-button" type="button" data-menu-toggle aria-label="Abrir menu" aria-expanded="false"><span class="material-symbols-outlined">menu</span></button>
-      <div class="topbar-title"><strong>Central de ajuda</strong><span>Orientações rápidas para continuar estudando</span></div>
-      <div class="topbar-actions"><a class="icon-button" href="../perfil/index.html" aria-label="Abrir perfil"><span class="material-symbols-outlined">person</span></a></div>
-    </header>
-    <div class="page">
-      <header class="help-hero"><span class="help-symbol material-symbols-outlined">support_agent</span><p class="eyebrow">COMO PODEMOS AJUDAR?</p><h1>Encontre uma resposta rápida</h1><p>Pesquise uma dúvida ou escolha um dos assuntos mais comuns.</p><label><span class="material-symbols-outlined">search</span><input type="search" data-help-search placeholder="Ex.: esqueci minha senha" aria-label="Pesquisar ajuda"></label></header>
-      <div class="help-layout">
-        <section><div class="topic-grid"><button type="button" data-topic="acesso"><span class="material-symbols-outlined">key</span><strong>Acesso e senha</strong><small>Entrar e proteger a conta</small></button><button type="button" data-topic="agenda"><span class="material-symbols-outlined">calendar_month</span><strong>Agenda</strong><small>Provas e compromissos</small></button><button type="button" data-topic="atividades"><span class="material-symbols-outlined">assignment</span><strong>Atividades</strong><small>Envios e resultados</small></button></div><section class="panel faq-panel"><div class="panel-header"><div><h2>Perguntas frequentes</h2><p>Toque em uma pergunta para ver a resposta</p></div></div><div data-faq-list></div></section></section>
-        <aside class="panel support-card"><span class="support-mark material-symbols-outlined">forum</span><h2>Ainda precisa de ajuda?</h2><p>Procure primeiro um professor ou a equipe responsável pelo laboratório da escola.</p><ol><li><span>1</span>Anote o que estava fazendo.</li><li><span>2</span>Se puder, faça uma captura da tela.</li><li><span>3</span>Informe seu nome, turma e horário do problema.</li></ol><button class="button secondary" type="button" data-copy-diagnostics><span class="material-symbols-outlined">content_copy</span>Copiar dados técnicos</button><a class="button primary" href="../perfil/index.html"><span class="material-symbols-outlined">person</span>Ver meu perfil</a></aside>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="description" content="Ajuda e suporte do OminiSaber." />
+    <title>Ajuda e suporte | OminiSaber</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@700;800&family=Material+Symbols+Outlined:FILL@0..1"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../shared/account-shell.css" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="sidebar-responsive.css?v=20260903-1" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../../backend/ominisaber-supabase-config.js"></script>
+    <script src="../../../backend/ominisaber-supabase-client.js?v=20260903-2"></script>
+    <script defer src="../shared/account-shell.js"></script>
+    <script defer src="script.js"></script>
+  </head>
+  <body data-app-role="student" data-required-role="aluno">
+    <aside class="app-sidebar" aria-label="Navegação principal"></aside>
+    <main class="app-main">
+      <header class="app-topbar">
+        <button
+          class="icon-button menu-button"
+          type="button"
+          data-menu-toggle
+          aria-label="Abrir menu"
+          aria-expanded="false"
+        >
+          <span class="material-symbols-outlined">menu</span>
+        </button>
+        <div class="topbar-title">
+          <strong>Central de ajuda</strong
+          ><span>Orientações rápidas para continuar estudando</span>
+        </div>
+        <div class="topbar-actions">
+          <a
+            class="icon-button"
+            href="../perfil/index.html"
+            aria-label="Abrir perfil"
+            ><span class="material-symbols-outlined">person</span></a
+          >
+        </div>
+      </header>
+      <div class="page">
+        <header class="help-hero">
+          <span class="help-symbol material-symbols-outlined"
+            >support_agent</span
+          >
+          <p class="eyebrow">COMO PODEMOS AJUDAR?</p>
+          <h1>Encontre uma resposta rápida</h1>
+          <p>Pesquise uma dúvida ou escolha um dos assuntos mais comuns.</p>
+          <label
+            ><span class="material-symbols-outlined">search</span
+            ><input
+              type="search"
+              data-help-search
+              placeholder="Ex.: esqueci minha senha"
+              aria-label="Pesquisar ajuda"
+          /></label>
+        </header>
+        <div class="help-layout">
+          <section>
+            <div class="topic-grid">
+              <button type="button" data-topic="acesso">
+                <span class="material-symbols-outlined">key</span
+                ><strong>Acesso e senha</strong
+                ><small>Entrar e proteger a conta</small></button
+              ><button type="button" data-topic="agenda">
+                <span class="material-symbols-outlined">calendar_month</span
+                ><strong>Agenda</strong
+                ><small>Provas e compromissos</small></button
+              ><button type="button" data-topic="atividades">
+                <span class="material-symbols-outlined">assignment</span
+                ><strong>Atividades</strong><small>Envios e resultados</small>
+              </button>
+            </div>
+            <section class="panel faq-panel">
+              <div class="panel-header">
+                <div>
+                  <h2>Perguntas frequentes</h2>
+                  <p>Toque em uma pergunta para ver a resposta</p>
+                </div>
+              </div>
+              <div data-faq-list></div>
+            </section>
+          </section>
+          <aside class="panel support-card">
+            <span class="support-mark material-symbols-outlined">forum</span>
+            <h2>Ainda precisa de ajuda?</h2>
+            <p>
+              Procure primeiro um professor ou a equipe responsável pelo
+              laboratório da escola.
+            </p>
+            <ol>
+              <li><span>1</span>Anote o que estava fazendo.</li>
+              <li><span>2</span>Se puder, faça uma captura da tela.</li>
+              <li>
+                <span>3</span>Informe seu nome, turma e horário do problema.
+              </li>
+            </ol>
+            <button
+              class="button secondary"
+              type="button"
+              data-copy-diagnostics
+            >
+              <span class="material-symbols-outlined">content_copy</span>Copiar
+              dados técnicos</button
+            ><a class="button primary" href="../perfil/index.html"
+              ><span class="material-symbols-outlined">person</span>Ver meu
+              perfil</a
+            >
+          </aside>
+        </div>
       </div>
-    </div>
-  </main>
-  <nav class="mobile-nav" aria-label="Atalhos"><a href="../dashboard_principal/index.html"><span class="material-symbols-outlined">home</span>Início</a><a href="../agenda/index.html"><span class="material-symbols-outlined">calendar_month</span>Agenda</a><a href="../notificacoes/index.html"><span class="material-symbols-outlined">notifications</span>Avisos</a><a href="../perfil/index.html"><span class="material-symbols-outlined">person</span>Perfil</a></nav>
-  <div class="toast" data-toast role="status" aria-live="polite"></div>
-</body>
+    </main>
+    <nav class="mobile-nav" aria-label="Atalhos">
+      <a href="../dashboard_principal/index.html"
+        ><span class="material-symbols-outlined">home</span>Início</a
+      ><a href="../agenda/index.html"
+        ><span class="material-symbols-outlined">calendar_month</span>Agenda</a
+      ><a href="../notificacoes/index.html"
+        ><span class="material-symbols-outlined">notifications</span>Avisos</a
+      ><a href="../perfil/index.html"
+        ><span class="material-symbols-outlined">person</span>Perfil</a
+      >
+    </nav>
+    <div class="toast" data-toast role="status" aria-live="polite"></div>
+  </body>
 </html>

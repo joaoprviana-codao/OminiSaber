@@ -1,41 +1,240 @@
 <!doctype html>
 <html lang="pt-BR">
-<head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Trilhas interativas de Língua Portuguesa do OminiSaber.">
-  <title>Língua Portuguesa | OminiSaber</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700&family=Material+Symbols+Outlined:FILL@0..1" rel="stylesheet">
-  <link rel="stylesheet" href="experiencia.css"><link rel="stylesheet" href="style.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="../../../../backend/ominisaber-supabase-config.js"></script><script src="../../../../backend/ominisaber-supabase-client.js"></script>
-  <script defer src="experiencia.js"></script><script defer src="script.js"></script>
-</head>
-<body>
-  <a class="skip-link" href="#conteudo">Ir para as trilhas</a>
-  <aside class="sidebar" aria-label="Navegação principal">
-    <a class="brand" href="../../dashboard_principal/index.html"><span class="brand-mark"><span class="material-symbols-outlined">school</span></span>OminiSaber</a>
-    <nav class="sidebar-nav"><a href="../../dashboard_principal/index.html"><span class="material-symbols-outlined">home</span>Início</a><a href="../index.html"><span class="material-symbols-outlined">route</span>Trilhas</a><a href="index.html" aria-current="page"><span class="material-symbols-outlined">menu_book</span>Português</a><a href="../../laboratorio_de_redacao/index.html"><span class="material-symbols-outlined">edit_note</span>Redação</a><a href="../../minha_evolucao/index.html"><span class="material-symbols-outlined">monitoring</span>Evolução</a><a href="../../biblioteca_digital/index.html"><span class="material-symbols-outlined">book_2</span>Biblioteca</a></nav>
-    <div class="sidebar-profile"><img class="profile-avatar" src="../../../assets/avatar-marina.png" alt=""><div><strong data-profile-name>Estudante</strong><span data-profile-grade>Ensino Médio</span></div></div>
-  </aside>
-  <div class="mobile-bar"><a class="brand" href="../../dashboard_principal/index.html"><span class="brand-mark"><span class="material-symbols-outlined">school</span></span>OminiSaber</a><button class="mobile-menu-button icon-button" data-menu-toggle aria-label="Abrir menu" aria-expanded="false"><span class="material-symbols-outlined">menu</span></button></div>
-  <div class="app-shell">
-    <header class="topbar"><div class="subject-title"><span class="subject-icon"><span class="material-symbols-outlined">menu_book</span></span>Língua Portuguesa</div><div class="top-actions"><a class="icon-button" href="../../perfil/index.html" aria-label="Abrir perfil"><span class="material-symbols-outlined">person</span></a></div></header>
-    <main class="page" id="conteudo">
-      <section class="portuguese-hero">
-        <div><p class="eyebrow">Sua biblioteca de experiências</p><h1>Leia, investigue e<br>construa sentidos.</h1><p>Cada descritor ganha uma forma própria de aprender. Escolha uma experiência, observe as pistas e avance no seu ritmo.</p><div class="button-row"><a class="primary-button" href="mapa-da-lingua/index.html">Começar pelo Mapa da Língua<span class="material-symbols-outlined">arrow_forward</span></a><a class="secondary-button" href="#experiencias">Ver todas</a></div></div>
-        <aside class="hero-progress" aria-label="Progresso em Língua Portuguesa"><span class="material-symbols-outlined">auto_stories</span><strong data-hub-progress>0/3</strong><p>experiências concluídas</p><div class="hub-progress-track"><span data-hub-progress-bar></span></div></aside>
-      </section>
-      <section id="experiencias" aria-labelledby="experiencias-title">
-        <div class="hub-section-head"><div><p class="eyebrow">Trilhas por descritor</p><h2 id="experiencias-title">Experiências disponíveis</h2></div><div class="hub-filters" role="group" aria-label="Filtrar por ano"><button data-year="all" aria-pressed="true">Todos</button><button data-year="1">1º ano</button><button data-year="2">2º ano</button><button data-year="3">3º ano</button></div></div>
-        <div class="experience-grid">
-          <article class="experience-card map-card" data-card-year="1"><div class="card-visual"><img src="assets/mapa-linguistico-brasil.png" alt="Mapa ilustrado do Brasil"><span class="year-badge">1º ano · 1º trimestre</span></div><div class="card-copy"><div class="descriptor"><span>EM13LP10</span><strong>D103_P</strong></div><h3>Mapa da Língua</h3><p>Descubra como vocativos, formalidade e escolhas lexicais revelam quem fala e para quem.</p><div class="card-footer"><span data-card-status="mapa-da-lingua">Exploração interativa</span><a href="mapa-da-lingua/index.html" aria-label="Abrir Mapa da Língua"><span class="material-symbols-outlined">arrow_forward</span></a></div></div></article>
-          <article class="experience-card argument-card" data-card-year="2"><div class="card-visual argument-visual"><span class="argument-line green">Tese</span><span class="argument-line ochre">Argumento</span><span class="argument-line teal">Evidência</span><span class="argument-line coral">Contra-argumento</span><span class="year-badge">2º ano · 3º trimestre</span></div><div class="card-copy"><div class="descriptor"><span>EM13LP05</span><strong>D055_P</strong></div><h3>Investigação Argumentativa</h3><p>Desmonte um artigo de opinião e relacione tese, justificativas, evidências e contrapontos.</p><div class="card-footer"><span data-card-status="investigacao-argumentativa">Leitura investigativa</span><a href="investigacao-argumentativa/index.html" aria-label="Abrir Investigação Argumentativa"><span class="material-symbols-outlined">arrow_forward</span></a></div></div></article>
-          <article class="experience-card visual-card" data-card-year="3"><div class="card-visual"><img src="assets/brasil-em-contraste.png" alt="Colagem editorial Brasil em contraste"><span class="year-badge">3º ano · 1º trimestre</span></div><div class="card-copy"><div class="descriptor"><span>EM13LP48</span><strong>D057_P</strong></div><h3>Interpretação Visual</h3><p>Combine fotografia, título e gráfico para reconhecer a crítica social construída pelo material.</p><div class="card-footer"><span data-card-status="interpretacao-visual">Leitura multimodal</span><a href="interpretacao-visual/index.html" aria-label="Abrir Interpretação Visual"><span class="material-symbols-outlined">arrow_forward</span></a></div></div></article>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      name="description"
+      content="Trilhas interativas de Língua Portuguesa do OminiSaber."
+    />
+    <title>Língua Portuguesa | OminiSaber</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700&family=Material+Symbols+Outlined:FILL@0..1"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="experiencia.css" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../../../backend/ominisaber-supabase-config.js"></script>
+    <script src="../../../../backend/ominisaber-supabase-client.js"></script>
+    <script defer src="experiencia.js"></script>
+    <script defer src="script.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#conteudo">Ir para as trilhas</a>
+    <aside class="sidebar" aria-label="Navegação principal">
+      <a class="brand" href="../../dashboard_principal/index.html"
+        ><span class="brand-mark"
+          ><span class="material-symbols-outlined">school</span></span
+        >OminiSaber</a
+      >
+      <nav class="sidebar-nav">
+        <a href="../../dashboard_principal/index.html"
+          ><span class="material-symbols-outlined">home</span>Início</a
+        ><a href="../index.html"
+          ><span class="material-symbols-outlined">route</span>Trilhas</a
+        ><a href="index.html" aria-current="page"
+          ><span class="material-symbols-outlined">menu_book</span>Português</a
+        ><a href="../../laboratorio_de_redacao/index.html"
+          ><span class="material-symbols-outlined">edit_note</span>Redação</a
+        ><a href="../../minha_evolucao/index.html"
+          ><span class="material-symbols-outlined">monitoring</span>Evolução</a
+        ><a href="../../biblioteca_digital/index.html"
+          ><span class="material-symbols-outlined">book_2</span>Biblioteca</a
+        >
+      </nav>
+      <div class="sidebar-profile">
+        <img
+          class="profile-avatar"
+          src="../../../assets/avatar-marina.png"
+          alt=""
+        />
+        <div>
+          <strong data-profile-name>Estudante</strong
+          ><span data-profile-grade>Ensino Médio</span>
         </div>
-        <p class="empty-filter" data-empty-filter hidden>Nenhuma experiência disponível para este filtro.</p>
-      </section>
-      <section class="teacher-feed surface panel"><div><p class="panel-kicker">Conectado ao professor de Português</p><h2>Atividades publicadas para sua turma</h2><p class="muted small" data-teacher-feed-copy>Consultando o Supabase...</p></div><span class="teacher-feed-count" data-teacher-feed-count>—</span></section>
-    </main>
-  </div>
-</body>
+      </div>
+    </aside>
+    <div class="mobile-bar">
+      <a class="brand" href="../../dashboard_principal/index.html"
+        ><span class="brand-mark"
+          ><span class="material-symbols-outlined">school</span></span
+        >OminiSaber</a
+      ><button
+        class="mobile-menu-button icon-button"
+        data-menu-toggle
+        aria-label="Abrir menu"
+        aria-expanded="false"
+      >
+        <span class="material-symbols-outlined">menu</span>
+      </button>
+    </div>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="subject-title">
+          <span class="subject-icon"
+            ><span class="material-symbols-outlined">menu_book</span></span
+          >Língua Portuguesa
+        </div>
+        <div class="top-actions">
+          <a
+            class="icon-button"
+            href="../../perfil/index.html"
+            aria-label="Abrir perfil"
+            ><span class="material-symbols-outlined">person</span></a
+          >
+        </div>
+      </header>
+      <main class="page" id="conteudo">
+        <section class="portuguese-hero">
+          <div>
+            <p class="eyebrow">Sua biblioteca de experiências</p>
+            <h1>Leia, investigue e<br />construa sentidos.</h1>
+            <p>
+              Cada descritor ganha uma forma própria de aprender. Escolha uma
+              experiência, observe as pistas e avance no seu ritmo.
+            </p>
+            <div class="button-row">
+              <a class="primary-button" href="mapa-da-lingua/index.html"
+                >Começar pelo Mapa da Língua<span
+                  class="material-symbols-outlined"
+                  >arrow_forward</span
+                ></a
+              ><a class="secondary-button" href="#experiencias">Ver todas</a>
+            </div>
+          </div>
+          <aside
+            class="hero-progress"
+            aria-label="Progresso em Língua Portuguesa"
+          >
+            <span class="material-symbols-outlined">auto_stories</span
+            ><strong data-hub-progress>0/3</strong>
+            <p>experiências concluídas</p>
+            <div class="hub-progress-track">
+              <span data-hub-progress-bar></span>
+            </div>
+          </aside>
+        </section>
+        <section id="experiencias" aria-labelledby="experiencias-title">
+          <div class="hub-section-head">
+            <div>
+              <p class="eyebrow">Trilhas por descritor</p>
+              <h2 id="experiencias-title">Experiências disponíveis</h2>
+            </div>
+            <div class="hub-filters" role="group" aria-label="Filtrar por ano">
+              <button data-year="all" aria-pressed="true">Todos</button
+              ><button data-year="1">1º ano</button
+              ><button data-year="2">2º ano</button
+              ><button data-year="3">3º ano</button>
+            </div>
+          </div>
+          <div class="experience-grid">
+            <article class="experience-card map-card" data-card-year="1">
+              <div class="card-visual">
+                <img
+                  src="assets/mapa-linguistico-brasil.png"
+                  alt="Mapa ilustrado do Brasil"
+                /><span class="year-badge">1º ano · 1º trimestre</span>
+              </div>
+              <div class="card-copy">
+                <div class="descriptor">
+                  <span>EM13LP10</span><strong>D103_P</strong>
+                </div>
+                <h3>Mapa da Língua</h3>
+                <p>
+                  Descubra como vocativos, formalidade e escolhas lexicais
+                  revelam quem fala e para quem.
+                </p>
+                <div class="card-footer">
+                  <span data-card-status="mapa-da-lingua"
+                    >Exploração interativa</span
+                  ><a
+                    href="mapa-da-lingua/index.html"
+                    aria-label="Abrir Mapa da Língua"
+                    ><span class="material-symbols-outlined"
+                      >arrow_forward</span
+                    ></a
+                  >
+                </div>
+              </div>
+            </article>
+            <article class="experience-card argument-card" data-card-year="2">
+              <div class="card-visual argument-visual">
+                <span class="argument-line green">Tese</span
+                ><span class="argument-line ochre">Argumento</span
+                ><span class="argument-line teal">Evidência</span
+                ><span class="argument-line coral">Contra-argumento</span
+                ><span class="year-badge">2º ano · 3º trimestre</span>
+              </div>
+              <div class="card-copy">
+                <div class="descriptor">
+                  <span>EM13LP05</span><strong>D055_P</strong>
+                </div>
+                <h3>Investigação Argumentativa</h3>
+                <p>
+                  Desmonte um artigo de opinião e relacione tese,
+                  justificativas, evidências e contrapontos.
+                </p>
+                <div class="card-footer">
+                  <span data-card-status="investigacao-argumentativa"
+                    >Leitura investigativa</span
+                  ><a
+                    href="investigacao-argumentativa/index.html"
+                    aria-label="Abrir Investigação Argumentativa"
+                    ><span class="material-symbols-outlined"
+                      >arrow_forward</span
+                    ></a
+                  >
+                </div>
+              </div>
+            </article>
+            <article class="experience-card visual-card" data-card-year="3">
+              <div class="card-visual">
+                <img
+                  src="assets/brasil-em-contraste.png"
+                  alt="Colagem editorial Brasil em contraste"
+                /><span class="year-badge">3º ano · 1º trimestre</span>
+              </div>
+              <div class="card-copy">
+                <div class="descriptor">
+                  <span>EM13LP48</span><strong>D057_P</strong>
+                </div>
+                <h3>Interpretação Visual</h3>
+                <p>
+                  Combine fotografia, título e gráfico para reconhecer a crítica
+                  social construída pelo material.
+                </p>
+                <div class="card-footer">
+                  <span data-card-status="interpretacao-visual"
+                    >Leitura multimodal</span
+                  ><a
+                    href="interpretacao-visual/index.html"
+                    aria-label="Abrir Interpretação Visual"
+                    ><span class="material-symbols-outlined"
+                      >arrow_forward</span
+                    ></a
+                  >
+                </div>
+              </div>
+            </article>
+          </div>
+          <p class="empty-filter" data-empty-filter hidden>
+            Nenhuma experiência disponível para este filtro.
+          </p>
+        </section>
+        <section class="teacher-feed surface panel">
+          <div>
+            <p class="panel-kicker">Conectado ao professor de Português</p>
+            <h2>Atividades publicadas para sua turma</h2>
+            <p class="muted small" data-teacher-feed-copy>
+              Consultando o Supabase...
+            </p>
+          </div>
+          <span class="teacher-feed-count" data-teacher-feed-count>—</span>
+        </section>
+      </main>
+    </div>
+  </body>
 </html>

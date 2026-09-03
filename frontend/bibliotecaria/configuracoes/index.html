@@ -6,8 +6,13 @@
     <title>Regras | Biblioteca | OminiSaber</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&family=Material+Symbols+Outlined:FILL@0..1" rel="stylesheet" />
-    <link rel="stylesheet" href="../library.css?v=20260902-2" /><link rel="stylesheet" href="rules.css?v=20260902-1" /><link rel="stylesheet" href="../../shared/sidebar.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&family=Material+Symbols+Outlined:FILL@0..1"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../library.css?v=20260902-2" />
+    <link rel="stylesheet" href="rules.css?v=20260902-1" />
+    <link rel="stylesheet" href="../../shared/sidebar.css" />
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../../../backend/ominisaber-supabase-config.js"></script>
     <script src="../../../backend/ominisaber-supabase-client.js?v=20260902-2"></script>
@@ -50,49 +55,67 @@
           </div>
         </header>
         <div class="rules-layout">
-        <section class="card">
-          <div class="card-heading">
-            <div>
-              <h2>Parâmetros atuais</h2>
-              <p class="muted">
-                As novas regras valem para as próximas entregas.
-              </p>
+          <section class="card">
+            <div class="card-heading">
+              <div>
+                <h2>Parâmetros atuais</h2>
+                <p class="muted">
+                  As novas regras valem para as próximas entregas.
+                </p>
+              </div>
             </div>
-          </div>
-          <form data-library-settings>
-            <label
-              >Prazo de devolução<select class="input" name="prazo_dias">
-                <option value="15">15 dias</option>
-                <option value="30">30 dias</option>
-              </select></label
-            ><label
-              >Limite de livros por aluno<select
-                class="input"
-                name="limite_livros"
+            <form data-library-settings>
+              <label
+                >Prazo de devolução<select class="input" name="prazo_dias">
+                  <option value="15">15 dias</option>
+                  <option value="30">30 dias</option>
+                </select></label
+              ><label
+                >Limite de livros por aluno<select
+                  class="input"
+                  name="limite_livros"
+                >
+                  <option value="1">1 livro</option>
+                  <option value="2">2 livros</option>
+                  <option value="3">3 livros</option>
+                  <option value="4">4 livros</option>
+                  <option value="5">5 livros</option>
+                </select></label
               >
-                <option value="1">1 livro</option>
-                <option value="2">2 livros</option>
-                <option value="3">3 livros</option>
-                <option value="4">4 livros</option>
-                <option value="5">5 livros</option>
-              </select></label
+              <div class="form-actions">
+                <button class="button" type="submit" data-settings-save>
+                  <span class="material-symbols-outlined">save</span>Salvar
+                  regras
+                </button>
+              </div>
+            </form>
+          </section>
+          <aside class="card rules-preview" aria-live="polite">
+            <p class="eyebrow">COMO FICA PARA O ALUNO</p>
+            <span class="material-symbols-outlined rules-preview-icon"
+              >event_available</span
             >
-            <div class="form-actions">
-              <button class="button" type="submit" data-settings-save>
-                <span class="material-symbols-outlined">save</span>Salvar regras
-              </button>
+            <h2>Empréstimo simples e previsível</h2>
+            <p>
+              Depois da retirada, o aluno terá
+              <strong data-rules-days>15 dias</strong> para devolver o exemplar.
+            </p>
+            <div class="rule-chip">
+              <span class="material-symbols-outlined">library_books</span
+              ><span
+                >Até <strong data-rules-limit>1 livro</strong> ativo por
+                aluno</span
+              >
             </div>
-          </form>
-        </section>
-        <aside class="card rules-preview" aria-live="polite">
-          <p class="eyebrow">COMO FICA PARA O ALUNO</p>
-          <span class="material-symbols-outlined rules-preview-icon">event_available</span>
-          <h2>Empréstimo simples e previsível</h2>
-          <p>Depois da retirada, o aluno terá <strong data-rules-days>15 dias</strong> para devolver o exemplar.</p>
-          <div class="rule-chip"><span class="material-symbols-outlined">library_books</span><span>Até <strong data-rules-limit>1 livro</strong> ativo por aluno</span></div>
-          <div class="rule-chip"><span class="material-symbols-outlined">block</span><span>Atrasos bloqueiam novas solicitações</span></div>
-          <small>Pedidos já entregues preservam a data de devolução original.</small>
-        </aside>
+            <div class="rule-chip">
+              <span class="material-symbols-outlined">block</span
+              ><span>Atrasos bloqueiam novas solicitações</span>
+            </div>
+            <small
+              >Pedidos já entregues preservam a data de devolução
+              original.</small
+            >
+          </aside>
         </div>
       </main>
     </div>
