@@ -1,6 +1,7 @@
 (() => {
   const SKILL_RE = /\b(?:EM|EF)\d{2}[A-Z]{2}\d{2}\b/gi;
   const DESCRIPTOR_RE = /\bD\d{3}(?:_[A-Z])?\b/gi;
+  const CURRICULAR_HEADER_RE = /^(?:\s*(?:habilidade(?:s)?(?:\s+da\s+computa[cç][aã]o|\s+principal)?|objeto(?:s)?\s+de\s+conhecimento|expectativa(?:s)?(?:\s+de\s+aprendizagem)?|descritor(?:es)?|materiais?\s+estruturados?|material\s+estruturado|componente\s+curricular|s[eé]rie|trimestre|quinzena|semana)\b|\s*(?:EM|EF)\d{2}[A-Z]{2}\d{2}\b)/i;
   const clean = (value) => String(value || '').replace(/\s+/g, ' ').trim();
   const unique = (values) => [...new Set(values.map(clean).filter(Boolean))];
   const first = (value, pattern) => String(value || '').match(pattern)?.[1] || null;
@@ -47,7 +48,7 @@
       if (!match) return;
       const continuation = [];
       for (const next of lines.slice(index + 1)) {
-        if (/\bD\d{3}(?:_[A-Z])?\b/i.test(next) || /\b(?:expectativa(?:s)?|objeto(?:s)?)\b/i.test(next) || /\b(?:EM|EF)\d{2}[A-Z]{2}\d{2}\b/i.test(next)) break;
+        if (CURRICULAR_HEADER_RE.test(next) || /\bD\d{3}(?:_[A-Z])?\b/i.test(next)) break;
         continuation.push(next);
       }
       descriptors.push({ code: match[1].toUpperCase(), descricao: normalizeLines([match[2], ...continuation]) });
@@ -64,7 +65,7 @@
         values.push(line.replace(new RegExp(`^\\s*${label}\\s*[:\\-]?\\s*`, 'i'), ''));
         return;
       }
-      if (collecting && /^(?:\s*(?:descritor(?:es)?|expectativa(?:s)?|objeto(?:s)?)\b|\s*(?:EM|EF)\d{2}[A-Z]{2}\d{2}\b)/i.test(line)) collecting = false;
+      if (collecting && CURRICULAR_HEADER_RE.test(line)) collecting = false;
       if (collecting) values.push(line);
     });
     return unique(values).filter((value) => !/^(?:descritor(?:es)?|expectativa(?:s)?|objeto(?:s)?)\s*[:\-]?$/i.test(value));

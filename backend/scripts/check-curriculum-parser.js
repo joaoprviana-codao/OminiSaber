@@ -3,6 +3,8 @@ import vm from 'node:vm';
 
 const source = fs.readFileSync(new URL('../../frontend/gestor/shared/curriculo-parser.js', import.meta.url), 'utf8');
 const migration = fs.readFileSync(new URL('../migrations/20260903_importacao_curricular_fase1.sql', import.meta.url), 'utf8');
+const phase2Migration = fs.readFileSync(new URL('../migrations/20260903_importacao_curricular_fase2.sql', import.meta.url), 'utf8');
+const gestorSource = fs.readFileSync(new URL('../../frontend/gestor/shared/gestor-app.js', import.meta.url), 'utf8');
 const context = { window: {} };
 vm.runInNewContext(source, context);
 const parse = context.window.OminiSaberCurriculumParser.parseCurriculumPages;
@@ -49,10 +51,19 @@ assert(allSeries.items.length === 3, 'documento com múltiplas séries');
 assert(allSeries.items[0].payload.serie === 2 && allSeries.items[1].payload.serie === 3, 'séries locais');
 assert(allSeries.items[0].payload.trimestre === 2 && allSeries.items[1].payload.trimestre === 3, 'trimestres locais');
 assert(allSeries.items.some((item) => item.tipo === 'referencia_ensino_fundamental' && item.etapa === 'ensino_fundamental' && item.status === 'revisar'), 'referência EF separada');
+const efReference = allSeries.items.find((item) => item.tipo === 'referencia_ensino_fundamental');
+efReference.status = 'aprovado';
+assert(efReference.tipo === 'referencia_ensino_fundamental' && efReference.etapa === 'ensino_fundamental', 'EF aprovado permanece referência complementar');
+efReference.status = 'rejeitado';
+assert(efReference.tipo === 'referencia_ensino_fundamental' && efReference.status === 'rejeitado', 'EF rejeitado permanece fora das habilidades');
 
 const unknown = parse(['Documento escaneado sem texto selecionável'], {});
 assert(unknown.items[0].tipo === 'aviso' && unknown.items[0].confianca < 70, 'estrutura desconhecida em revisão');
 assert(migration.includes('add column if not exists curriculo_id') && migration.includes('add column if not exists versao'), 'importação registra currículo e versão');
 assert(migration.includes('max(versao), 0) + 1') && migration.includes("proxima_versao, 'publicado'"), 'aprovação cria nova versão publicada');
 assert(migration.includes("set status = 'aprovada', curriculo_id = novo_curriculo_id, versao = proxima_versao"), 'aprovação vincula versão à importação');
+assert(migration.includes("where importacao_id = imp.id and tipo = 'habilidade'"), 'EF nunca materializado como habilidade principal');
+assert(phase2Migration.includes('referencia_ensino_fundamental'), 'staging aceita referência EF');
+assert(gestorSource.includes('name="materia_codigo"') && gestorSource.includes('payload.materia_codigo'), 'matéria editada usa materia_codigo');
+assert(!gestorSource.includes('payload.materia)'), 'payload.materia não é usado');
 console.log('OK parser curricular: trimestre único, múltiplas séries, duplicatas por código e habilidade sem descritor.');
