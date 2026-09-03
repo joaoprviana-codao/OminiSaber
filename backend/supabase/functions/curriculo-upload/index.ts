@@ -30,7 +30,6 @@ Deno.serve(async (request) => {
     if (signature !== '%PDF-' || !new TextDecoder().decode(bytes.slice(-1024)).includes('%%EOF')) return reply({ error: 'Arquivo inválido: assinatura PDF ausente ou finalização inválida.' }, 400);
     const hash = await hexHash(bytes);
     const extractedText = String(form.get('texto') || '');
-    if (!extractedText.trim()) return reply({ error: 'PDF sem texto selecionável.' }, 400);
     const reprocessamentoDeId = String(form.get('reprocessamento_de_id') || '') || null;
     if (!reprocessamentoDeId) {
       const { data: duplicate } = await scoped.from('importacoes_curriculo').select('*,importacoes_curriculo_itens(*)').eq('arquivo_hash_sha256', hash).is('reprocessamento_de_id', null).maybeSingle();
@@ -46,7 +45,7 @@ Deno.serve(async (request) => {
       if (documento.error) throw documento.error;
       documentoId = documento.data.id;
       const items = JSON.parse(String(form.get('itens') || '[]'));
-      const { data: importacaoId, error: stageError } = await scoped.rpc('criar_importacao_curriculo', { p_documento_id: documentoId, p_nome_arquivo: file.name, p_hash: hash, p_tamanho: file.size, p_origem: form.get('origem') || null, p_ano: form.get('ano') ? Number(form.get('ano')) : null, p_materia: form.get('materia_codigo') || null, p_trimestre: form.get('trimestre') ? Number(form.get('trimestre')) : null, p_resumo: JSON.parse(String(form.get('resumo') || '{}')), p_texto: extractedText, p_itens: items, p_reprocessamento_de_id: reprocessamentoDeId });
+      const { data: importacaoId, error: stageError } = await scoped.rpc('criar_importacao_curriculo', { p_documento_id: documentoId, p_nome_arquivo: file.name, p_hash: hash, p_tamanho: file.size, p_origem: form.get('origem') || null, p_ano: form.get('ano') ? Number(form.get('ano')) : null, p_materia: form.get('materia_codigo') || null, p_trimestre: form.get('trimestre') ? Number(form.get('trimestre')) : null, p_resumo: JSON.parse(String(form.get('resumo') || '{}')), p_texto: extractedText || null, p_itens: items, p_reprocessamento_de_id: reprocessamentoDeId });
       if (stageError) throw stageError;
       const { data: staged } = await scoped.from('importacoes_curriculo').select('documento_id').eq('id', importacaoId).single();
       if (staged?.documento_id !== documentoId) { await admin.storage.from('curriculos-pdfs').remove([storagePath]); await admin.from('documentos_curriculares').delete().eq('id', documentoId); }

@@ -5,6 +5,7 @@ const source = fs.readFileSync(new URL('../../frontend/gestor/shared/curriculo-p
 const migration = fs.readFileSync(new URL('../migrations/20260903_importacao_curricular_fase1.sql', import.meta.url), 'utf8');
 const phase2Migration = fs.readFileSync(new URL('../migrations/20260903_importacao_curricular_fase2.sql', import.meta.url), 'utf8');
 const gestorSource = fs.readFileSync(new URL('../../frontend/gestor/shared/gestor-app.js', import.meta.url), 'utf8');
+const securityMigration = fs.readFileSync(new URL('../migrations/20260903_importacao_curricular_fase3_1.sql', import.meta.url), 'utf8');
 const context = { window: {} };
 vm.runInNewContext(source, context);
 const parse = context.window.OminiSaberCurriculumParser.parseCurriculumPages;
@@ -71,4 +72,6 @@ assert(phase2Migration.includes('referencia_ensino_fundamental'), 'staging aceit
 assert(gestorSource.includes('name="materia_codigo"') && gestorSource.includes('payload.materia_codigo'), 'matéria editada usa materia_codigo');
 assert(!gestorSource.includes('payload.materia)'), 'payload.materia não é usado');
 assert(gestorSource.includes('ok: "OK"') && gestorSource.includes('aprovado: "Aprovado"') && gestorSource.includes('rejeitado: "Rejeitado"'), 'status aprovado e rejeitado têm labels explícitos');
+assert(securityMigration.includes('on conflict (curriculo_id, serie, trimestre) do update'), 'múltiplas habilidades reutilizam o período');
+assert(securityMigration.includes("and status = 'revisar'") && securityMigration.includes("status in ('ok', 'aprovado')"), 'habilidade rejeitada não bloqueia e não materializa');
 console.log('OK parser curricular: trimestre único, múltiplas séries, duplicatas por código e habilidade sem descritor.');
