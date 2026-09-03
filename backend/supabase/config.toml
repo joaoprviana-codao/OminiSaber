@@ -1,2 +1,5 @@
 [functions.gestor-contas]
 verify_jwt = true
+
+[functions.curriculo-upload]
+verify_jwt = true

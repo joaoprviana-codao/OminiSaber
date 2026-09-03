@@ -22,6 +22,7 @@ const sources = [
   'migrations/20260903_importacao_curricular.sql',
   'migrations/20260903_importacao_curricular_fase1.sql',
   'migrations/20260903_importacao_curricular_fase2.sql',
+  'migrations/20260903_importacao_curricular_fase3.sql',
   'migrations/20260903_redacoes_avaliacoes_portugues.sql'
 ];
 

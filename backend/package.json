@@ -9,6 +9,7 @@
     "auth:check": "node scripts/check-auth-flow.js",
     "manager:check": "node scripts/check-manager-flow.js",
     "curriculum:check": "node scripts/check-curriculum-parser.js",
+    "curriculum:security:check": "node scripts/check-curriculum-security.js",
     "library:check": "node scripts/check-library-flow.js",
     "library:prepare": "node scripts/prepare-library-data.js",
     "teacher:portuguese:check": "node scripts/check-portuguese-teacher-flow.js"

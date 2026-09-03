@@ -408,7 +408,7 @@
         document.querySelector("#back-descriptors").onclick = descriptorsPage;
         document.querySelectorAll(".review-status").forEach((select) => { select.onchange = async () => { const item = items.find((entry) => entry.id === select.dataset.id); item.status = select.value; if (!select.dataset.id.startsWith("local-")) await api().updateCurriculumImportItem(select.dataset.id, { status: select.value }); render(); }; });
         document.querySelectorAll(".edit-import").forEach((button) => { button.onclick = () => editItem(items.find((item) => item.id === button.dataset.id)); });
-        document.querySelector("#reject-import").onclick = async () => { await api().updateCurriculumImport(importacao.id, { status: "rejeitada" }); toast("Importação rejeitada."); descriptorsPage(); };
+        document.querySelector("#reject-import").onclick = async () => { await api().rejectCurriculumImport(importacao.id); toast("Importação rejeitada."); descriptorsPage(); };
         document.querySelector("#approve-import").onclick = async () => { await api().approveCurriculumImport(importacao.id); toast("Currículo aprovado e publicado no catálogo."); descriptorsPage(); };
       };
       render();
