@@ -936,17 +936,10 @@
   const updateManagerProfile = async (id, changes) => {
     await managerSession();
     const coreKeys = ['nome', 'matricula', 'curso_tecnico', 'turma_id', 'tipo_professor'];
-    const optionalKeys = ['ativo', 'email_contato', 'primeiro_acesso_pendente', 'ultimo_acesso_em'];
     const core = Object.fromEntries(Object.entries(changes || {}).filter(([key]) => coreKeys.includes(key)));
-    const optionalFields = Object.fromEntries(Object.entries(changes || {}).filter(([key]) => optionalKeys.includes(key)));
     if (Object.keys(core).length) {
       const { error } = await client.from('perfis').update(core).eq('id', id);
       if (error) throw error;
-    }
-    if (Object.keys(optionalFields).length) {
-      const { error } = await client.from('perfis').update(optionalFields).eq('id', id);
-      const missingColumn = error && (error.code === 'PGRST204' || error.code === '42703' || /column|schema cache/i.test(error.message || ''));
-      if (error && !missingColumn) throw error;
     }
     const { data, error } = await client.from('perfis').select('*,turmas!perfis_turma_id_fkey(id,nome,serie)').eq('id', id).single();
     if (error) throw error;
